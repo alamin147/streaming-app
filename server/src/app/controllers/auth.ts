@@ -38,8 +38,10 @@ export const signin = async (
     const token = jwt.sign({ id: user._id }, process.env.JWTSECRET as string);
 
     const { password, ...restuser } = user;
-
-    response(res, 200, true, "User logged in successfully", token, {
+    res.cookie("token", token, {
+      httpOnly: true,
+    });
+    response(res, 200, true, "User logged in successfully", {
       user: restuser,
     });
   } catch (err: any) {

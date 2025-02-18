@@ -1,5 +1,7 @@
+import { createError } from "../error/error";
+import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
-import { Response } from "express";
+import { NextFunction, Request, Response } from "express";
 
 const hashPassword = async (password: string) => {
   const salt = await bcrypt.genSalt(10);
@@ -11,14 +13,8 @@ export const response = (
   status: number,
   success: boolean,
   message: string,
-  token?: string,
   data?: any
 ) => {
-  if (token) {
-    res.cookie("token", token, {
-      httpOnly: true,
-    });
-  }
   res.status(status).json({
     status,
     success,
@@ -26,6 +22,23 @@ export const response = (
     data,
   });
 };
+
+export const verifyToken = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const token = req.cookies.access_token;
+  if (!token)
+    return next(createError(401, false, "You are not authenticated!"));
+
+  jwt.verify(token, process.env.JWT as string, (err: any, user: any) => {
+    if (err) return next(createError(403, false, "Token is not valid!"));
+    req.user = user;
+    next();
+  });
+};
+
 export const utils = {
   hashPassword,
 };
