@@ -119,3 +119,33 @@ export const trendingVideos = async (
     response(res, 500, false, err.message || "Internal Server Error");
   }
 };
+
+export const getByTag = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const tags = (req.query.tags as string).split(",");
+    const videos = await Video.find({ tags: { $in: tags } }).limit(20);
+    response(res, 200, true, "Videos fetched successfully", { videos });
+  } catch (err: any) {
+    response(res, 500, false, err.message || "Internal Server Error");
+  }
+};
+
+export const search = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const query = req.query.q as string;
+    const videos = await Video.find({
+      title: { $regex: query, $options: "i" },
+    }).limit(40);
+    response(res, 200, true, "Videos fetched successfully", { videos });
+  } catch (err: any) {
+    response(res, 500, false, err.message || "Internal Server Error");
+  }
+};

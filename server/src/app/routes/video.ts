@@ -5,7 +5,9 @@ import {
   createVideo,
   deleteVideo,
   fetchVideos,
+  getByTag,
   getVideo,
+  search,
   trendingVideos,
   updateVideo,
 } from "../controllers/video";
@@ -19,4 +21,7 @@ videoRoutes.delete("/:id", verifyToken, deleteVideo);
 videoRoutes.put("/view/:id", addView);
 videoRoutes.get("/trend", trendingVideos);
 videoRoutes.get("/random", fetchVideos);
+videoRoutes.get("/tags", getByTag);
+videoRoutes.get("/search", search);
+
 export default videoRoutes;
