@@ -1,7 +1,8 @@
+import { Request, Response } from "express";
 import User from "../models/User.js";
-import { response, utils } from "../utils/utils.js";
+import { response, utils } from "../utils/utils";
 
-export const signup = async (req, res) => {
+export const signup = async (req: Request, res: Response) => {
   try {
     const data = req.body;
     const hash = await utils.hashPassword(data.password);
@@ -10,11 +11,7 @@ export const signup = async (req, res) => {
     await newUser.save();
 
     response(res, 201, true, "User created successfully");
-  } catch (error) {
-    res.status(500).json({
-      status: 500,
-      message: "Internal server error",
-      success: false,
-    });
+  } catch (error: any) {
+    response(res, 500, false, error?.message || "Server error");
   }
 };
