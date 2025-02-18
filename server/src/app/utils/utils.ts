@@ -10,12 +10,20 @@ export const response = (
   res: Response,
   status: number,
   success: boolean,
-  message: string
+  message: string,
+  token?: string,
+  data?: any
 ) => {
+  if (token) {
+    res.cookie("token", token, {
+      httpOnly: true,
+    });
+  }
   res.status(status).json({
     status,
     success,
     message,
+    data,
   });
 };
 export const utils = {
