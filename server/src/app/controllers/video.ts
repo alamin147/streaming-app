@@ -76,3 +76,46 @@ export const deleteVideo = async (
     response(res, 500, false, err.message || "Internal Server Error");
   }
 };
+
+export const addView = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    await Video.findByIdAndUpdate(req.params.id, {
+      $inc: { views: 1 },
+    });
+    response(res, 200, true, "View added successfully");
+  } catch (err: any) {
+    response(res, 500, false, err.message || "Internal Server Error");
+  }
+};
+
+export const fetchVideos = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const videos = await Video.aggregate([{ $sample: { size: 20 } }]);
+    response(res, 200, true, "Videos fetched successfully", { videos });
+  } catch (err: any) {
+    response(res, 500, false, err.message || "Internal Server Error");
+  }
+};
+
+export const trendingVideos = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const videos = await Video.find().sort({ views: -1 });
+    response(res, 200, true, "Trending videos fetched successfully", {
+      videos,
+    });
+  } catch (err: any) {
+    response(res, 500, false, err.message || "Internal Server Error");
+  }
+};
