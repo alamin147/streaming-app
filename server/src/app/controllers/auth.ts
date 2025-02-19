@@ -17,7 +17,7 @@ export const signup = async (
 
     response(res, 201, true, "User created successfully");
   } catch (err: any) {
-    next(err);
+    response(res, 500, true, err?.message || "Server Error");
   }
 };
 
@@ -45,6 +45,45 @@ export const signin = async (
       user: restuser,
     });
   } catch (err: any) {
-    next(err);
+    response(res, 500, true, err?.message || "Server Error");
+  }
+};
+
+export const googleAuth = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const user = await User.findOne({ email: req.body.email }).lean();
+    if (user) {
+      const token = jwt.sign({ id: user._id }, process.env.JWTSECRET as string);
+
+      res.cookie("token", token, {
+        httpOnly: true,
+      });
+      response(res, 200, true, "User logged in successfully", {
+        user,
+      });
+    } else {
+      const newUser = new User({
+        ...req.body,
+        fromGoogle: true,
+      });
+      const savedUser = await newUser.save();
+      const token = jwt.sign(
+        { id: savedUser._id },
+        process.env.JWTSECRET as string
+      );
+
+      res.cookie("token", token, {
+        httpOnly: true,
+      });
+      response(res, 200, true, "User logged in successfully", {
+        user: savedUser,
+      });
+    }
+  } catch (err: any) {
+    response(res, 500, true, err?.message || "Server Error");
   }
 };
