@@ -8,6 +8,10 @@ const UserSchema = new mongoose_1.default.Schema({
     name: {
         type: String,
         required: true,
+    },
+    username: {
+        type: String,
+        required: true,
         unique: true,
     },
     email: {
@@ -21,6 +25,10 @@ const UserSchema = new mongoose_1.default.Schema({
     },
     img: {
         type: String,
+    },
+    fromGoogle: {
+        type: Boolean,
+        default: false,
     },
 }, { timestamps: true });
 exports.default = mongoose_1.default.model("User", UserSchema);
