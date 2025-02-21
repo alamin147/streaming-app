@@ -1,21 +1,21 @@
-import * as React from "react"
+import * as React from "react";
 import {
-  BookOpen,
-  Bot,
-  Command,
-  Frame,
+  LayoutGrid,
+  House,
+  ArrowDownToLine,
+  History,
+  Flame,
+  Settings,
   LifeBuoy,
-  Map,
-  PieChart,
   Send,
-  Settings2,
-  SquareTerminal,
-} from "lucide-react"
-
-import { NavMain } from "@/components/nav-main"
-import { NavProjects } from "@/components/nav-projects"
-import { NavSecondary } from "@/components/nav-secondary"
-import { NavUser } from "@/components/nav-user"
+  BookmarkPlus,
+  TvMinimalPlay,
+  Film,
+} from "lucide-react";
+import { NavMain } from "@/components/nav-main";
+import { NavProjects } from "@/components/nav-projects";
+import { NavSecondary } from "@/components/nav-secondary";
+import { NavUser } from "@/components/nav-user";
 import {
   Sidebar,
   SidebarContent,
@@ -24,7 +24,7 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-} from "@/components/ui/sidebar"
+} from "@/components/ui/sidebar";
 
 const data = {
   user: {
@@ -34,89 +34,53 @@ const data = {
   },
   navMain: [
     {
-      title: "Playground",
+      title: "Home",
       url: "#",
-      icon: SquareTerminal,
+      icon: House,
+    },
+    {
+      title: "Download",
+      url: "#",
+      icon: ArrowDownToLine,
+    },
+    {
+      title: "Trending",
+      url: "#",
+      icon: Flame,
+    },
+    {
+      title: "Category",
+      url: "#",
+      icon: LayoutGrid,
       isActive: true,
       items: [
         {
-          title: "History",
+          title: "Action",
           url: "#",
         },
         {
-          title: "Starred",
+          title: "Adventure",
           url: "#",
         },
         {
-          title: "Settings",
+          title: "Horror",
+          url: "#",
+        },
+        {
+          title: "Comedy",
           url: "#",
         },
       ],
     },
     {
-      title: "Models",
+      title: "History",
       url: "#",
-      icon: Bot,
-      items: [
-        {
-          title: "Genesis",
-          url: "#",
-        },
-        {
-          title: "Explorer",
-          url: "#",
-        },
-        {
-          title: "Quantum",
-          url: "#",
-        },
-      ],
-    },
-    {
-      title: "Documentation",
-      url: "#",
-      icon: BookOpen,
-      items: [
-        {
-          title: "Introduction",
-          url: "#",
-        },
-        {
-          title: "Get Started",
-          url: "#",
-        },
-        {
-          title: "Tutorials",
-          url: "#",
-        },
-        {
-          title: "Changelog",
-          url: "#",
-        },
-      ],
+      icon: History,
     },
     {
       title: "Settings",
       url: "#",
-      icon: Settings2,
-      items: [
-        {
-          title: "General",
-          url: "#",
-        },
-        {
-          title: "Team",
-          url: "#",
-        },
-        {
-          title: "Billing",
-          url: "#",
-        },
-        {
-          title: "Limits",
-          url: "#",
-        },
-      ],
+      icon: Settings,
     },
   ],
   navSecondary: [
@@ -133,22 +97,22 @@ const data = {
   ],
   projects: [
     {
-      name: "Design Engineering",
+      name: "Bookmark",
       url: "#",
-      icon: Frame,
+      icon: BookmarkPlus,
     },
     {
-      name: "Sales & Marketing",
+      name: "Movies",
       url: "#",
-      icon: PieChart,
+      icon: TvMinimalPlay,
     },
     {
-      name: "Travel",
+      name: "Series",
       url: "#",
-      icon: Map,
+      icon: Film,
     },
   ],
-}
+};
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
@@ -156,17 +120,12 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton size="lg" asChild>
-              <a href="#">
-                <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
-                  <Command className="size-4" />
-                </div>
-                <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-semibold">Acme Inc</span>
-                  <span className="truncate text-xs">Enterprise</span>
-                </div>
-              </a>
-            </SidebarMenuButton>
+            <h1 className="ms-2">
+              <span className="text-yellow-500 font-bold italic text-4xl">
+                N
+              </span>
+              <span className="text-xl"> Movies</span>
+            </h1>
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>
@@ -179,5 +138,5 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <NavUser user={data.user} />
       </SidebarFooter>
     </Sidebar>
-  )
+  );
 }
