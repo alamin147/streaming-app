@@ -114,11 +114,8 @@ const data = {
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
-
-  // const { isCollapsed } = useSidebar();
-  // console.log(isCollapsed);
   return (
-    <Sidebar variant="inset" {...props}>
+    <Sidebar variant="inset"  {...props}>
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
