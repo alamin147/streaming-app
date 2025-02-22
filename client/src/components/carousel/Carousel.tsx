@@ -5,6 +5,7 @@ import "swiper/css/pagination";
 import "swiper/swiper-bundle.css";
 import { useSidebar } from "../ui/sidebar";
 import { FaPlay, FaPlus } from "react-icons/fa";
+import Cards from "../cards/Cards";
 // Your image array
 const images = [
   "https://media.gettyimages.com/id/1445487185/photo/canadian-born-actor-keanu-reeves-walks-along-an-aisle-in-the-church-of-saint-eustache-in-a.jpg?s=612x612&w=0&k=20&c=rCJatqXjiKyzRRobjW7iuSZrYg7a7n0MbjRHw2NASZQ=",
@@ -23,81 +24,95 @@ const Carousel = () => {
   }
 
   return (
-    <div
-      className={`w-screen ${
-        open === true ? "max-w-[calc(100vw-300px)]" : "max-w-[calc(100vw-50px)]"
-      } mx-auto h-80 md:h-[700px] overflow-hidden`}
-    >
-      <Swiper
-        modules={[Autoplay, Pagination, Navigation]}
-        // autoplay={{ delay: 2000, disableOnInteraction: false }}
-        loop={true}
-        pagination={{ clickable: true }}
-        className="h-full rounded-2xl shadow-lg"
+    <>
+      <div
+        className={`w-screen ${
+          open === true
+            ? "max-w-[calc(100vw-300px)]"
+            : "max-w-[calc(100vw-50px)]"
+        } mx-auto h-80 md:h-[700px] overflow-hidden`}
       >
-        {images.map((image, index) => (
-          <SwiperSlide key={index}>
-            <div className="relative w-full h-full">
-              <img
-                src={image}
-                alt={`Slide ${index + 1}`}
-                className="w-full h-full object-cover rounded-2xl"
-              />
-              {/* Overlay with title, rating, year, tags, and buttons */}
-              <div className=" absolute inset-0 bg-black bg-opacity-50 p-6 flex flex-col justify-center gap-2">
-                <div className="-mt-0 md:-mt-20">
-                  {/* Title */}
-                  <div className="mb-3 md:mb-6">
-                    <h2 className="text-2xl md:text-6xl font-semibold text-white mb-2 z-10">
-                      Movie Title {index + 1}
-                    </h2>
-                  </div>
-                  {/* Rating | Year | Age | Duration */}
-                  <div className="text-sm md:text-lg flex items-center gap-2  text-white z-10 mb-2">
-                    <span className="text-yellow-500">⭐ 8.5 |</span>
-                    <span className="flex items-center gap-1">2021 |</span>
-                    <span>18+ |</span>
-                    <span>1.20 hr </span>
-                  </div>
+        <Swiper
+          modules={[Autoplay, Pagination, Navigation]}
+          // autoplay={{ delay: 2000, disableOnInteraction: false }}
+          loop={true}
+          pagination={{ clickable: true }}
+          className="h-full rounded-2xl shadow-lg"
+        >
+          {images.map((image, index) => (
+            <SwiperSlide key={index}>
+              <div className="relative w-full h-full">
+                <img
+                  src={image}
+                  alt={`Slide ${index + 1}`}
+                  className="w-full h-full object-cover rounded-2xl"
+                />
+                {/* Overlay with title, rating, year, tags, and buttons */}
+                <div className=" absolute inset-0 bg-black bg-opacity-50 p-6 flex flex-col justify-center gap-2">
+                  <div className="-mt-0 md:-mt-20">
+                    {/* Title */}
+                    <div className="mb-3 md:mb-6">
+                      <h2 className="text-2xl md:text-6xl font-semibold text-white mb-2 z-10">
+                        Movie Title {index + 1}
+                      </h2>
+                    </div>
+                    {/* Rating | Year | Age | Duration */}
+                    <div className="text-sm md:text-lg flex items-center gap-2  text-white z-10 mb-2">
+                      <span className="text-yellow-500">⭐ 8.5 |</span>
+                      <span className="flex items-center gap-1">2021 |</span>
+                      <span>18+ |</span>
+                      <span>1.20 hr </span>
+                    </div>
 
-                  {/* Tags */}
-                  <div className="flex gap-2 text-xs md:text-sm z-10 mb-4">
-                    <span className="bg-gray-500 text-white px-3 py-1 rounded-md">
-                      Action
-                    </span>
-                    <span
-                      className=" text-white px-3 py-1 rounded-md"
-                      style={{
-                        background:
-                          "linear-gradient(8deg, rgba(91,91,91,1) 54%, rgba(83,83,83,1) 60%)",
-                      }}
-                    >
-                      Thriller
-                    </span>
+                    {/* Tags */}
+                    <div className="flex gap-2 text-xs md:text-sm z-10 mb-4">
+                      <span className="bg-gray-500 text-white px-3 py-1 rounded-md">
+                        Action
+                      </span>
+                      <span
+                        className=" text-white px-3 py-1 rounded-md"
+                        style={{
+                          background:
+                            "linear-gradient(8deg, rgba(91,91,91,1) 54%, rgba(83,83,83,1) 60%)",
+                        }}
+                      >
+                        Thriller
+                      </span>
 
-                    <span className="bg-gray-500 text-white px-3 py-1 rounded-md">
-                      Drama
-                    </span>
-                  </div>
+                      <span className="bg-gray-500 text-white px-3 py-1 rounded-md">
+                        Drama
+                      </span>
+                    </div>
 
-                  {/* Buttons */}
-                  <div className="flex gap-4 md:gap-8 mt-2 z-10 items-center">
-                    <button className="px-2 md:px-4 py-2  bg-yellow-500 rounded-md hover:bg-yellow-400 flex font-semibold gap-1.5 text-black text-sm  md:text-lg">
-                      <FaPlay className="mt-0.5 md:mt-1 " />
-                      Watch Now
-                    </button>
+                    {/* Buttons */}
+                    <div className="flex gap-4 md:gap-8 mt-2 z-10 items-center">
+                      <button className="px-2 md:px-4 py-2  bg-yellow-500 rounded-md hover:bg-yellow-400 flex font-semibold gap-1.5 text-black text-sm  md:text-lg">
+                        <FaPlay className="mt-0.5 md:mt-1 " />
+                        Watch Now
+                      </button>
 
-                    <button className="group hover:text-yellow-500 text-sm  md:text-lg flex items-center gap-2 text-white rounded-md ">
-                      <FaPlus /> Watchlist
-                    </button>
+                      <button className="group hover:text-yellow-500 text-sm  md:text-lg flex items-center gap-2 text-white rounded-md ">
+                        <FaPlus /> Watchlist
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          </SwiperSlide>
-        ))}
-      </Swiper>
-    </div>
+            </SwiperSlide>
+          ))}
+        </Swiper>
+      </div>
+
+      <div
+        className={`w-screen ${
+          open === true
+            ? "max-w-[calc(100vw-300px)]"
+            : "max-w-[calc(100vw-50px)]"
+        } mx-auto h-80 md:h-[700px] overflow-hidden mt-20`}
+      >
+        <Cards />
+      </div>
+    </>
   );
 };
 
