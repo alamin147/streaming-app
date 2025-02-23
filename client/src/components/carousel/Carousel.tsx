@@ -6,6 +6,7 @@ import "swiper/swiper-bundle.css";
 import { useSidebar } from "../ui/sidebar";
 import { FaPlay, FaPlus } from "react-icons/fa";
 import Cards from "../cards/Cards";
+
 // Your image array
 const images = [
   "https://media.gettyimages.com/id/1445487185/photo/canadian-born-actor-keanu-reeves-walks-along-an-aisle-in-the-church-of-saint-eustache-in-a.jpg?s=612x612&w=0&k=20&c=rCJatqXjiKyzRRobjW7iuSZrYg7a7n0MbjRHw2NASZQ=",
@@ -22,7 +23,6 @@ const Carousel = () => {
   if (isMobile === true) {
     setOpen(false);
   }
-
   return (
     <>
       <div
@@ -34,10 +34,10 @@ const Carousel = () => {
       >
         <Swiper
           modules={[Autoplay, Pagination, Navigation]}
-          // autoplay={{ delay: 2000, disableOnInteraction: false }}
+          autoplay={{ delay: 2000, disableOnInteraction: false }}
           loop={true}
           pagination={{ clickable: true }}
-          className="h-full rounded-2xl shadow-lg"
+          className="h-full rounded-2xl shadow-lg "
         >
           {images.map((image, index) => (
             <SwiperSlide key={index}>
@@ -108,9 +108,19 @@ const Carousel = () => {
           open === true
             ? "max-w-[calc(100vw-300px)]"
             : "max-w-[calc(100vw-50px)]"
-        } mx-auto h-80 md:h-[700px] overflow-hidden mt-20`}
+        } mx-auto my-20`}
       >
-        <Cards />
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-x-4 gap-y-6" >
+          <Cards />
+          <Cards />
+          <Cards />
+          <Cards />
+          <Cards />
+          <Cards />
+          <Cards />
+          <Cards />
+          <Cards />
+        </div>
       </div>
     </>
   );
