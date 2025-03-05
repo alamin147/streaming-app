@@ -108,8 +108,9 @@ const Carousel = () => {
           open === true
             ? "max-w-[calc(100vw-300px)]"
             : "max-w-[calc(100vw-50px)]"
-        } mx-auto my-20`}
+        } mx-auto mt-7`}
       >
+          <h1 className="text-white text-lg md:text-2xl mb-2">Trending</h1>
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-x-4 gap-y-6" >
           <Cards />
           <Cards />

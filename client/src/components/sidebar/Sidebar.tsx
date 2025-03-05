@@ -1,5 +1,4 @@
 import { AppSidebar } from "@/components/app-sidebar";
-
 import { Separator } from "@/components/ui/separator";
 import {
   SidebarInset,
@@ -11,6 +10,7 @@ import { Moon, Sun } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { IoIosMoon } from "react-icons/io";
 import Carousel from "../carousel/Carousel";
+import { NavLink } from "react-router-dom";
 
 export default function Sidebar() {
   const { theme, setTheme } = useTheme();
@@ -23,15 +23,15 @@ export default function Sidebar() {
           <div className="flex items-center gap-4">
             {<SidebarTrigger className=" flex md:hidden -ml-1" />}
             <Separator orientation="vertical" className="mr-2 h-4" />
-            <a href="#" className="hover:text-yellow-400 text-sm md:text-lg font-medium">
+            <NavLink to="/" className={({ isActive }) => `hover:text-yellow-400 text-sm md:text-lg font-medium ${isActive ? 'text-yellow-400' : ''}`}>
               All
-            </a>
-            <a href="#" className="hover:text-yellow-400 text-sm md:text-lg font-medium">
+            </NavLink>
+            <NavLink to="/movies" className={({ isActive }) => `hover:text-yellow-400 text-sm md:text-lg font-medium ${isActive ? 'text-yellow-400' : ''}`}>
               Movies
-            </a>
-            <a href="#" className="hover:text-yellow-400 text-sm md:text-lg font-medium">
+            </NavLink>
+            <NavLink to="/trending" className={({ isActive }) => `hover:text-yellow-400 text-sm md:text-lg font-medium ${isActive ? 'text-yellow-400' : ''}`}>
               Trending
-            </a>
+            </NavLink>
           </div>
           <div className="flex items-center gap-4">
             {theme == "dark" ? (

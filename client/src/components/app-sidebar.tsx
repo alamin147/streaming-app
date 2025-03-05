@@ -33,51 +33,50 @@ const data = {
   navMain: [
     {
       title: "Home",
-      url: "#",
+      url: "/",
       icon: House,
     },
     {
       title: "Download",
-      url: "#",
+      url: "/download",
       icon: ArrowDownToLine,
     },
     {
       title: "Trending",
-      url: "#",
+      url: "/trending",
       icon: Flame,
     },
     {
       title: "Category",
-      url: "#",
+      url: "/category",
       icon: LayoutGrid,
-      isActive: true,
       items: [
         {
           title: "Action",
-          url: "#",
+          url: "/category/action",
         },
         {
           title: "Adventure",
-          url: "#",
+          url: "/category/adventure",
         },
         {
           title: "Horror",
-          url: "#",
+          url: "/category/horror",
         },
         {
           title: "Comedy",
-          url: "#",
+          url: "/category/comedy",
         },
       ],
     },
     {
       title: "History",
-      url: "#",
+      url: "/history",
       icon: History,
     },
     {
       title: "Settings",
-      url: "#",
+      url: "/settings",
       icon: Settings,
     },
   ],
@@ -129,7 +128,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
-        <NavMain items={data.navMain} />
+        <NavMain items={data.navMain}  />
         <NavProjects projects={data.projects} />
         <NavSecondary items={data.navSecondary} className="mt-auto" />
       </SidebarContent>
