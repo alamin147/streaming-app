@@ -6,8 +6,9 @@ import "swiper/swiper-bundle.css";
 import { useSidebar } from "../ui/sidebar";
 import { FaPlay, FaPlus } from "react-icons/fa";
 import Cards from "../cards/Cards";
+import Footer from "../footer/Footer";
 
-// Your image array
+//  image array
 const images = [
   "https://media.gettyimages.com/id/1445487185/photo/canadian-born-actor-keanu-reeves-walks-along-an-aisle-in-the-church-of-saint-eustache-in-a.jpg?s=612x612&w=0&k=20&c=rCJatqXjiKyzRRobjW7iuSZrYg7a7n0MbjRHw2NASZQ=",
   "https://media.gettyimages.com/id/517724758/photo/marlon-brando-as-don-vito-corleone-in-the-godfather-for-which-he-won-an-oscar-for-best-actor.jpg?s=612x612&w=0&k=20&c=AteFgnS-zJEp9DmlieoeCk-ECqOyXy82splFpVmoLA8=",
@@ -37,6 +38,7 @@ const Carousel = () => {
           autoplay={{ delay: 2000, disableOnInteraction: false }}
           loop={true}
           pagination={{ clickable: true }}
+          spaceBetween={10}
           className="h-full rounded-2xl shadow-lg "
         >
           {images.map((image, index) => (
@@ -103,25 +105,60 @@ const Carousel = () => {
         </Swiper>
       </div>
 
-      <div
-        className={`w-screen ${
-          open === true
-            ? "max-w-[calc(100vw-300px)]"
-            : "max-w-[calc(100vw-50px)]"
-        } mx-auto mt-7`}
-      >
-          <h1 className="text-white text-lg md:text-2xl mb-2">Trending</h1>
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-x-4 gap-y-6" >
-          <Cards />
-          <Cards />
-          <Cards />
-          <Cards />
-          <Cards />
-          <Cards />
-          <Cards />
-          <Cards />
-          <Cards />
+      <div>
+        <div
+          className={`w-screen ${
+            open === true
+              ? "max-w-[calc(100vw-300px)]"
+              : "max-w-[calc(100vw-50px)]"
+          } mx-auto mt-7`}
+        >
+          <h1 className="text-black dark:text-white text-lg md:text-2xl mb-2 ">
+            <span className="me-1.5 border-l-8 border-yellow-500"></span>
+            <span>Trending</span>
+          </h1>
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-x-4 gap-y-6">
+            <Cards />
+            <Cards />
+            <Cards />
+            <Cards />
+            <Cards />
+            <Cards />
+            <Cards />
+            <Cards />
+            <Cards />
+          </div>
         </div>
+
+
+
+
+        {/* recent */}
+        <div
+          className={`w-screen ${
+            open === true
+              ? "max-w-[calc(100vw-300px)]"
+              : "max-w-[calc(100vw-50px)]"
+          } mx-auto mt-7`}
+        >
+          <h1 className="text-black dark:text-white text-lg md:text-2xl mb-2 ">
+            <span className="me-1.5 border-l-8 border-yellow-500"></span>
+            <span>Recent</span>
+          </h1>
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-x-4 gap-y-6">
+            <Cards />
+            <Cards />
+            <Cards />
+            <Cards />
+            <Cards />
+            <Cards />
+            <Cards />
+            <Cards />
+            <Cards />
+          </div>
+        </div>
+
+        <Footer/>
       </div>
     </>
   );

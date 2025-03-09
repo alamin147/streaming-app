@@ -122,7 +122,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
               <span className="text-yellow-500 font-bold italic text-4xl">
                 N
               </span>
-              <span className="text-xl"> Movies</span>
+              <span className="text-xl">Movies</span>
             </h1>
           </SidebarMenuItem>
         </SidebarMenu>
