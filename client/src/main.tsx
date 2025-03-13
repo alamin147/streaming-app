@@ -7,6 +7,8 @@ import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
 import { Provider } from "react-redux";
 import { persistor, store } from "./redux/store.ts";
 import { PersistGate } from "redux-persist/integration/react";
+import LoginPage from "./pages/login/Login.tsx";
+import { RegisterPage } from "./pages/register/Register.tsx";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
@@ -18,6 +20,9 @@ createRoot(document.getElementById("root")!).render(
               <Route path="/" element={<App />} />
               <Route path="/movies" element={<div>movies</div>} />
               <Route path="/trending" element={<div>trendign</div>} />
+              <Route path="/login" element={<LoginPage/>} />
+              <Route path="/register" element={<RegisterPage/>} />
+
             </Routes>
           </Router>
         </PersistGate>
