@@ -3,6 +3,7 @@ import { RegisterPageImports } from "./imports";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import SyncLoader from "react-spinners/ClipLoader";
+import { Link, useNavigate } from "react-router-dom";
 
 export function RegisterPage({
   className,
@@ -36,20 +37,23 @@ export function RegisterPage({
       conpassword: "123456",
     },
   });
-
+  const navigate = useNavigate();
   const [registerUser, { isLoading }] = useRegisterUserMutation();
   const onSubmit = async (data: any) => {
     if (data.password !== data.conpassword) {
       toast.error("Passwords do not match.");
       return;
     }
-  
+
     try {
       const res: any = await registerUser(data).unwrap();
       console.log(res);
-  
+
       if (res?.status === 201) {
-        toast.success(res?.message || "User created successfully!");
+        toast.success(
+          res?.message || "User created successfully! Please login to continue."
+        );
+        navigate("/login");
       } else {
         toast.error(res?.message || "Something went wrong!");
       }
@@ -57,7 +61,6 @@ export function RegisterPage({
       toast.error(error?.data?.message || "Something went wrong!");
     }
   };
-  
 
   return (
     <div className="flex min-h-svh flex-col items-center justify-center gap-6 bg-muted p-6 md:p-10">
@@ -180,12 +183,18 @@ export function RegisterPage({
                   <Button
                     type="submit"
                     className="hover:bg-yellow-300 w-full hover:text-black"
+                    disabled={isLoading}
                   >
                     Register
                   </Button>
                 </div>
               </form>
-
+              <div className="mt-4 text-center text-sm">
+                Already have an account?{" "}
+                <Link to="/login" className="underline underline-offset-4">
+                  Login
+                </Link>
+              </div>
               <div className="my-5 relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t after:border-border">
                 <span className="relative z-10 bg-background px-2 text-muted-foreground">
                   Or continue with

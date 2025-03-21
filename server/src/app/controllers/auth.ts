@@ -36,23 +36,24 @@ export const signup = async (
   }
 };
 
-export const signin = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
+export const signin = async (req: Request, res: Response) => {
   try {
-    const user = await User.findOne({ username: req.body.username }).lean();
+    const { usernameOrEmail, password } = req.body;
+    const user = await User.findOne({
+      $or: [{ email: usernameOrEmail }, { username: usernameOrEmail }],
+    })
+      .select("+password")
+      .lean();
 
     if (!user) return response(res, 404, false, "User Not Found");
 
-    const checkPass = await bcrypt.compare(req.body.password, user.password);
+    const checkPass = await bcrypt.compare(password, user.password);
 
     if (!checkPass) return response(res, 400, false, "Invalid password");
 
     const token = jwt.sign({ id: user._id }, process.env.JWTSECRET as string);
 
-    const { password, ...restuser } = user;
+    const { password: userPassword, ...restuser } = user;
     res.cookie("token", token, {
       httpOnly: true,
     });

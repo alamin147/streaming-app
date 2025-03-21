@@ -1,7 +1,7 @@
 import { baseApi } from "./baseApi";
 
 const api = baseApi.injectEndpoints({
-  endpoints: (builder) => ({
+  endpoints: () => ({
   }),
 });
 
