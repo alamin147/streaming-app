@@ -9,15 +9,30 @@ export const signup = async (
   next: NextFunction
 ) => {
   try {
-    const data = req.body;
-    const hash = await utils.hashPassword(data.password);
+    const { username, email, password } = req.body;
+
+    const existingUser = await User.findOne({
+      $or: [{ email }, { username }],
+    });
+
+    if (existingUser) {
+      if (existingUser.email === email) {
+        return response(res, 400, false, "Email is already registered.");
+      }
+      if (existingUser.username === username) {
+        return response(res, 400, false, "Username is already taken.");
+      }
+    }
+
+    const hash = await utils.hashPassword(password);
 
     const newUser = new User({ ...req.body, password: hash });
     await newUser.save();
 
-    response(res, 201, true, "User created successfully");
+    return response(res, 201, true, "User created successfully");
   } catch (err: any) {
-    response(res, 500, true, err?.message || "Server Error");
+    console.error("Signup error:", err);
+    return response(res, 500, false, err?.message || "Server Error");
   }
 };
 

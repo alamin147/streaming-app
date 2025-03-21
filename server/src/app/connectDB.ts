@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 export const connectDB = () => {
   mongoose
-    .connect("mongodb://localhost:27017/streaming")
+    .connect(`${process.env.MONGO_URI}`, )
     .then(() => {
       console.log("connected to DB");
     })
