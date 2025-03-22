@@ -49,9 +49,17 @@ export const signin = async (req: Request, res: Response) => {
 
     const checkPass = await bcrypt.compare(password, user.password);
 
-    if (!checkPass) return response(res, 400, false, "Invalid password");
+    if (!checkPass) return response(res, 400, false, "Password is wrong");
 
-    const token = jwt.sign({ id: user._id }, process.env.JWTSECRET as string);
+    const token = jwt.sign(
+      {
+        id: user._id,
+        name: user.name,
+        username: user.username,
+        email: user.email,
+      },
+      process.env.JWTSECRET as string
+    );
 
     const { password: userPassword, ...restuser } = user;
     res.cookie("token", token, {
@@ -59,6 +67,7 @@ export const signin = async (req: Request, res: Response) => {
     });
     response(res, 200, true, "User logged in successfully", {
       user: restuser,
+      token
     });
   } catch (err: any) {
     response(res, 500, true, err?.message || "Server Error");

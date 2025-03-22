@@ -13,6 +13,9 @@ export type TUser = {
 const isValidJwt = (token: string): boolean => {
   return token.split(".").length === 3;
 };
+
+
+
 export const getUserInfo = (): TUser | null => {
   const token = useSelector((state: any) => state.auth.token);
 

@@ -13,9 +13,12 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { FaApple, FaGoogle } from "react-icons/fa";
 import { FaMeta } from "react-icons/fa6";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useLoginUserMutation } from "@/redux/features/auth/authApi";
 import toast from "react-hot-toast";
+import { useDispatch } from "react-redux";
+import { setUser } from "@/redux/features/auth/authSlice";
+import { jwtDecode } from "jwt-decode";
 
 export function LoginForm({
   className,
@@ -32,17 +35,23 @@ export function LoginForm({
     },
   });
   const [loginUser, { isLoading }] = useLoginUserMutation();
+  const dispatch = useDispatch();
 
+  const navigate = useNavigate();
   const onSubmit = async (data: any) => {
     try {
       const res: any = await loginUser(data).unwrap();
-
       if (res?.success === true) {
+        const { token } = res.data;
         toast.success(res?.message || "User logged in successfully.");
+        const decoded = jwtDecode(token);
+        dispatch(setUser({ user: decoded, token }));
+        navigate("/");
       } else {
         toast.error(res?.message || "Something went wrong!");
       }
     } catch (error: any) {
+      console.log(error);
       toast.error(error?.data?.message || "Something went wrong!");
     }
   };

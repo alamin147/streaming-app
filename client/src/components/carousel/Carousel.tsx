@@ -130,9 +130,6 @@ const Carousel = () => {
           </div>
         </div>
 
-
-
-
         {/* recent */}
         <div
           className={`w-screen ${
@@ -158,7 +155,7 @@ const Carousel = () => {
           </div>
         </div>
 
-        <Footer/>
+        <Footer />
       </div>
     </>
   );

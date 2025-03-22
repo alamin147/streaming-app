@@ -9,10 +9,11 @@ import { persistor, store } from "./redux/store.ts";
 import { PersistGate } from "redux-persist/integration/react";
 import LoginPage from "./pages/login/Login.tsx";
 import { RegisterPage } from "./pages/register/Register.tsx";
-
+import { Toaster } from 'react-hot-toast';
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <ThemeProvider defaultTheme="light" storageKey="">
+
       <Provider store={store}>
         <PersistGate loading={null} persistor={persistor}>
           <Router>
@@ -27,6 +28,7 @@ createRoot(document.getElementById("root")!).render(
           </Router>
         </PersistGate>
       </Provider>
+      <Toaster/>
     </ThemeProvider>
   </StrictMode>
 );

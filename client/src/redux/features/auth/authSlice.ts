@@ -2,11 +2,11 @@ import { createSlice } from "@reduxjs/toolkit";
 import { RootState } from "../../store";
 
 type TAuthState = {
-  token: null | object;
+  token: null | string;
 };
 
 const initialState: TAuthState = {
-  token: null,
+  token: localStorage.getItem("token"),
 };
 
 const authSlice = createSlice({
@@ -15,11 +15,12 @@ const authSlice = createSlice({
   reducers: {
     setUser: (state, action) => {
       const { token } = action.payload;
-      // console.log("from state", token)
       state.token = token;
+      localStorage.setItem("token", token);
     },
     logout: (state) => {
       state.token = null;
+      localStorage.removeItem("token");
     },
   },
 });

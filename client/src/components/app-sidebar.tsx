@@ -6,16 +6,14 @@ import {
   History,
   Flame,
   Settings,
-  LifeBuoy,
-  Send,
   BookmarkPlus,
   TvMinimalPlay,
   Film,
+  DoorOpen,
 } from "lucide-react";
 import { NavMain } from "@/components/nav-main";
 import { NavProjects } from "@/components/nav-projects";
 import { NavSecondary } from "@/components/nav-secondary";
-import { NavUser } from "@/components/nav-user";
 import {
   Sidebar,
   SidebarContent,
@@ -82,15 +80,11 @@ const data = {
   ],
   navSecondary: [
     {
-      title: "Support",
+      title: "Log out",
       url: "#",
-      icon: LifeBuoy,
+      icon: DoorOpen,
     },
-    {
-      title: "Feedback",
-      url: "#",
-      icon: Send,
-    },
+    
   ],
   projects: [
     {
@@ -131,9 +125,10 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <NavMain items={data.navMain}  />
         <NavProjects projects={data.projects} />
         <NavSecondary items={data.navSecondary} className="mt-auto" />
+       
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={data.user} />
+        {/* <NavUser user={data.user} /> */}
       </SidebarFooter>
     </Sidebar>
   );
