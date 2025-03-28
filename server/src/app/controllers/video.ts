@@ -1,7 +1,11 @@
 import { NextFunction, Request, Response } from "express";
 import Video from "../models/Video";
 import { response } from "../utils/utils";
-import { createError } from "../error/error";
+import { google } from "googleapis";
+import fs from "fs";
+import dotenv from "dotenv";
+import { authorizeFunction, uploadFile } from "../middlewares/uploads";
+dotenv.config();
 
 export const createVideo = async (
   req: Request,
@@ -147,5 +151,40 @@ export const search = async (
     response(res, 200, true, "Videos fetched successfully", { videos });
   } catch (err: any) {
     response(res, 500, false, err.message || "Internal Server Error");
+  }
+};
+
+export const uploadVideo: any = async (req: Request, res: Response) => {
+  const data = req.body;
+
+  if (!req.file) {
+    return res.status(400).send("No file uploaded.");
+  }
+
+  try {
+    const authClient = await authorizeFunction();
+    const uploadedFile = await uploadFile(
+      authClient,
+      req.file.path,
+      data.title
+    );
+
+    const newVideo = new Video({
+      userId: req.user.id,
+      title: data.title,
+      des: data.desc,
+      videoUrl: `https://drive.google.com/file/d/${uploadedFile.id}`,
+    });
+    try {
+      const savedVideo = await newVideo.save();
+      res.status(200).json(savedVideo);
+      response(res, 201, true, "Video Created successfully");
+    } catch (err: any) {
+      res.status(500).json({ error: err.message });
+    }
+  } catch (error: any) {
+    res.status(500).json({ error: error.message });
+  } finally {
+    await fs.promises.unlink(req.file.path);
   }
 };

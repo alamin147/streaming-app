@@ -10,10 +10,13 @@ import {
   search,
   trendingVideos,
   updateVideo,
+  uploadVideo,
 } from "../controllers/video";
 
 const videoRoutes = express.Router();
 
+import { upload } from "../middlewares/multer";
+videoRoutes.post("/upload", upload.single("video"),verifyToken, uploadVideo);
 videoRoutes.post("/", verifyToken, createVideo);
 videoRoutes.get("/find/:id", getVideo);
 videoRoutes.put("/:id", verifyToken, updateVideo);

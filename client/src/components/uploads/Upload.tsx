@@ -1,149 +1,195 @@
-import { useEffect, useState } from "react";
-import {
-  getStorage,
-  ref,
-  uploadBytesResumable,
-  getDownloadURL,
-} from "firebase/storage";
-import { app } from "@/firebase/Firebase";
-import axios from "axios";
-import { Button } from "../ui/button";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { X, Upload, ImageIcon, Film } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Progress } from "@/components/ui/progress";
+import { useUploadVideoMutation } from "@/redux/features/videos/videosApi";
+
+interface VideoUploadModalProps {
+  isOpen: boolean;
+  setIsOpens: (open: boolean) => void;
+}
 
 export default function VideoUploadModal({
   isOpen,
   setIsOpens,
-}: {
-  isOpen: boolean;
-  setIsOpens: (open: boolean) => void;
-}) {
-  const [img, setImg] = useState(undefined);
-  const [video, setVideo] = useState(undefined);
-  const [imgPerc, setImgPerc] = useState(0);
-  const [videoPerc, setVideoPerc] = useState(0);
-  const [inputs, setInputs] = useState({});
-  const [tags, setTags] = useState([]);
+}: VideoUploadModalProps) {
+  const { register, handleSubmit, setValue, watch, reset } = useForm();
+  const [uploadProgress, setUploadProgress] = useState<number>(0);
+  const [isUploading, setIsUploading] = useState<boolean>(false);
 
-  const handleChange = (e: any) => {
-    setInputs((prev) => {
-      return { ...prev, [e.target.name]: e.target.value };
-    });
+  // Watching form fields
+  const thumbnail = watch("thumbnail");
+  const videoFile = watch("video");
+
+  // Handle file selection
+  const handleFileChange = (
+    event: React.ChangeEvent<HTMLInputElement>,
+    type: "thumbnail" | "video"
+  ) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      setValue(type, file);
+    }
   };
 
-  const uploadFile = (file: any, urlType: any) => {
-    const storage = getStorage(app);
-    const fileName = new Date().getTime() + file.name;
-    const storageRef = ref(storage, fileName);
-    const uploadTask = uploadBytesResumable(storageRef, file);
+  const [uploadVideo] = useUploadVideoMutation();
+  const onSubmit = async (data: any) => {
+    if (!data.video) return alert("Please select a video file.");
 
-    uploadTask.on(
-      "state_changed",
-      (snapshot) => {
-        const progress =
-          (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-        urlType === "imgUrl"
-          ? setImgPerc(Math.round(progress))
-          : setVideoPerc(Math.round(progress));
-        switch (snapshot.state) {
-          case "paused":
-            console.log("Upload is paused");
-            break;
-          case "running":
-            console.log("Upload is running");
-            break;
-          default:
-            break;
-        }
-      },
-      (error) => {},
-      () => {
-        getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-          setInputs((prev) => {
-            return { ...prev, [urlType]: downloadURL };
-          });
-        });
-      }
-    );
-  };
-  useEffect(() => {
-    video && uploadFile(video, "videoUrl");
-  }, [video]);
+    const formData = new FormData();
+    if (data.title) formData.append("title", data.title);
+    if (data.desc) formData.append("desc", data.desc);
+    if (data.thumbnail) formData.append("thumbnail", data.thumbnail);
+    if (data.video) formData.append("video", data.video);
 
-  useEffect(() => {
-    img && uploadFile(img, "imgUrl");
-  }, [img]);
+    try {
+      setIsUploading(true);
+      setUploadProgress(0);
 
-  const handleUpload = async (e: any) => {
-    e.preventDefault();
-    const res = await axios.post("/videos", { ...inputs, tags });
-    setIsOpens(false);
-    // res.status === 200 && navigate(`/video/${res.data._id}`);
+      const response = await uploadVideo(formData).unwrap();
+
+      console.log(response);
+      alert("Video uploaded successfully!");
+      reset();
+      setIsOpens(false);
+    } catch (error) {
+      console.error("Upload failed:", error);
+      alert("Upload failed. Please try again.");
+    } finally {
+      setIsUploading(false);
+    }
   };
 
   return (
-    isOpen && (
-      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-        <div className="bg-white p-6 rounded-2xl shadow-2xl w-96 relative">
-          {/* Close button */}
-          <button
-            className="absolute top-3 right-3 text-gray-400 hover:text-gray-700 transition"
-            onClick={() => setIsOpens(false)}
-          >
-            X
-          </button>
+    <div
+      className={`fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 ${
+        isOpen ? "visible opacity-100" : "invisible opacity-0"
+      } transition-opacity duration-300`}
+      onClick={() => setIsOpens(false)}
+    >
+      <div
+        className="bg-white dark:bg-gray-900 p-6 rounded-2xl shadow-2xl w-full max-w-md relative transition-all duration-300"
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* Close Button */}
+        <button
+          className="absolute top-4 right-4 text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition-colors"
+          onClick={() => setIsOpens(false)}
+        >
+          <X className="w-5 h-5" />
+        </button>
 
-          <h2 className="text-2xl font-semibold text-gray-800 mb-4 text-center">
-            Upload Video
-          </h2>
+        <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-6 text-center">
+          Upload Your Video
+        </h2>
 
-          <div className="space-y-4">
-            {/* Image Upload */}
-            <label className="block">
-              <span className="text-gray-600">Thumbnail</span>
-              <input
-                type="file"
-                accept="image/*"
-                className="mt-1 w-full border rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
-              />
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+          {/* Title */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+              Title
             </label>
-
-            {/* Title Input */}
-            <input
+            <Input
               type="text"
-              placeholder="Video Title"
-              className="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+              placeholder="Enter video title"
+              {...register("title", { required: true })}
             />
-
-            {/* Description Input */}
-            <textarea
-              placeholder="Video Description"
-              className="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
-            />
-
-            {/* Video Upload */}
-            <label className="block">
-              <span className="text-gray-600">Video File</span>
-              <input
-                type="file"
-                accept="video/*"
-                className="mt-1 w-full border rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
-              />
-            </label>
           </div>
 
+          {/* Description */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+              Description
+            </label>
+            <Textarea placeholder="Describe your video" {...register("desc")} />
+          </div>
+
+          {/* Thumbnail Upload */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+              Thumbnail
+            </label>
+            <div className="border-2 border-dashed rounded-lg p-4 flex flex-col items-center">
+              {thumbnail ? (
+                <img
+                  src={URL.createObjectURL(thumbnail)}
+                  alt="Thumbnail preview"
+                  className="w-full h-40 object-cover rounded-md"
+                />
+              ) : (
+                <ImageIcon className="w-10 h-10 text-gray-400 mb-2" />
+              )}
+              <label className="mt-2 inline-flex items-center px-4 py-2 bg-yellow-500 hover:bg-yellow-400 text-black rounded-lg cursor-pointer transition-colors">
+                <span>Browse files</span>
+                <input
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={(e) => handleFileChange(e, "thumbnail")}
+                />
+              </label>
+            </div>
+          </div>
+
+          {/* Video Upload */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+              Video File
+            </label>
+            <div className="border-2 border-dashed rounded-lg p-4 flex flex-col items-center">
+              {videoFile ? (
+                <div className="text-sm text-center">
+                  <Film className="w-10 h-10 text-yellow-500 mb-2" />
+                  <p>{videoFile.name}</p>
+                </div>
+              ) : (
+                <Film className="w-10 h-10 text-gray-400 mb-2" />
+              )}
+              <label className="mt-2 inline-flex items-center px-4 py-2 bg-yellow-500 hover:bg-yellow-400 text-black rounded-lg cursor-pointer transition-colors">
+                <span>Browse files</span>
+                <input
+                  type="file"
+                  accept="video/*"
+                  className="hidden"
+                  onChange={(e) => handleFileChange(e, "video")}
+                />
+              </label>
+            </div>
+          </div>
+
+          {/* Upload Progress */}
+          {isUploading && (
+            <div className="mt-4">
+              <Progress value={uploadProgress} className="h-2" />
+              <p className="text-xs text-center mt-1">
+                {uploadProgress}% Uploaded
+              </p>
+            </div>
+          )}
+
           {/* Buttons */}
-          <div className="flex justify-end gap-3 mt-5">
+          <div className="flex justify-end gap-3 mt-6">
             <Button
-              className="px-4 py-2 text-black rounded-lg transition border border-yellow-400 hover:bg-yellow-400"
+              type="button"
+              variant="outline"
               onClick={() => setIsOpens(false)}
             >
               Cancel
             </Button>
-            <Button className="px-4 py-2 bg-yellow-500  rounded-lg hover:bg-yellow-400 transition text-black">
-              Upload
+            <Button
+              type="submit"
+              disabled={isUploading}
+              className="bg-yellow-500 hover:bg-yellow-400 text-black transition-colors"
+            >
+              <Upload className="w-4 h-4 mr-2" />
+              {isUploading ? "Uploading..." : "Upload"}
             </Button>
           </div>
-        </div>
+        </form>
       </div>
-    )
+    </div>
   );
 }

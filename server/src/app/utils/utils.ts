@@ -28,11 +28,11 @@ export const verifyToken = (
   res: Response,
   next: NextFunction
 ) => {
-  const token = req.cookies.access_token;
+  const token = req.cookies.token;
   if (!token)
     return next(createError(401, false, "You are not authenticated!"));
 
-  jwt.verify(token, process.env.JWT as string, (err: any, user: any) => {
+  jwt.verify(token, process.env.JWTSECRET as string, (err: any, user: any) => {
     if (err) return next(createError(403, false, "Token is not valid!"));
     req.user = user;
     next();

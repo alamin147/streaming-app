@@ -12,6 +12,16 @@ const videoApi = baseApi.injectEndpoints({
       },
      
     }),
+    uploadVideo: builder.mutation({
+      query: (data) => {
+        return {
+          url: "/videos/upload",
+          method: "POST",
+          body: data,
+        };
+      },
+     
+    }),
     getVideos: builder.query({
       query: (status?: string) => {
         // console.log(status);
@@ -29,4 +39,5 @@ const videoApi = baseApi.injectEndpoints({
 export const {
     useCreateVideoMutation,
     useGetVideosQuery,
+    useUploadVideoMutation,
 } = videoApi;

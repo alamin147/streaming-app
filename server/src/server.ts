@@ -9,7 +9,7 @@ import cors from "cors";
 import { response } from "./app/utils/utils";
 import cookieParser from "cookie-parser";
 
-const app = express();
+export const app = express();
 dotenv.config();
 app.use(
   cors({
