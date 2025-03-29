@@ -28,11 +28,11 @@ export const authorizeFunction = async () => {
 export const uploadFile = async (
   authClient: any,
   filePath: string,
-  fileName: string
+  fileName: string,
+  folderId: string
 ): Promise<any> => {
   const drive = google.drive({ version: "v3", auth: authClient });
-
-  const folderId = process.env.GOOGLE_FOLDER_ID;
+ 
   if (!folderId) {
     throw new Error("Missing GOOGLE_FOLDER_ID in environment variables.");
   }
@@ -60,4 +60,9 @@ export const uploadFile = async (
     console.error("Google Drive Upload Error:", error);
     throw new Error("Failed to upload file to Google Drive.");
   }
+};
+
+export const deleteFile = async (authClient: any, fileId: string) => {
+  const drive = google.drive({ version: "v3", auth: authClient });
+  await drive.files.delete({ fileId });
 };

@@ -4,7 +4,11 @@ import { response } from "../utils/utils";
 import { google } from "googleapis";
 import fs from "fs";
 import dotenv from "dotenv";
-import { authorizeFunction, uploadFile } from "../middlewares/uploads";
+import {
+  authorizeFunction,
+  deleteFile,
+  uploadFile,
+} from "../middlewares/uploads";
 dotenv.config();
 
 export const createVideo = async (
@@ -156,35 +160,80 @@ export const search = async (
 
 export const uploadVideo: any = async (req: Request, res: Response) => {
   const data = req.body;
+  let uploadedVideo: any;
+  let uploadedThumbnail: any;
+  let authClient;
 
-  if (!req.file) {
-    return res.status(400).send("No file uploaded.");
+  if (
+    !req.files ||
+    !(req.files as any).video ||
+    !(req.files as any).thumbnail
+  ) {
+    return res.status(400).send("Both video and thumbnail are required.");
   }
 
+  // console.log("files", req.files);
+  const videoFile = (req.files as any).video[0];
+  const thumbnailFile = (req.files as any).thumbnail[0];
+
   try {
-    const authClient = await authorizeFunction();
-    const uploadedFile = await uploadFile(
+    authClient = await authorizeFunction();
+
+    uploadedVideo = await uploadFile(
       authClient,
-      req.file.path,
-      data.title
+      videoFile.path,
+      data.title,
+      process.env.GOOGLE_VIDEO_FOLDER_ID as string
+    );
+
+    uploadedThumbnail = await uploadFile(
+      authClient,
+      thumbnailFile.path,
+      data.title,
+      process.env.GOOGLE_THUMBNAIL_FOLDER_ID as string
     );
 
     const newVideo = new Video({
       userId: req.user.id,
       title: data.title,
       des: data.desc,
-      videoUrl: `https://drive.google.com/file/d/${uploadedFile.id}`,
+      videoUrl: `https://drive.google.com/file/d/${uploadedVideo.id}`,
+      imgUrl: `https://drive.google.com/file/d/${uploadedThumbnail.id}`,
     });
-    try {
-      const savedVideo = await newVideo.save();
-      res.status(200).json(savedVideo);
-      response(res, 201, true, "Video Created successfully");
-    } catch (err: any) {
-      res.status(500).json({ error: err.message });
-    }
+
+    const savedVideo = await newVideo.save();
+
+    await fs.promises.unlink(videoFile.path).catch(() => null);
+    await fs.promises.unlink(thumbnailFile.path).catch(() => null);
+    response(res, 201, true, "Video uploaded successfully", savedVideo);
   } catch (error: any) {
+    console.log(error);
+
+    if (uploadedVideo?.id) {
+      try {
+        await deleteFile(authClient, uploadedVideo.id);
+        console.log(`Rolled back: Deleted uploaded video ${uploadedVideo.id}`);
+      } catch (deleteError) {
+        console.error("Failed to delete uploaded video:", deleteError);
+      }
+    }
+
+    if (uploadedThumbnail?.id) {
+      try {
+        await deleteFile(authClient, uploadedThumbnail.id);
+        console.log(
+          `Rolled back: Deleted uploaded thumbnail ${uploadedThumbnail.id}`
+        );
+      } catch (deleteError) {
+        console.error("Failed to delete uploaded thumbnail:", deleteError);
+      }
+    }
+    await fs.promises.unlink(videoFile.path).catch(() => null);
+    await fs.promises.unlink(thumbnailFile.path).catch(() => null);
+
     res.status(500).json({ error: error.message });
   } finally {
-    await fs.promises.unlink(req.file.path);
+    await fs.promises.unlink(videoFile.path).catch(() => null);
+    await fs.promises.unlink(thumbnailFile.path).catch(() => null);
   }
 };

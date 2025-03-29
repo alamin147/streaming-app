@@ -3,11 +3,7 @@ import User from "../models/User";
 import { response, utils } from "../utils/utils";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-export const signup = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
+export const signup = async (req: Request, res: Response) => {
   try {
     const { username, email, password } = req.body;
 
@@ -64,10 +60,11 @@ export const signin = async (req: Request, res: Response) => {
     const { password: userPassword, ...restuser } = user;
     res.cookie("token", token, {
       httpOnly: true,
+      expires: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000),
     });
     response(res, 200, true, "User logged in successfully", {
       user: restuser,
-      token
+      token,
     });
   } catch (err: any) {
     response(res, 500, true, err?.message || "Server Error");
