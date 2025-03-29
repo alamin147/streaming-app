@@ -121,14 +121,11 @@ const Carousel = () => {
             <span className="me-1.5 border-l-8 border-yellow-500"></span>
             <span>Trending</span>
           </h1>
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-x-4 gap-y-6">
-            {/* <Cards title="" imgUrl=""/> */}
-            {videos?.data.videos.map((video: any) => (
-              <Cards
-                key={video._id}
-                title={video.title}
-                imgUrl={video.imgUrl}
-              />
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-4 p-4">
+            {videos?.data.videos.map((movie: any) => (
+              <>
+                <Cards key={movie._id} title={movie.title} imgUrl={movie.imgUrl} />
+              </>
             ))}
           </div>
         </div>

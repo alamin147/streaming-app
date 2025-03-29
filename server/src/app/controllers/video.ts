@@ -1,7 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import Video from "../models/Video";
 import { response } from "../utils/utils";
-import { google } from "googleapis";
 import fs from "fs";
 import dotenv from "dotenv";
 import {
@@ -131,7 +130,6 @@ export const trendingVideos = async (
 export const getByTag = async (
   req: Request,
   res: Response,
-  next: NextFunction
 ) => {
   try {
     const tags = (req.query.tags as string).split(",");
@@ -145,7 +143,6 @@ export const getByTag = async (
 export const search = async (
   req: Request,
   res: Response,
-  next: NextFunction
 ) => {
   try {
     const query = req.query.q as string;

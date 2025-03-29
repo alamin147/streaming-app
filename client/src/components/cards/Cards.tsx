@@ -4,11 +4,11 @@ import { FaPlay } from "react-icons/fa";
 const Cards = ({ title, imgUrl }: { title: string; imgUrl: string }) => {
   return (
     <div className="max-w-36 sm:max-w-48 text-black dark:text-white relative group">
-      <div className="relative overflow-hidden rounded-t-lg">
+      <div className="relative overflow-hidden rounded-t-lg w-full h-48 sm:h-64">
         <img
           src={imgUrl}
           alt={title}
-          className="rounded-t-lg transition-transform duration-300 group-hover:scale-110"
+          className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
         />
         <span className="absolute top-2 right-2 bg-white text-black font-semibold text-xs px-1 rounded">
           HD
@@ -19,7 +19,9 @@ const Cards = ({ title, imgUrl }: { title: string; imgUrl: string }) => {
           </div>
         </div>
       </div>
-      <h2 className="mt-2 sm:mt-3 text-sm sm:text-base font-bold">{title}</h2>
+      <h2 className="mt-2 sm:mt-3 text-sm sm:text-base font-bold truncate">
+        {title}
+      </h2>
       <div className="mt-1 sm:mt-2 flex flex-wrap justify-between text-xs sm:text-sm text-gray-400">
         <div className="flex items-center">
           <span>2024</span>
