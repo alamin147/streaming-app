@@ -7,6 +7,7 @@ import { useSidebar } from "../ui/sidebar";
 import { FaPlay, FaPlus } from "react-icons/fa";
 import Cards from "../cards/Cards";
 import Footer from "../footer/Footer";
+import { useGetVideosQuery } from "@/redux/features/videos/videosApi";
 
 //  image array
 const images = [
@@ -24,6 +25,9 @@ const Carousel = () => {
   if (isMobile === true) {
     setOpen(false);
   }
+
+  const { data: videos } = useGetVideosQuery(undefined);
+  // console.log(videos?.data?.videos);
   return (
     <>
       <div
@@ -118,15 +122,14 @@ const Carousel = () => {
             <span>Trending</span>
           </h1>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-x-4 gap-y-6">
-            <Cards />
-            <Cards />
-            <Cards />
-            <Cards />
-            <Cards />
-            <Cards />
-            <Cards />
-            <Cards />
-            <Cards />
+            {/* <Cards title="" imgUrl=""/> */}
+            {videos?.data.videos.map((video: any) => (
+              <Cards
+                key={video._id}
+                title={video.title}
+                imgUrl={video.imgUrl}
+              />
+            ))}
           </div>
         </div>
 
@@ -143,15 +146,7 @@ const Carousel = () => {
             <span>Recent</span>
           </h1>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-x-4 gap-y-6">
-            <Cards />
-            <Cards />
-            <Cards />
-            <Cards />
-            <Cards />
-            <Cards />
-            <Cards />
-            <Cards />
-            <Cards />
+            {/* <Cards /> */}
           </div>
         </div>
 

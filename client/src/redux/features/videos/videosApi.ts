@@ -10,7 +10,6 @@ const videoApi = baseApi.injectEndpoints({
           body: data,
         };
       },
-     
     }),
     uploadVideo: builder.mutation({
       query: (data) => {
@@ -20,24 +19,21 @@ const videoApi = baseApi.injectEndpoints({
           body: data,
         };
       },
-     
     }),
     getVideos: builder.query({
-      query: (status?: string) => {
+      query: () => {
         // console.log(status);
         return {
-          url: `/task/tasks/${status}`,
+          url: `/videos/random`,
           method: "GET",
         };
       },
-   
     }),
-    
   }),
 });
 
 export const {
-    useCreateVideoMutation,
-    useGetVideosQuery,
-    useUploadVideoMutation,
+  useCreateVideoMutation,
+  useGetVideosQuery,
+  useUploadVideoMutation,
 } = videoApi;

@@ -29,10 +29,11 @@ export const uploadFile = async (
   authClient: any,
   filePath: string,
   fileName: string,
-  folderId: string
+  folderId: string,
+  types: ["image" | "video"]
 ): Promise<any> => {
   const drive = google.drive({ version: "v3", auth: authClient });
- 
+
   if (!folderId) {
     throw new Error("Missing GOOGLE_FOLDER_ID in environment variables.");
   }
@@ -43,7 +44,7 @@ export const uploadFile = async (
   };
 
   const media = {
-    mimeType: "video/*",
+    mimeType: `${types}/*`,
     body: fs.createReadStream(filePath),
   };
 

@@ -183,14 +183,16 @@ export const uploadVideo: any = async (req: Request, res: Response) => {
       authClient,
       videoFile.path,
       data.title,
-      process.env.GOOGLE_VIDEO_FOLDER_ID as string
+      process.env.GOOGLE_VIDEO_FOLDER_ID as string,
+      ["video"]
     );
 
     uploadedThumbnail = await uploadFile(
       authClient,
       thumbnailFile.path,
       data.title,
-      process.env.GOOGLE_THUMBNAIL_FOLDER_ID as string
+      process.env.GOOGLE_THUMBNAIL_FOLDER_ID as string,
+      ["image"]
     );
 
     const newVideo = new Video({
@@ -198,9 +200,9 @@ export const uploadVideo: any = async (req: Request, res: Response) => {
       title: data.title,
       des: data.desc,
       videoUrl: `https://drive.google.com/file/d/${uploadedVideo.id}`,
-      imgUrl: `https://drive.google.com/file/d/${uploadedThumbnail.id}`,
+      imgUrl: `https://lh3.googleusercontent.com/d/${uploadedThumbnail.id}`,
     });
-
+    // https://lh3.googleusercontent.com/d/filelink
     const savedVideo = await newVideo.save();
 
     await fs.promises.unlink(videoFile.path).catch(() => null);

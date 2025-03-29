@@ -1,13 +1,13 @@
 import { Dot } from "lucide-react";
 import { FaPlay } from "react-icons/fa";
 
-const Cards = () => {
+const Cards = ({ title, imgUrl }: { title: string; imgUrl: string }) => {
   return (
     <div className="max-w-36 sm:max-w-48 text-black dark:text-white relative group">
       <div className="relative overflow-hidden rounded-t-lg">
         <img
-          src="https://f.woowoowoowoo.net/resize/250x400/cf/12/cf1215815170205721c745448400c61b/cf1215815170205721c745448400c61b.jpg"
-          alt="Mufasa: The Lion King"
+          src={imgUrl}
+          alt={title}
           className="rounded-t-lg transition-transform duration-300 group-hover:scale-110"
         />
         <span className="absolute top-2 right-2 bg-white text-black font-semibold text-xs px-1 rounded">
@@ -19,9 +19,7 @@ const Cards = () => {
           </div>
         </div>
       </div>
-      <h2 className="mt-2 sm:mt-3 text-sm sm:text-base font-bold">
-        Mufasa: The Lion King
-      </h2>
+      <h2 className="mt-2 sm:mt-3 text-sm sm:text-base font-bold">{title}</h2>
       <div className="mt-1 sm:mt-2 flex flex-wrap justify-between text-xs sm:text-sm text-gray-400">
         <div className="flex items-center">
           <span>2024</span>
