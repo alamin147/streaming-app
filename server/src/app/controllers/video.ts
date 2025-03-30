@@ -176,7 +176,7 @@ export const uploadVideo: any = async (req: Request, res: Response) => {
         .toISOString()
         .replace(/[:.]/g, "-")}`;
 
-      uploadedThumbnail = await uploadFile(thumbnailFile.path, filename);
+      uploadedThumbnail = await uploadFile(thumbnailFile.path, filename, "img");
 
       if (uploadedThumbnail?.secure_url) {
         imgUrl = uploadedThumbnail?.secure_url as string;
@@ -187,10 +187,10 @@ export const uploadVideo: any = async (req: Request, res: Response) => {
         .toISOString()
         .replace(/[:.]/g, "-")}`;
 
-      uploadedVideo = await uploadFile(videoFile.path, filename);
+      uploadedVideo = await uploadFile(videoFile.path, filename, "vid");
 
-      if (uploadedVideo?.secure_url) {
-        videoUrl = uploadedVideo?.secure_url as string;
+      if (uploadedVideo?.eager?.[0]?.secure_url) {
+        videoUrl = uploadedVideo.eager[0].secure_url;
       }
     }
 

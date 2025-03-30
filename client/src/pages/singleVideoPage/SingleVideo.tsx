@@ -1,3 +1,5 @@
+"use client";
+
 import { useState } from "react";
 import { Star, ThumbsUp, ThumbsDown } from "lucide-react";
 
@@ -16,8 +18,21 @@ export default function AnimeDetails() {
   };
 
   return (
-    <div className="min-h-screen bg-black text-gray-200 p-4 md:p-8">
-      <div className="max-w-7xl mx-auto">
+    <div className="min-h-screen bg-black text-gray-200">
+      {/* Video Player at the top */}
+      <div className="w-full bg-gray-900">
+        <div className="relative w-full aspect-video max-h-[80vh]">
+          <video
+            controls
+            className="w-full h-full object-contain"
+            poster="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-EoVij8S0D6aQXr1BDZYqvVOt7TFcQW.png"
+            src="https://res.cloudinary.com/dgwqvyfnk/video/upload/v1743326613/9999999999999999_2025-03-30T09-23-06-694Z.mp4"
+          ></video>
+        </div>
+      </div>
+
+      {/* Content below video */}
+      <div className="max-w-7xl mx-auto p-4 md:p-8">
         <div className="flex flex-col md:flex-row gap-6 md:gap-8">
           {/* Poster Image */}
           <div className="flex-shrink-0 w-full md:w-64 lg:w-72 md:h-auto">
