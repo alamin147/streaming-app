@@ -3,11 +3,7 @@ import Video from "../models/Video";
 import { response } from "../utils/utils";
 import fs from "fs";
 import dotenv from "dotenv";
-import {
-  authorizeFunction,
-  deleteFile,
-  uploadFile,
-} from "../middlewares/uploads";
+import { uploadFile } from "../middlewares/uploads";
 dotenv.config();
 
 export const createVideo = async (
@@ -127,10 +123,7 @@ export const trendingVideos = async (
   }
 };
 
-export const getByTag = async (
-  req: Request,
-  res: Response,
-) => {
+export const getByTag = async (req: Request, res: Response) => {
   try {
     const tags = (req.query.tags as string).split(",");
     const videos = await Video.find({ tags: { $in: tags } }).limit(20);
@@ -140,10 +133,7 @@ export const getByTag = async (
   }
 };
 
-export const search = async (
-  req: Request,
-  res: Response,
-) => {
+export const search = async (req: Request, res: Response) => {
   try {
     const query = req.query.q as string;
     const videos = await Video.find({
@@ -156,83 +146,67 @@ export const search = async (
 };
 
 export const uploadVideo: any = async (req: Request, res: Response) => {
-  const data = req.body;
-  let uploadedVideo: any;
   let uploadedThumbnail: any;
-  let authClient;
-
+  let uploadedVideo: any;
+  let imgUrl: any;
+  let videoUrl: any;
   if (
     !req.files ||
     !(req.files as any).video ||
     !(req.files as any).thumbnail
   ) {
-    return res.status(400).send("Both video and thumbnail are required.");
+    return response(res, 400, false, "Both video and thumbnail are required.");
   }
 
   // console.log("files", req.files);
   const videoFile = (req.files as any).video[0];
   const thumbnailFile = (req.files as any).thumbnail[0];
 
+  const maxSize = 500 * 1024 * 1024;
+  if (videoFile.size > maxSize || thumbnailFile.size > maxSize) {
+    return response(res, 400, false, "Video or thumbnail size exceeds 500MB.");
+  }
+
+  console.log(videoFile, thumbnailFile, req.body);
+
+  const { title, desc } = req.body;
   try {
-    authClient = await authorizeFunction();
+    if (thumbnailFile) {
+      const filename = `${title.replace(/ /g, "_")}_${new Date()
+        .toISOString()
+        .replace(/[:.]/g, "-")}`;
 
-    uploadedVideo = await uploadFile(
-      authClient,
-      videoFile.path,
-      data.title,
-      process.env.GOOGLE_VIDEO_FOLDER_ID as string,
-      ["video"]
-    );
+      uploadedThumbnail = await uploadFile(thumbnailFile.path, filename);
 
-    uploadedThumbnail = await uploadFile(
-      authClient,
-      thumbnailFile.path,
-      data.title,
-      process.env.GOOGLE_THUMBNAIL_FOLDER_ID as string,
-      ["image"]
-    );
+      if (uploadedThumbnail?.secure_url) {
+        imgUrl = uploadedThumbnail?.secure_url as string;
+      }
+    }
+    if (videoFile) {
+      const filename = `${title.replace(/ /g, "_")}_${new Date()
+        .toISOString()
+        .replace(/[:.]/g, "-")}`;
+
+      uploadedVideo = await uploadFile(videoFile.path, filename);
+
+      if (uploadedVideo?.secure_url) {
+        videoUrl = uploadedVideo?.secure_url as string;
+      }
+    }
 
     const newVideo = new Video({
       userId: req.user.id,
-      title: data.title,
-      des: data.desc,
-      videoUrl: `https://drive.google.com/file/d/${uploadedVideo.id}`,
-      imgUrl: `https://lh3.googleusercontent.com/d/${uploadedThumbnail.id}`,
+      title,
+      des: desc,
+      videoUrl: videoUrl,
+      imgUrl: imgUrl,
     });
-    // https://lh3.googleusercontent.com/d/filelink
+
     const savedVideo = await newVideo.save();
 
-    await fs.promises.unlink(videoFile.path).catch(() => null);
-    await fs.promises.unlink(thumbnailFile.path).catch(() => null);
     response(res, 201, true, "Video uploaded successfully", savedVideo);
   } catch (error: any) {
     console.log(error);
-
-    if (uploadedVideo?.id) {
-      try {
-        await deleteFile(authClient, uploadedVideo.id);
-        console.log(`Rolled back: Deleted uploaded video ${uploadedVideo.id}`);
-      } catch (deleteError) {
-        console.error("Failed to delete uploaded video:", deleteError);
-      }
-    }
-
-    if (uploadedThumbnail?.id) {
-      try {
-        await deleteFile(authClient, uploadedThumbnail.id);
-        console.log(
-          `Rolled back: Deleted uploaded thumbnail ${uploadedThumbnail.id}`
-        );
-      } catch (deleteError) {
-        console.error("Failed to delete uploaded thumbnail:", deleteError);
-      }
-    }
-    await fs.promises.unlink(videoFile.path).catch(() => null);
-    await fs.promises.unlink(thumbnailFile.path).catch(() => null);
-
-    res.status(500).json({ error: error.message });
-  } finally {
-    await fs.promises.unlink(videoFile.path).catch(() => null);
-    await fs.promises.unlink(thumbnailFile.path).catch(() => null);
+    response(res, 500, false, error.message || "Internal Server Error");
   }
 };
