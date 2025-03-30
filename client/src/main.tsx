@@ -10,6 +10,7 @@ import { PersistGate } from "redux-persist/integration/react";
 import LoginPage from "./pages/login/Login.tsx";
 import { RegisterPage } from "./pages/register/Register.tsx";
 import { Toaster } from 'react-hot-toast';
+import SingleVideo from "./pages/singleVideoPage/SingleVideo.tsx";
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <ThemeProvider defaultTheme="light" storageKey="">
@@ -23,6 +24,7 @@ createRoot(document.getElementById("root")!).render(
               <Route path="/trending" element={<div>trendign</div>} />
               <Route path="/login" element={<LoginPage/>} />
               <Route path="/register" element={<RegisterPage/>} />
+              <Route path="/single" element={<SingleVideo/>} />
 
             </Routes>
           </Router>
