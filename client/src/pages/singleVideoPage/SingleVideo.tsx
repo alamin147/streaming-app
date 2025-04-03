@@ -1,11 +1,11 @@
-"use client";
-
-import { useState } from "react";
-import { Star, ThumbsUp, ThumbsDown } from "lucide-react";
+import { useState, useRef } from "react";
+import { Star, ThumbsUp, ThumbsDown, Play } from "lucide-react";
 
 export default function AnimeDetails() {
   const [liked, setLiked] = useState(false);
   const [disliked, setDisliked] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const videoRef = useRef<HTMLVideoElement>(null);
 
   const handleLike = () => {
     setLiked(!liked);
@@ -17,6 +17,19 @@ export default function AnimeDetails() {
     if (liked) setLiked(false);
   };
 
+  const handlePlayClick = () => {
+    if (videoRef.current) {
+      videoRef.current.play();
+      setIsPlaying(true);
+    }
+  };
+
+  const handleVideoStateChange = () => {
+    if (videoRef.current) {
+      setIsPlaying(!videoRef.current.paused);
+    }
+  };
+
   return (
     <div className="py-8 px-4 md:px-8">
       <div className="min-h-screen bg-black text-gray-200">
@@ -24,11 +37,26 @@ export default function AnimeDetails() {
         <div className="w-full bg-gray-900">
           <div className="relative w-full aspect-video max-h-[80vh]">
             <video
+              ref={videoRef}
               controls
               className="w-full h-full object-contain"
               poster="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-EoVij8S0D6aQXr1BDZYqvVOt7TFcQW.png"
               src="https://res.cloudinary.com/dgwqvyfnk/video/upload/v1743326613/9999999999999999_2025-03-30T09-23-06-694Z.mp4"
+              onPlay={handleVideoStateChange}
+              onPause={handleVideoStateChange}
             ></video>
+
+            {/* Play button overlay */}
+            {!isPlaying && (
+              <div
+                className="absolute inset-0 flex items-center justify-center cursor-pointer bg-black bg-opacity-30 transition-opacity hover:bg-opacity-20"
+                onClick={handlePlayClick}
+              >
+                <div className="bg-yellow-500 bg-opacity-80 rounded-full p-5 shadow-lg transform transition-transform hover:scale-110">
+                  <Play className="h-12 w-12 text-black fill-black" />
+                </div>
+              </div>
+            )}
           </div>
         </div>
 
@@ -66,7 +94,7 @@ export default function AnimeDetails() {
 
                 {/* Badges and Rating */}
                 <div className="flex flex-wrap items-center gap-3">
-                  <span className="bg-green-600 text-white px-3 py-1 rounded-full text-sm font-medium">
+                  <span className="bg-yellow-400 text-black px-3 py-1 rounded-full text-sm font-medium">
                     HD
                   </span>
                   <div className="flex items-center gap-1 text-yellow-500">
