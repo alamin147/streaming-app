@@ -4,6 +4,7 @@ import { response } from "../utils/utils";
 import fs from "fs";
 import dotenv from "dotenv";
 import { uploadFile } from "../middlewares/uploads";
+import RecentVideos from "../models/RecentVideos";
 dotenv.config();
 
 export const createVideo = async (
@@ -95,6 +96,43 @@ export const addView = async (
   }
 };
 
+export const recentVideos = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const videoId = req.body.id;
+    
+    const existingRecord = await RecentVideos.findOne({ 
+      userId: req.user.id, 
+      videoId: videoId 
+    });
+    
+    if (existingRecord) {
+      return response(res, 200, true, "Video already in recent list");
+    } else {
+      const recentVideos = new RecentVideos({ userId: req.user.id, videoId });
+      const savedVideo = await recentVideos.save();
+      return response(res, 201, true, "Recent video added successfully", { savedVideo });
+    }
+  } catch (err: any) {
+    response(res, 500, false, err.message || "Internal Server Error");
+  }
+};
+
+export const fetchRecentVideos = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const videos = await RecentVideos.aggregate([{ $sample: { size: 20 } }]);
+    response(res, 200, true, "Recent Videos fetched successfully", { videos });
+  } catch (err: any) {
+    response(res, 500, false, err.message || "Internal Server Error");
+  }
+};
 export const fetchVideos = async (
   req: Request,
   res: Response,

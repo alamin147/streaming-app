@@ -7,7 +7,7 @@ import { useSidebar } from "../ui/sidebar";
 import { FaPlay, FaPlus } from "react-icons/fa";
 import Cards from "../cards/Cards";
 import Footer from "../footer/Footer";
-import { useGetVideosQuery } from "@/redux/features/videos/videosApi";
+import { useGetRecentVideosQuery, useGetVideosQuery } from "@/redux/features/videos/videosApi";
 
 //  image array
 const images = [
@@ -27,6 +27,7 @@ const Carousel = () => {
   }
 
   const { data: videos } = useGetVideosQuery(undefined);
+  const { data: recentvideos } = useGetRecentVideosQuery(undefined);
   console.log(videos?.data?.videos);
   return (
     <>
@@ -139,12 +140,16 @@ const Carousel = () => {
               : "max-w-[calc(100vw-50px)]"
           } mx-auto mt-7`}
         >
-          <h1 className="text-black dark:text-white text-lg md:text-2xl mb-2 ">
+          {(recentvideos?.data.videos.length>0)&&<h1 className="text-black dark:text-white text-lg md:text-2xl mb-2 ">
             <span className="me-1.5 border-l-8 border-yellow-500"></span>
-            <span>Recent</span>
-          </h1>
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-x-4 gap-y-6">
-            {/* <Cards /> */}
+            <span>Recently Watched</span>
+          </h1>}
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-4 p-4">
+            {recentvideos?.data.videos.map((movie: any) => (
+              <div key={movie._id}>
+                <Cards _id={movie._id} title={movie.title} imgUrl={movie.imgUrl} />
+              </div>
+            ))}
           </div>
         </div>
 

@@ -4,9 +4,11 @@ import {
   addView,
   createVideo,
   deleteVideo,
+  fetchRecentVideos,
   fetchVideos,
   getByTag,
   getVideo,
+  recentVideos,
   search,
   trendingVideos,
   updateVideo,
@@ -26,6 +28,8 @@ videoRoutes.post(
   uploadVideo
 );
 
+videoRoutes.post("/recentVideos", verifyToken, recentVideos);
+videoRoutes.get("/recentVideos", verifyToken, fetchRecentVideos);
 videoRoutes.post("/", verifyToken, createVideo);
 videoRoutes.get("/find/:id", getVideo);
 videoRoutes.put("/:id", verifyToken, updateVideo);

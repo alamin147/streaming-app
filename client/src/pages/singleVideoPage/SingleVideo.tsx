@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react"; // Add useEffect import
+import { useState, useRef, useEffect } from "react";
 import { Star, ThumbsUp, ThumbsDown, Play, Sun } from "lucide-react";
 import { Link, NavLink, useParams } from "react-router-dom";
 import { getUserInfo } from "@/redux/authUlits";
@@ -6,16 +6,19 @@ import { useTheme } from "@/components/themeProvider/ThemeProvider";
 import { IoIosMoon } from "react-icons/io";
 import { Avatar, AvatarFallback } from "@radix-ui/react-avatar";
 import { Button } from "@/components/ui/button";
+import { useUploadRecentVideosMutation } from "@/redux/features/videos/videosApi";
 
-export default function SingleVideo() {
+export const SingleVideo=()=> {
+  const videoId= useParams();
+console.log(videoId)
   const [liked, setLiked] = useState(false);
   const [disliked, setDisliked] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
-  const { id } = useParams<{ id: string }>();
   const user = getUserInfo();
   const { theme, setTheme } = useTheme();
-
+  const [called,setCalled]= useState(true);
+  const [uploadRecentVideos]= useUploadRecentVideosMutation();
   useEffect(() => {
     // Scroll to top when component mounts
     window.scrollTo(0, 0);
@@ -31,10 +34,15 @@ export default function SingleVideo() {
     if (liked) setLiked(false);
   };
 
-  const handlePlayClick = () => {
+  const handlePlayClick = async() => {
     if (videoRef.current) {
       videoRef.current.play();
       setIsPlaying(true);
+      // add to the recent here
+      if(called){
+        await uploadRecentVideos(videoId);
+        setCalled(false);
+      }
     }
   };
 
@@ -44,7 +52,6 @@ export default function SingleVideo() {
     }
   };
 
-  console.log("Video ID:", id);
   return (
     <>
       <div className="flex h-16 shrik-0 items-center justify-between gap-2  py-8 px-4 md:px-8">

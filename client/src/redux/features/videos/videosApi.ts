@@ -31,11 +31,34 @@ const videoApi = baseApi.injectEndpoints({
         };
       },
     }),
+
+    uploadRecentVideos: builder.mutation({
+      query: (data) => {
+        return {
+          url: "/videos/recentVideos",
+          method: "POST",
+          body: data,
+        };
+      },
+      invalidatesTags:["recent"]
+    }),
+    getRecentVideos: builder.query({
+      query: () => {
+        return {
+          url: "/videos/recentVideos",
+          method: "GET",
+        };
+      },
+      providesTags:["recent"]
+    }),
   }),
+  
 });
 
 export const {
   useGetVideosQuery,
   useUploadVideoMutation,
   useGetSingleVideoQuery,
+  useGetRecentVideosQuery,
+  useUploadRecentVideosMutation
 } = videoApi;
