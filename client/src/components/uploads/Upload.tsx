@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Progress } from "@/components/ui/progress";
 import { useUploadVideoMutation } from "@/redux/features/videos/videosApi";
+import toast from "react-hot-toast";
 
 interface VideoUploadModalProps {
   isOpen: boolean;
@@ -38,7 +39,14 @@ export default function VideoUploadModal({
   const [uploadVideo] = useUploadVideoMutation();
   const onSubmit = async (data: any) => {
     if (!data.video) return alert("Please select a video file.");
-
+    11929445
+    11534336
+    if(data.video.size>(100*1024*1024))
+    {
+      let size=Number(data.video.size);
+      toast.error(`Video must be under 100MB. Your video size is: ${(size/(1024*1024)).toFixed(2)}MB`)
+      return;
+    }
     const formData = new FormData();
     if (data.title) formData.append("title", data.title);
     if (data.desc) formData.append("desc", data.desc);

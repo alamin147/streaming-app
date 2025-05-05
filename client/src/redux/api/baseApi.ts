@@ -14,7 +14,9 @@ export const baseApi = createApi({
       }
       return headers;
     },
-  }),
- 
+  }
+),
+
+tagTypes:["video","user"],
   endpoints: () => ({}),
 });

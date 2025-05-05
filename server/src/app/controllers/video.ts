@@ -162,9 +162,9 @@ export const uploadVideo: any = async (req: Request, res: Response) => {
   const videoFile = (req.files as any).video[0];
   const thumbnailFile = (req.files as any).thumbnail[0];
 
-  const maxSize = 500 * 1024 * 1024;
+  const maxSize = 100 * 1024 * 1024;
   if (videoFile.size > maxSize || thumbnailFile.size > maxSize) {
-    return response(res, 400, false, "Video or thumbnail size exceeds 500MB.");
+    return response(res, 400, false, "Video or thumbnail size exceeds 100MB.");
   }
 
   console.log(videoFile, thumbnailFile, req.body);

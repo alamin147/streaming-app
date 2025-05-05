@@ -2,15 +2,6 @@ import { baseApi } from "../../api/baseApi";
 
 const videoApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
-    createVideo: builder.mutation({
-      query: (data) => {
-        return {
-          url: "/task/create",
-          method: "POST",
-          body: data,
-        };
-      },
-    }),
     uploadVideo: builder.mutation({
       query: (data) => {
         return {
@@ -19,6 +10,7 @@ const videoApi = baseApi.injectEndpoints({
           body: data,
         };
       },
+      invalidatesTags:["video"]
     }),
     getVideos: builder.query({
       query: () => {
@@ -28,12 +20,22 @@ const videoApi = baseApi.injectEndpoints({
           method: "GET",
         };
       },
+      providesTags:["video"]
+    }),
+    getSingleVideo: builder.query({
+      query: ({ id }: { id: string }) => {
+        // console.log(status);
+        return {
+          url: `/videos/find/${id}`,
+          method: "GET",
+        };
+      },
     }),
   }),
 });
 
 export const {
-  useCreateVideoMutation,
   useGetVideosQuery,
   useUploadVideoMutation,
+  useGetSingleVideoQuery,
 } = videoApi;

@@ -1,7 +1,17 @@
 import { Dot } from "lucide-react";
 import { FaPlay } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 
-const Cards = ({ title, imgUrl }: { title: string; imgUrl: string }) => {
+const Cards = ({
+  _id,
+  title,
+  imgUrl,
+}: {
+  _id: string;
+  title: string;
+  imgUrl: string;
+}) => {
+  const navigate = useNavigate();
   return (
     <div className="max-w-36 sm:max-w-48 text-black dark:text-white relative group">
       <div className="relative overflow-hidden rounded-t-lg w-full h-48 sm:h-64">
@@ -13,7 +23,10 @@ const Cards = ({ title, imgUrl }: { title: string; imgUrl: string }) => {
         <span className="absolute top-2 right-2 bg-white text-black font-semibold text-xs px-1 rounded">
           HD
         </span>
-        <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+        <div
+          onClick={() => navigate(`/video/${_id}`)}
+          className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+        >
           <div className="cursor-pointer bg-yellow-500 rounded-full p-3 sm:p-5 flex items-center justify-center">
             <FaPlay className="text-white text-xl sm:text-2xl" />
           </div>

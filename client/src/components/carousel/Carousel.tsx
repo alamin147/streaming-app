@@ -27,7 +27,7 @@ const Carousel = () => {
   }
 
   const { data: videos } = useGetVideosQuery(undefined);
-  // console.log(videos?.data?.videos);
+  console.log(videos?.data?.videos);
   return (
     <>
       <div
@@ -86,7 +86,7 @@ const Carousel = () => {
                       </span>
 
                       <span className="bg-gray-500 text-white px-3 py-1 rounded-md">
-                        Drama
+                        DramaMovies
                       </span>
                     </div>
 
@@ -94,7 +94,7 @@ const Carousel = () => {
                     <div className="flex gap-4 md:gap-8 mt-2 z-10 items-center">
                       <button className="px-2 md:px-4 py-2  bg-yellow-500 rounded-md hover:bg-yellow-400 flex font-semibold gap-1.5 text-black text-sm  md:text-lg">
                         <FaPlay className="mt-0.5 md:mt-1 " />
-                        Watch Now
+                        Watch NowMovies
                       </button>
 
                       <button className="group hover:text-yellow-500 text-sm  md:text-lg flex items-center gap-2 text-white rounded-md ">
@@ -111,6 +111,7 @@ const Carousel = () => {
 
       <div>
         <div
+        id="#trending"
           className={`w-screen ${
             open === true
               ? "max-w-[calc(100vw-300px)]"
@@ -123,9 +124,9 @@ const Carousel = () => {
           </h1>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-4 p-4">
             {videos?.data.videos.map((movie: any) => (
-              <>
-                <Cards key={movie._id} title={movie.title} imgUrl={movie.imgUrl} />
-              </>
+              <div key={movie._id}>
+                <Cards _id={movie._id} title={movie.title} imgUrl={movie.imgUrl} />
+              </div>
             ))}
           </div>
         </div>
