@@ -33,7 +33,7 @@ videoRoutes.get("/recentVideos", verifyToken, fetchRecentVideos);
 videoRoutes.post("/", verifyToken, createVideo);
 videoRoutes.get("/find/:id", getVideo);
 videoRoutes.put("/:id", verifyToken, updateVideo);
-videoRoutes.delete("/:id", verifyToken, deleteVideo);
+videoRoutes.delete("/delete/:id", verifyToken, deleteVideo);
 videoRoutes.put("/view/:id", addView);
 videoRoutes.get("/trend", trendingVideos);
 videoRoutes.get("/random", fetchVideos);

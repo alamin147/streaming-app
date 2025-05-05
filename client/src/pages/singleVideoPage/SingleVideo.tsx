@@ -1,45 +1,35 @@
 import { useState, useRef, useEffect } from "react";
-import { Star, ThumbsUp, ThumbsDown, Play, Sun } from "lucide-react";
+import { Star, Play, Sun } from "lucide-react";
 import { Link, NavLink, useParams } from "react-router-dom";
 import { getUserInfo } from "@/redux/authUlits";
 import { useTheme } from "@/components/themeProvider/ThemeProvider";
 import { IoIosMoon } from "react-icons/io";
 import { Avatar, AvatarFallback } from "@radix-ui/react-avatar";
 import { Button } from "@/components/ui/button";
-import { useUploadRecentVideosMutation } from "@/redux/features/videos/videosApi";
+import {
+  useGetSingleVideoQuery,
+  useUploadRecentVideosMutation,
+} from "@/redux/features/videos/videosApi";
 
-export const SingleVideo=()=> {
-  const videoId= useParams();
-console.log(videoId)
-  const [liked, setLiked] = useState(false);
-  const [disliked, setDisliked] = useState(false);
+export const SingleVideo = () => {
+  const videoId: any = useParams();
   const [isPlaying, setIsPlaying] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
   const user = getUserInfo();
   const { theme, setTheme } = useTheme();
-  const [called,setCalled]= useState(true);
-  const [uploadRecentVideos]= useUploadRecentVideosMutation();
+  const [called, setCalled] = useState(true);
+  const [uploadRecentVideos] = useUploadRecentVideosMutation();
+  const { data: singleVideo, isLoading } = useGetSingleVideoQuery(videoId);
+
   useEffect(() => {
-    // Scroll to top when component mounts
     window.scrollTo(0, 0);
   }, []);
 
-  const handleLike = () => {
-    setLiked(!liked);
-    if (disliked) setDisliked(false);
-  };
-
-  const handleDislike = () => {
-    setDisliked(!disliked);
-    if (liked) setLiked(false);
-  };
-
-  const handlePlayClick = async() => {
+  const handlePlayClick = async () => {
     if (videoRef.current) {
       videoRef.current.play();
       setIsPlaying(true);
-      // add to the recent here
-      if(called){
+      if (called) {
         await uploadRecentVideos(videoId);
         setCalled(false);
       }
@@ -51,6 +41,25 @@ console.log(videoId)
       setIsPlaying(!videoRef.current.paused);
     }
   };
+
+  const LoadingSpinner = () => (
+    <div className="min-h-screen flex items-center justify-center">
+      <div className="flex flex-col items-center">
+        <div className="w-16 h-16 border-4 border-yellow-400 border-t-transparent rounded-full animate-spin"></div>
+        <p className="mt-4 text-lg font-medium text-gray-200">
+          Loading video...
+        </p>
+      </div>
+    </div>
+  );
+
+  if (isLoading) {
+    return <LoadingSpinner />;
+  }
+
+  const video = singleVideo?.data?.video;
+  console.log(video);
+  const { title, imgUrl, des, videUrl, views } = video;
 
   return (
     <>
@@ -128,8 +137,8 @@ console.log(videoId)
                 ref={videoRef}
                 controls
                 className="w-full h-full object-contain"
-                poster="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-EoVij8S0D6aQXr1BDZYqvVOt7TFcQW.png"
-                src="https://res.cloudinary.com/dgwqvyfnk/video/upload/v1743326613/9999999999999999_2025-03-30T09-23-06-694Z.mp4"
+                poster={imgUrl}
+                src={videUrl}
                 onPlay={handleVideoStateChange}
                 onPause={handleVideoStateChange}
               ></video>
@@ -155,7 +164,7 @@ console.log(videoId)
               <div className="flex-shrink-0 w-full md:w-64 lg:w-72 md:h-auto">
                 <div className="relative rounded-lg overflow-hidden w-full md:w-64 lg:w-72 h-[400px] md:h-full">
                   <img
-                    src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-EoVij8S0D6aQXr1BDZYqvVOt7TFcQW.png"
+                    src={imgUrl}
                     alt="Blue Box Poster"
                     className="absolute inset-0 w-full h-full object-cover object-center"
                   />
@@ -168,7 +177,7 @@ console.log(videoId)
                   {/* Title and Rating */}
                   <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                     <h1 className="text-3xl md:text-4xl lg:text-5xl font-semibold text-gray-300">
-                      Blue Box
+                      {title}
                     </h1>
                     <div className="flex items-center gap-4">
                       <div className="flex items-center gap-2">
@@ -181,49 +190,36 @@ console.log(videoId)
                   </div>
 
                   {/* Badges and Rating */}
-                  <div className="flex flex-wrap items-center gap-3">
-                    <span className="bg-yellow-400 text-black px-3 py-1 rounded-full text-sm font-medium">
-                      HD
-                    </span>
-                    <div className="flex items-center gap-1 text-yellow-500">
-                      <Star className="fill-yellow-500 h-5 w-5" />
-                      <span className="font-medium">7.8</span>
+                  <div className="flex justify-between flex-wrap items-center gap-3">
+                    <div className="flex flex-wrap items-center gap-3">
+                      <span className="bg-yellow-400 text-black px-3 py-1 rounded-full text-sm font-medium">
+                        HD
+                      </span>
+                      <div className="flex items-center gap-1 text-yellow-500">
+                        <Star className="fill-yellow-500 h-5 w-5" />
+                        <span className="font-medium">7.8</span>
+                      </div>
+                      <span className="text-gray-400">24 min</span>
                     </div>
-                    <span className="text-gray-400">24 min</span>
-                  </div>
+                    {/*  */}
 
-                  {/* Like/Dislike Buttons */}
-                  <div className="flex gap-2 my-2">
-                    <button
-                      onClick={handleLike}
-                      className={`flex items-center gap-2 px-4 py-2 rounded-full border ${
-                        liked
-                          ? "bg-yellow-500 text-black border-yellow-500"
-                          : "border-gray-600 hover:bg-gray-800"
-                      }`}
-                    >
-                      <ThumbsUp className="h-5 w-5" />
-                      <span>Like</span>
-                    </button>
-                    <button
-                      onClick={handleDislike}
-                      className={`flex items-center gap-2 px-4 py-2 rounded-full border ${
-                        disliked
-                          ? "bg-gray-200 text-black border-gray-200"
-                          : "border-gray-600 hover:bg-gray-800"
-                      }`}
-                    >
-                      <ThumbsDown className="h-5 w-5" />
-                      <span>Dislike</span>
-                    </button>
+                    <div className="flex gap-2">
+                      <span className="bg-ed-400 text-white px-3 py-1 rounded-full text-md font-medium">
+                        Genre:
+                      </span>
+                      <span className="bg-red-400 text-black px-3 py-1 rounded-full text-sm font-medium">
+                        Action
+                      </span>
+                      <span className="bg-yellow-400 text-black px-3 py-1 rounded-full text-sm font-medium">
+                        Comedy
+                      </span>
+                      <span className="bg-green-400 text-black px-3 py-1 rounded-full text-sm font-medium">
+                        Horror
+                      </span>
+                    </div>
                   </div>
-
                   {/* Synopsis */}
-                  <p className="text-gray-300 text-base md:text-lg">
-                    Badminton player Taiki has always admired basketball star
-                    Chinatsu from afar. But one spring day, a surprising turn
-                    brings them unexpectedly close.
-                  </p>
+                  <p className="text-gray-300 text-base md:text-lg">{des}</p>
 
                   {/* Details */}
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-2 mt-2">
@@ -231,17 +227,13 @@ console.log(videoId)
                       <span className="w-28 text-gray-400">Country:</span>
                       <span className="text-gray-200">Japan</span>
                     </div>
-                    <div className="flex">
-                      <span className="w-28 text-gray-400">Genre:</span>
-                      <span className="text-gray-200">
-                        Animation, Comedy, Drama
-                      </span>
-                    </div>
+
                     <div className="flex">
                       <span className="w-28 text-gray-400">Released:</span>
                       <span className="text-gray-200">2024-10-03</span>
                     </div>
-                    <div className="flex">
+
+                    <div className="flex col-span-1 md:col-span-2">
                       <span className="w-28 text-gray-400">Production:</span>
                       <span className="text-gray-200">
                         Telecom Animation Film, UNLIMITED PRODUCE by TMS, TMS
@@ -250,17 +242,9 @@ console.log(videoId)
                     </div>
                     <div className="flex col-span-1 md:col-span-2">
                       <span className="w-28 text-gray-400">Casts:</span>
-                      <span className="text-gray-200">
+                      <span className="tIext-gray-200">
                         Chiaki Kobayashi, Reina Ueda, Yuuma Uchida, Shoya Chiba,
                         Shogo Sakata
-                      </span>
-                    </div>
-                    <div className="flex col-span-1 md:col-span-2">
-                      <span className="w-28 text-gray-400">Tags:</span>
-                      <span className="text-gray-200">
-                        Watch Blue Box Online Free, Blue Box Online Free, Where
-                        to watch Blue Box, Blue Box movie free online, Blue Box
-                        free online
                       </span>
                     </div>
                   </div>
@@ -272,4 +256,4 @@ console.log(videoId)
       </div>
     </>
   );
-}
+};

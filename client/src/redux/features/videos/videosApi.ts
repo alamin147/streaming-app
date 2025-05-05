@@ -10,7 +10,7 @@ const videoApi = baseApi.injectEndpoints({
           body: data,
         };
       },
-      invalidatesTags:["video"]
+      invalidatesTags: ["video"],
     }),
     getVideos: builder.query({
       query: () => {
@@ -20,13 +20,13 @@ const videoApi = baseApi.injectEndpoints({
           method: "GET",
         };
       },
-      providesTags:["video"]
+      providesTags: ["video"],
     }),
     getSingleVideo: builder.query({
-      query: ({ id }: { id: string }) => {
-        // console.log(status);
+      query: (id: any) => {
+        console.log(id.id);
         return {
-          url: `/videos/find/${id}`,
+          url: `/videos/find/${id.id}`,
           method: "GET",
         };
       },
@@ -40,7 +40,7 @@ const videoApi = baseApi.injectEndpoints({
           body: data,
         };
       },
-      invalidatesTags:["recent"]
+      invalidatesTags: ["recent"],
     }),
     getRecentVideos: builder.query({
       query: () => {
@@ -49,10 +49,9 @@ const videoApi = baseApi.injectEndpoints({
           method: "GET",
         };
       },
-      providesTags:["recent"]
+      providesTags: ["recent"],
     }),
   }),
-  
 });
 
 export const {
@@ -60,5 +59,5 @@ export const {
   useUploadVideoMutation,
   useGetSingleVideoQuery,
   useGetRecentVideosQuery,
-  useUploadRecentVideosMutation
+  useUploadRecentVideosMutation,
 } = videoApi;

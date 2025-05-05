@@ -28,7 +28,6 @@ const Carousel = () => {
 
   const { data: videos } = useGetVideosQuery(undefined);
   const { data: recentvideos } = useGetRecentVideosQuery(undefined);
-  console.log(videos?.data?.videos);
   return (
     <>
       <div
@@ -146,8 +145,9 @@ const Carousel = () => {
           </h1>}
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-4 p-4">
             {recentvideos?.data.videos.map((movie: any) => (
+              console.log(movie.videoId),
               <div key={movie._id}>
-                <Cards _id={movie._id} title={movie.title} imgUrl={movie.imgUrl} />
+                <Cards _id={movie.videoId._id} title={movie.videoId.title} imgUrl={movie.videoId.imgUrl} />
               </div>
             ))}
           </div>

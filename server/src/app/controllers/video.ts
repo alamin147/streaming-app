@@ -1,7 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import Video from "../models/Video";
 import { response } from "../utils/utils";
-import fs from "fs";
 import dotenv from "dotenv";
 import { uploadFile } from "../middlewares/uploads";
 import RecentVideos from "../models/RecentVideos";
@@ -103,18 +102,32 @@ export const recentVideos = async (
 ) => {
   try {
     const videoId = req.body.id;
-    
-    const existingRecord = await RecentVideos.findOne({ 
-      userId: req.user.id, 
-      videoId: videoId 
+
+    // First, check if the record exists
+    const existingRecord = await RecentVideos.findOne({
+      userId: req.user.id,
+      videoId: videoId,
     });
-    
+
     if (existingRecord) {
-      return response(res, 200, true, "Video already in recent list");
+      // Delete the existing record
+      await RecentVideos.findByIdAndDelete(existingRecord._id);
+
+      // Create a new record (which will have a fresh timestamp)
+      const newRecentVideo = new RecentVideos({ userId: req.user.id, videoId });
+      const savedVideo = await newRecentVideo.save();
+
+      return response(res, 200, true, "Video moved to top of recent list", {
+        recentVideo: savedVideo,
+      });
     } else {
-      const recentVideos = new RecentVideos({ userId: req.user.id, videoId });
-      const savedVideo = await recentVideos.save();
-      return response(res, 201, true, "Recent video added successfully", { savedVideo });
+      // Create a new record if it doesn't exist
+      const recentVideo = new RecentVideos({ userId: req.user.id, videoId });
+      const savedVideo = await recentVideo.save();
+
+      return response(res, 201, true, "Recent video added successfully", {
+        recentVideo: savedVideo,
+      });
     }
   } catch (err: any) {
     response(res, 500, false, err.message || "Internal Server Error");
@@ -127,12 +140,22 @@ export const fetchRecentVideos = async (
   next: NextFunction
 ) => {
   try {
-    const videos = await RecentVideos.aggregate([{ $sample: { size: 20 } }]);
+    const videos = await RecentVideos.find({ userId: req.user.id })
+      .sort({ createdAt: -1 }) // Sort by creation time instead of updatedAt
+      .limit(20)
+      .populate({
+        path: "videoId",
+        model: "Video",
+        options: { lean: true },
+      })
+      .lean();
+
     response(res, 200, true, "Recent Videos fetched successfully", { videos });
   } catch (err: any) {
     response(res, 500, false, err.message || "Internal Server Error");
   }
 };
+
 export const fetchVideos = async (
   req: Request,
   res: Response,
