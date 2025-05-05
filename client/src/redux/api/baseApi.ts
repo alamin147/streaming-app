@@ -17,6 +17,6 @@ export const baseApi = createApi({
   }
 ),
 
-tagTypes:["video","user","recent"],
+tagTypes:["video","user","recent","watchLater"],
   endpoints: () => ({}),
 });

@@ -8,11 +8,13 @@ import {
   fetchVideos,
   getByTag,
   getVideo,
+  isBookmarked,
   recentVideos,
   search,
   trendingVideos,
   updateVideo,
   uploadVideo,
+  watchLater,
 } from "../controllers/video";
 
 const videoRoutes = express.Router();
@@ -28,6 +30,8 @@ videoRoutes.post(
   uploadVideo
 );
 
+videoRoutes.get("/bookmarked/:id", verifyToken, isBookmarked);
+videoRoutes.post("/watchlater/:id", verifyToken, watchLater);
 videoRoutes.post("/recentVideos", verifyToken, recentVideos);
 videoRoutes.get("/recentVideos", verifyToken, fetchRecentVideos);
 videoRoutes.post("/", verifyToken, createVideo);

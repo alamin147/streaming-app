@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { Star, Play, Sun } from "lucide-react";
+import { BsFillBookmarkPlusFill, BsBookmarkCheckFill } from "react-icons/bs";
 import { Link, NavLink, useParams } from "react-router-dom";
 import { getUserInfo } from "@/redux/authUlits";
 import { useTheme } from "@/components/themeProvider/ThemeProvider";
@@ -7,9 +8,12 @@ import { IoIosMoon } from "react-icons/io";
 import { Avatar, AvatarFallback } from "@radix-ui/react-avatar";
 import { Button } from "@/components/ui/button";
 import {
+  useAddToWatchLaterMutation,
   useGetSingleVideoQuery,
+  useIsBookmarkedQuery,
   useUploadRecentVideosMutation,
 } from "@/redux/features/videos/videosApi";
+import toast from "react-hot-toast";
 
 export const SingleVideo = () => {
   const videoId: any = useParams();
@@ -19,7 +23,10 @@ export const SingleVideo = () => {
   const { theme, setTheme } = useTheme();
   const [called, setCalled] = useState(true);
   const [uploadRecentVideos] = useUploadRecentVideosMutation();
+  const [addToWatchLater] = useAddToWatchLaterMutation();
   const { data: singleVideo, isLoading } = useGetSingleVideoQuery(videoId);
+  const { data: isBookmarked, isLoading: bookmarkedLoad } =
+    useIsBookmarkedQuery(videoId);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -53,13 +60,22 @@ export const SingleVideo = () => {
     </div>
   );
 
-  if (isLoading) {
+  if (isLoading || bookmarkedLoad) {
     return <LoadingSpinner />;
   }
 
   const video = singleVideo?.data?.video;
-  console.log(video);
-  const { title, imgUrl, des, videUrl, views } = video;
+  const { title, imgUrl, des, videoUrl, views } = video;
+console.log(videoUrl)
+  const handleAddToWatchLater = async () => {
+    const res = await addToWatchLater(videoId).unwrap();
+    if (res?.status == 200)
+      toast.success(res?.message ? res.message : "Video Added to watch later");
+    else
+      toast.success(
+        res?.message ? res.message : "Video failed to add in watch later"
+      );
+  };
 
   return (
     <>
@@ -138,7 +154,8 @@ export const SingleVideo = () => {
                 controls
                 className="w-full h-full object-contain"
                 poster={imgUrl}
-                src={videUrl}
+                src={"https://res.cloudinary.com/dgwqvyfnk/video/upload/sp_hd/v1746420319/sadkskldklsd_2025-05-05T04-45-04-473Z.mp4"}
+                // src={videoUrl}
                 onPlay={handleVideoStateChange}
                 onPause={handleVideoStateChange}
               ></video>
@@ -180,12 +197,25 @@ export const SingleVideo = () => {
                       {title}
                     </h1>
                     <div className="flex items-center gap-4">
-                      <div className="flex items-center gap-2">
-                        <span className="text-xl md:text-2xl font-bold text-gray-300">
-                          Score: <span className="text-yellow-500">0.0</span>
-                        </span>
-                        <span className="text-sm text-gray-400">/ 0 rated</span>
+                      <div className="flex items-center gap-4">
+                        <div className="flex items-center gap-2">
+                          <span className="text-xl md:text-2xl font-bold text-gray-300">
+                            Views:{" "}
+                            <span className="text-yellow-500">{views}</span>
+                          </span>
+                        </div>
                       </div>
+                      {isBookmarked?.data?.bookmarked ? (
+                        <BsBookmarkCheckFill
+                          className="text-2xl md:text-3xl"
+                          onClick={handleAddToWatchLater}
+                        />
+                      ) : (
+                        <BsFillBookmarkPlusFill
+                          className="text-2xl md:text-3xl"
+                          onClick={handleAddToWatchLater}
+                        />
+                      )}
                     </div>
                   </div>
 

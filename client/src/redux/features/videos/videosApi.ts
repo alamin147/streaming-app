@@ -24,7 +24,6 @@ const videoApi = baseApi.injectEndpoints({
     }),
     getSingleVideo: builder.query({
       query: (id: any) => {
-        console.log(id.id);
         return {
           url: `/videos/find/${id.id}`,
           method: "GET",
@@ -51,6 +50,25 @@ const videoApi = baseApi.injectEndpoints({
       },
       providesTags: ["recent"],
     }),
+    addToWatchLater: builder.mutation({
+      query: (data) => {
+        return {
+          url: `/videos/watchlater/${data.id}`,
+          method: "POST",
+          body: data,
+        };
+      },
+      invalidatesTags: ["watchLater"],
+    }),
+    isBookmarked: builder.query({
+      query: (data) => {
+        return {
+          url: `/videos/bookmarked/${data.id}`,
+          method: "GET",
+        };
+      },
+      providesTags: ["watchLater"],
+    }),
   }),
 });
 
@@ -60,4 +78,6 @@ export const {
   useGetSingleVideoQuery,
   useGetRecentVideosQuery,
   useUploadRecentVideosMutation,
+  useAddToWatchLaterMutation,
+  useIsBookmarkedQuery
 } = videoApi;

@@ -4,6 +4,7 @@ import { response } from "../utils/utils";
 import dotenv from "dotenv";
 import { uploadFile } from "../middlewares/uploads";
 import RecentVideos from "../models/RecentVideos";
+import WatchLater from "../models/WatchLater";
 dotenv.config();
 
 export const createVideo = async (
@@ -95,6 +96,32 @@ export const addView = async (
   }
 };
 
+export const watchLater = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const videoId = req.body.id;
+
+    const existingRecord = await WatchLater.findOne({
+      userId: req.user.id,
+      videoId: videoId,
+    });
+
+    if (existingRecord) {
+      await WatchLater.findByIdAndDelete(existingRecord._id);
+      return response(res, 200, true, "Video removed from watch later");
+    } else {
+      const Video = new WatchLater({ userId: req.user.id, videoId });
+      await Video.save();
+
+      return response(res, 201, true, "Video added to watch later");
+    }
+  } catch (err: any) {
+    response(res, 500, false, err.message || "Internal Server Error");
+  }
+};
 export const recentVideos = async (
   req: Request,
   res: Response,
@@ -103,17 +130,14 @@ export const recentVideos = async (
   try {
     const videoId = req.body.id;
 
-    // First, check if the record exists
     const existingRecord = await RecentVideos.findOne({
       userId: req.user.id,
       videoId: videoId,
     });
 
     if (existingRecord) {
-      // Delete the existing record
       await RecentVideos.findByIdAndDelete(existingRecord._id);
 
-      // Create a new record (which will have a fresh timestamp)
       const newRecentVideo = new RecentVideos({ userId: req.user.id, videoId });
       const savedVideo = await newRecentVideo.save();
 
@@ -121,7 +145,6 @@ export const recentVideos = async (
         recentVideo: savedVideo,
       });
     } else {
-      // Create a new record if it doesn't exist
       const recentVideo = new RecentVideos({ userId: req.user.id, videoId });
       const savedVideo = await recentVideo.save();
 
@@ -141,7 +164,7 @@ export const fetchRecentVideos = async (
 ) => {
   try {
     const videos = await RecentVideos.find({ userId: req.user.id })
-      .sort({ createdAt: -1 }) // Sort by creation time instead of updatedAt
+      .sort({ createdAt: -1 })
       .limit(20)
       .populate({
         path: "videoId",
@@ -269,5 +292,31 @@ export const uploadVideo: any = async (req: Request, res: Response) => {
   } catch (error: any) {
     console.log(error);
     response(res, 500, false, error.message || "Internal Server Error");
+  }
+};
+
+export const isBookmarked = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const videoId = req.params.id;
+    const existingRecord = await WatchLater.findOne({
+      userId: req.user.id,
+      videoId,
+    });
+
+    if (existingRecord) {
+      return response(res, 200, true, "", {
+        bookmarked: true,
+      });
+    } else {
+      return response(res, 200, true, "", {
+        bookmarked: false,
+      });
+    }
+  } catch (err: any) {
+    response(res, 500, false, err.message || "Internal Server Error");
   }
 };
