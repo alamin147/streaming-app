@@ -2,6 +2,7 @@ import express from "express";
 import { verifyToken } from "../utils/utils";
 import {
   addView,
+  CreateComment,
   createVideo,
   deleteVideo,
   fetchRecentVideos,
@@ -31,6 +32,7 @@ videoRoutes.post(
   uploadVideo
 );
 
+videoRoutes.post("/comments", verifyToken, CreateComment);
 videoRoutes.get("/watchlater", verifyToken, fetchWatchLaterVideos);
 videoRoutes.get("/bookmarked/:id", verifyToken, isBookmarked);
 videoRoutes.post("/watchlater/:id", verifyToken, watchLater);

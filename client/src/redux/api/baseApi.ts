@@ -8,7 +8,7 @@ export const baseApi = createApi({
     credentials: "include",
     prepareHeaders: (headers, { getState }) => {
       const token = (getState() as RootState).auth.token;
-      
+
       if (token) {
         headers.set("authorization", `${token}`);
       }
@@ -17,6 +17,6 @@ export const baseApi = createApi({
   }
 ),
 
-tagTypes:["video","user","recent","watchLater"],
+tagTypes:["video","user","recent","watchLater","comment"],
   endpoints: () => ({}),
 });
