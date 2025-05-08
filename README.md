@@ -1,6 +1,5 @@
 # streaming-app
 # Todo
-    - add to watch later
     - comment
     - rating
     - mobile fullscreen landscape

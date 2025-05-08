@@ -5,9 +5,9 @@ import "swiper/css/pagination";
 import "swiper/swiper-bundle.css";
 import { useSidebar } from "../ui/sidebar";
 import { FaPlay, FaPlus } from "react-icons/fa";
-import Cards from "../cards/Cards";
 import Footer from "../footer/Footer";
-import { useGetRecentVideosQuery, useGetVideosQuery } from "@/redux/features/videos/videosApi";
+import { useGetRecentVideosQuery, useGetVideosQuery, useGetWatchLaterVideosQuery } from "@/redux/features/videos/videosApi";
+import VideosCards from "../VideosCards/VideosCards";
 
 //  image array
 const images = [
@@ -28,6 +28,7 @@ const Carousel = () => {
 
   const { data: videos } = useGetVideosQuery(undefined);
   const { data: recentvideos } = useGetRecentVideosQuery(undefined);
+  const { data: watelaterVideos } = useGetWatchLaterVideosQuery(undefined);
   return (
     <>
       <div
@@ -110,48 +111,12 @@ const Carousel = () => {
       </div>
 
       <div>
-        <div
-        id="#trending"
-          className={`w-screen ${
-            open === true
-              ? "max-w-[calc(100vw-300px)]"
-              : "max-w-[calc(100vw-50px)]"
-          } mx-auto mt-7`}
-        >
-          <h1 className="text-black dark:text-white text-lg md:text-2xl mb-2 ">
-            <span className="me-1.5 border-l-8 border-yellow-500"></span>
-            <span>Trending</span>
-          </h1>
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-4 p-4">
-            {videos?.data.videos.map((movie: any) => (
-              <div key={movie._id}>
-                <Cards _id={movie._id} title={movie.title} imgUrl={movie.imgUrl} />
-              </div>
-            ))}
-          </div>
-        </div>
-
+        {/* trending */}
+        <VideosCards title="Trending" open={open} Videos={videos}/>
         {/* recent */}
-        <div
-          className={`w-screen ${
-            open === true
-              ? "max-w-[calc(100vw-300px)]"
-              : "max-w-[calc(100vw-50px)]"
-          } mx-auto mt-7`}
-        >
-          {(recentvideos?.data.videos.length>0)&&<h1 className="text-black dark:text-white text-lg md:text-2xl mb-2 ">
-            <span className="me-1.5 border-l-8 border-yellow-500"></span>
-            <span>Recently Watched</span>
-          </h1>}
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-4 p-4">
-            {recentvideos?.data.videos.map((movie: any) => (
-              console.log(movie.videoId),
-              <div key={movie._id}>
-                <Cards _id={movie.videoId._id} title={movie.videoId.title} imgUrl={movie.videoId.imgUrl} />
-              </div>
-            ))}
-          </div>
-        </div>
+        <VideosCards title="Recently Watched" open={open} Videos={recentvideos}/>
+        {/* watch later */}
+        <VideosCards title="Watch Later" open={open} Videos={watelaterVideos}/>
 
         <Footer />
       </div>

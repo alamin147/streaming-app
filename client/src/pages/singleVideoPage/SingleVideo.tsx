@@ -7,6 +7,7 @@ import { useTheme } from "@/components/themeProvider/ThemeProvider";
 import { IoIosMoon } from "react-icons/io";
 import { Avatar, AvatarFallback } from "@radix-ui/react-avatar";
 import { Button } from "@/components/ui/button";
+import Hls from "hls.js";
 import {
   useAddToWatchLaterMutation,
   useGetSingleVideoQuery,
@@ -31,6 +32,27 @@ export const SingleVideo = () => {
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
+
+  const video = singleVideo?.data?.video || {};
+  const { title = "", imgUrl = "", des = "", videoUrl = "", views = 0 } = video;
+
+  useEffect(() => {
+    if (videoRef.current && videoUrl) {
+      if (videoUrl.includes(".m3u8") && Hls.isSupported()) {
+        const hls = new Hls();
+        hls.loadSource(videoUrl);
+        hls.attachMedia(videoRef.current);
+        hls.on(Hls.Events.MANIFEST_PARSED, () => {
+          if (videoRef.current) {
+            videoRef.current.addEventListener("play", handleVideoStateChange);
+            videoRef.current.addEventListener("pause", handleVideoStateChange);
+          }
+        });
+      } else {
+        videoRef.current.src = videoUrl;
+      }
+    }
+  }, [videoUrl]);
 
   const handlePlayClick = async () => {
     if (videoRef.current) {
@@ -64,9 +86,6 @@ export const SingleVideo = () => {
     return <LoadingSpinner />;
   }
 
-  const video = singleVideo?.data?.video;
-  const { title, imgUrl, des, videoUrl, views } = video;
-console.log(videoUrl)
   const handleAddToWatchLater = async () => {
     const res = await addToWatchLater(videoId).unwrap();
     if (res?.status == 200)
@@ -154,8 +173,6 @@ console.log(videoUrl)
                 controls
                 className="w-full h-full object-contain"
                 poster={imgUrl}
-                src={"https://res.cloudinary.com/dgwqvyfnk/video/upload/sp_hd/v1746420319/sadkskldklsd_2025-05-05T04-45-04-473Z.mp4"}
-                // src={videoUrl}
                 onPlay={handleVideoStateChange}
                 onPause={handleVideoStateChange}
               ></video>

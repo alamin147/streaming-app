@@ -50,6 +50,15 @@ const videoApi = baseApi.injectEndpoints({
       },
       providesTags: ["recent"],
     }),
+    getWatchLaterVideos: builder.query({
+      query: () => {
+        return {
+          url: "/videos/watchlater",
+          method: "GET",
+        };
+      },
+      providesTags: ["recent"],
+    }),
     addToWatchLater: builder.mutation({
       query: (data) => {
         return {
@@ -79,5 +88,6 @@ export const {
   useGetRecentVideosQuery,
   useUploadRecentVideosMutation,
   useAddToWatchLaterMutation,
-  useIsBookmarkedQuery
+  useIsBookmarkedQuery,
+  useGetWatchLaterVideosQuery
 } = videoApi;

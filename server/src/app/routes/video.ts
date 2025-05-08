@@ -6,6 +6,7 @@ import {
   deleteVideo,
   fetchRecentVideos,
   fetchVideos,
+  fetchWatchLaterVideos,
   getByTag,
   getVideo,
   isBookmarked,
@@ -30,6 +31,7 @@ videoRoutes.post(
   uploadVideo
 );
 
+videoRoutes.get("/watchlater", verifyToken, fetchWatchLaterVideos);
 videoRoutes.get("/bookmarked/:id", verifyToken, isBookmarked);
 videoRoutes.post("/watchlater/:id", verifyToken, watchLater);
 videoRoutes.post("/recentVideos", verifyToken, recentVideos);

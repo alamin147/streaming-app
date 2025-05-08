@@ -320,3 +320,27 @@ export const isBookmarked = async (
     response(res, 500, false, err.message || "Internal Server Error");
   }
 };
+
+export const fetchWatchLaterVideos = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const videos = await WatchLater.find({ userId: req.user.id })
+      .sort({ createdAt: -1 })
+      .limit(10)
+      .populate({
+        path: "videoId",
+        model: "Video",
+        options: { lean: true },
+      })
+      .lean();
+
+    response(res, 200, true, "Watch Later Videos fetched successfully", {
+      videos,
+    });
+  } catch (err: any) {
+    response(res, 500, false, err.message || "Internal Server Error");
+  }
+};
