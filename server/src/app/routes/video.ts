@@ -9,6 +9,7 @@ import {
   fetchVideos,
   fetchWatchLaterVideos,
   getByTag,
+  getComments,
   getVideo,
   isBookmarked,
   recentVideos,
@@ -32,6 +33,7 @@ videoRoutes.post(
   uploadVideo
 );
 
+videoRoutes.get("/comments/:videoId", verifyToken, getComments);
 videoRoutes.post("/comments", verifyToken, CreateComment);
 videoRoutes.get("/watchlater", verifyToken, fetchWatchLaterVideos);
 videoRoutes.get("/bookmarked/:id", verifyToken, isBookmarked);

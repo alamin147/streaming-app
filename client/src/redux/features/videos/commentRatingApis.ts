@@ -4,9 +4,9 @@ const videoFeatures = baseApi.injectEndpoints({
   endpoints: (builder) => ({
 
     getComments: builder.query({
-      query: () => {
+      query: (id:any) => {
         return {
-          url: "/videos/watchlater",
+          url: `/videos/comments/${id.id}`,
           method: "GET",
         };
       },

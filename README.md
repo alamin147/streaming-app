@@ -1,6 +1,5 @@
 # streaming-app
 # Todo
-    - comment
     - rating
     - mobile fullscreen landscape
     - profile edit

@@ -396,3 +396,30 @@ export const CreateComment = async (req: Request, res: Response) => {
         response(res, 500, false, err.message || "Internal Server Error");
     }
 };
+
+
+export const getComments = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+) => {
+    try {
+        const { videoId } = req.params;
+        // console.log(videoId)
+        const comments = await Comment.find({ videoId })
+            .sort({ createdAt: -1 })
+            .populate({
+                path: "userId",
+                select: "name img createdAt",
+                options: { lean: true }
+            })
+            .lean();
+            console.log(comments)
+        response(res, 200, true, "Comments fetched successfully", {
+            comments
+        });
+    } catch (err: any) {
+        console.log(err)
+        response(res, 500, false, err.message || "Internal Server Error");
+    }
+};
