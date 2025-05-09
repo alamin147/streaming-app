@@ -13,6 +13,7 @@ import {
     useGetSingleVideoQuery,
     useIsBookmarkedQuery,
     useUploadRecentVideosMutation,
+    useRecordVideoViewMutation,
 } from "@/redux/features/videos/videosApi";
 import toast from "react-hot-toast";
 import CommentSection from "@/components/commentSection/CommentSection";
@@ -32,6 +33,10 @@ export const SingleVideo = () => {
     const { data: isBookmarked, isLoading: bookmarkedLoad } =
         useIsBookmarkedQuery(videoId);
 
+    const [viewCounted, setViewCounted] = useState(false);
+    const [watchTimer, setWatchTimer] = useState<NodeJS.Timeout | null>(null);
+    const [recordVideoView] = useRecordVideoViewMutation();
+
     useEffect(() => {
         window.scrollTo(0, 0);
     }, []);
@@ -45,6 +50,7 @@ export const SingleVideo = () => {
         views = 0,
         _id = "",
     } = video;
+
     useEffect(() => {
         if (videoRef.current && videoUrl) {
             if (videoUrl.includes(".m3u8") && Hls.isSupported()) {
@@ -69,22 +75,67 @@ export const SingleVideo = () => {
         }
     }, [videoUrl]);
 
+    useEffect(() => {
+        const viewedVideos = JSON.parse(localStorage.getItem('viewedVideos') || '{}');
+        if (videoId && videoId.id && viewedVideos[videoId.id]) {
+            setViewCounted(true);
+        }
+    }, [videoId]);
+
     const handlePlayClick = async () => {
         if (videoRef.current) {
             videoRef.current.play();
             setIsPlaying(true);
+
             if (called) {
                 await uploadRecentVideos(videoId);
                 setCalled(false);
+            }
+
+            if (!viewCounted) {
+                if (watchTimer) {
+                    clearTimeout(watchTimer);
+                }
+
+                const timer = setTimeout(async () => {
+                    try {
+                        await recordVideoView(videoId.id);
+
+                        const viewedVideos = JSON.parse(localStorage.getItem('viewedVideos') || '{}');
+                        viewedVideos[videoId.id] = Date.now();
+                        localStorage.setItem('viewedVideos', JSON.stringify(viewedVideos));
+
+                        setViewCounted(true);
+                    } catch (error) {
+                        console.error("Failed to record view", error);
+                    }
+                }, 10000);
+
+                setWatchTimer(timer);
             }
         }
     };
 
     const handleVideoStateChange = () => {
         if (videoRef.current) {
-            setIsPlaying(!videoRef.current.paused);
+            const isCurrentlyPlaying = !videoRef.current.paused;
+            setIsPlaying(isCurrentlyPlaying);
+
+            if (!isCurrentlyPlaying && watchTimer) {
+                clearTimeout(watchTimer);
+                setWatchTimer(null);
+            }
         }
     };
+
+    useEffect(() => {
+        return () => {
+            if (watchTimer) {
+                clearTimeout(watchTimer);
+            }
+        };
+    }, [watchTimer]);
+
     const LoadingSpinner = () => (
         <div className="min-h-screen flex items-center justify-center">
             <div className="flex flex-col items-center">

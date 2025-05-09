@@ -90,6 +90,7 @@ export const addView = async (
     next: NextFunction
 ) => {
     try {
+        // The minimum watch time requirement is enforced on the client side
         await Video.findByIdAndUpdate(req.params.id, {
             $inc: { views: 1 },
         });
@@ -278,7 +279,6 @@ export const uploadVideo: any = async (req: Request, res: Response) => {
         );
     }
 
-    console.log(videoFile, thumbnailFile, req.body);
 
     const { title, desc } = req.body;
     try {
@@ -321,7 +321,6 @@ export const uploadVideo: any = async (req: Request, res: Response) => {
 
         response(res, 201, true, "Video uploaded successfully", savedVideo);
     } catch (error: any) {
-        console.log(error);
         response(res, 500, false, error.message || "Internal Server Error");
     }
 };
@@ -392,7 +391,6 @@ export const CreateComment = async (req: Request, res: Response) => {
 
         return response(res, 201, true, "Comment Added");
     } catch (err: any) {
-        console.log(err);
         response(res, 500, false, err.message || "Internal Server Error");
     }
 };
@@ -413,12 +411,10 @@ export const getComments = async (
                 options: { lean: true },
             })
             .lean();
-        console.log(comments);
         response(res, 200, true, "Comments fetched successfully", {
             comments,
         });
     } catch (err: any) {
-        console.log(err);
         response(res, 500, false, err.message || "Internal Server Error");
     }
 };
@@ -458,7 +454,6 @@ export const createRating = async (req: Request, res: Response) => {
             updatedVideo,
         });
     } catch (err: any) {
-        console.log(err);
         response(res, 500, false, err.message || "Internal Server Error");
     }
 };

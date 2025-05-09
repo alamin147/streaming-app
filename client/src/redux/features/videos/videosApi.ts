@@ -78,6 +78,15 @@ const videoApi = baseApi.injectEndpoints({
       },
       providesTags: ["watchLater"],
     }),
+    recordVideoView: builder.mutation({
+      query: (id) => {
+        return {
+          url: `/videos/view/${id}`,
+          method: "PUT",
+        };
+      },
+      invalidatesTags: ["video"],
+    }),
   }),
 });
 
@@ -89,5 +98,6 @@ export const {
   useUploadRecentVideosMutation,
   useAddToWatchLaterMutation,
   useIsBookmarkedQuery,
-  useGetWatchLaterVideosQuery
+  useGetWatchLaterVideosQuery,
+  useRecordVideoViewMutation
 } = videoApi;
