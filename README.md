@@ -1,6 +1,7 @@
 # streaming-app
 # Todo
-    - rating
+    - views
+    - create new model for tags(action, adv, hr..)
     - mobile fullscreen landscape
     - profile edit
     - few of menu list implementation

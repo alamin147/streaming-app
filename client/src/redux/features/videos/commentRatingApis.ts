@@ -23,11 +23,23 @@ const videoFeatures = baseApi.injectEndpoints({
       invalidatesTags: ["comment"],
     }),
 
+    addRating: builder.mutation({
+      query: (data) => {
+        return {
+          url: `/videos/ratings/addRating/${data.videoId}`,
+          method: "PATCH",
+          body: data,
+        };
+      },
+      invalidatesTags: ["video"],
+    }),
+
   }),
 });
 
 export const {
 
   useAddCommentMutation,
-  useGetCommentsQuery
+  useGetCommentsQuery,
+  useAddRatingMutation
 } = videoFeatures;

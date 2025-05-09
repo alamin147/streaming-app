@@ -16,6 +16,7 @@ import {
 } from "@/redux/features/videos/videosApi";
 import toast from "react-hot-toast";
 import CommentSection from "@/components/commentSection/CommentSection";
+import RatingSection from "@/components/ratingSection/RatingSection";
 
 export const SingleVideo = () => {
     const videoId: any = useParams();
@@ -225,7 +226,7 @@ export const SingleVideo = () => {
                         {/* Content */}
                         <div className="flex-1 flex flex-col">
                             <div className="flex flex-col gap-4 h-full">
-                                {/* Title and Rating */}
+                                {/* Title and Controls */}
                                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                                     <h1 className="text-3xl md:text-4xl lg:text-5xl font-semibold text-gray-800 dark:text-gray-300">
                                         {title}
@@ -241,6 +242,7 @@ export const SingleVideo = () => {
                                                 </span>
                                             </div>
                                         </div>
+
                                         {isBookmarked?.data?.bookmarked ? (
                                             <BsBookmarkCheckFill
                                                 className="text-2xl md:text-3xl text-yellow-600 dark:text-yellow-500 cursor-pointer"
@@ -254,6 +256,13 @@ export const SingleVideo = () => {
                                         )}
                                     </div>
                                 </div>
+
+                                {/* Replace the rating system with the new component */}
+                                <RatingSection
+                                    videoId={_id}
+                                    videoRating={video.ratings || 0}
+                                    howManyRated={video.howManyRated || 0}
+                                />
 
                                 {/* Badges and Rating */}
                                 <div className="flex justify-between flex-wrap items-center gap-3">
@@ -287,6 +296,7 @@ export const SingleVideo = () => {
                                         </span>
                                     </div>
                                 </div>
+
                                 <p className="text-gray-700 dark:text-gray-300 text-base md:text-lg">
                                     {des}
                                 </p>

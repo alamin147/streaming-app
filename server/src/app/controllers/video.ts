@@ -380,8 +380,8 @@ export const fetchWatchLaterVideos = async (
 
 export const CreateComment = async (req: Request, res: Response) => {
     try {
-        const {videoId} = req.body;
-        const {comment} = req.body;
+        const { videoId } = req.body;
+        const { comment } = req.body;
 
         const Comments = new Comment({
             userId: req.user.id,
@@ -392,11 +392,10 @@ export const CreateComment = async (req: Request, res: Response) => {
 
         return response(res, 201, true, "Comment Added");
     } catch (err: any) {
-        console.log(err)
+        console.log(err);
         response(res, 500, false, err.message || "Internal Server Error");
     }
 };
-
 
 export const getComments = async (
     req: Request,
@@ -411,15 +410,55 @@ export const getComments = async (
             .populate({
                 path: "userId",
                 select: "name img createdAt",
-                options: { lean: true }
+                options: { lean: true },
             })
             .lean();
-            console.log(comments)
+        console.log(comments);
         response(res, 200, true, "Comments fetched successfully", {
-            comments
+            comments,
         });
     } catch (err: any) {
-        console.log(err)
+        console.log(err);
+        response(res, 500, false, err.message || "Internal Server Error");
+    }
+};
+
+export const createRating = async (req: Request, res: Response) => {
+    try {
+        const { videoId } = req.params;
+        const { rating } = req.body;
+        const ratingValue = Number(rating);
+        if (isNaN(ratingValue) || ratingValue < 1 || ratingValue > 5) {
+            return response(
+                res,
+                400,
+                false,
+                "Rating must be a number between 1 and 5"
+            );
+        }
+        const video = await Video.findById(videoId);
+        if (!video) {
+            return response(res, 404, false, "Video not found");
+        }
+        const currentTotalRating = video.ratings * video.howManyRated;
+        const newTotalRating = currentTotalRating + ratingValue;
+        const newHowManyRated = video.howManyRated + 1;
+        const newAverageRating = newTotalRating / newHowManyRated;
+
+        const updatedVideo = await Video.findByIdAndUpdate(
+            videoId,
+            {
+                ratings: parseFloat(newAverageRating.toFixed(1)),
+                howManyRated: newHowManyRated,
+            },
+            { new: true }
+        );
+
+        return response(res, 200, true, "Rating added successfully", {
+            updatedVideo,
+        });
+    } catch (err: any) {
+        console.log(err);
         response(res, 500, false, err.message || "Internal Server Error");
     }
 };

@@ -18,6 +18,7 @@ import {
   updateVideo,
   uploadVideo,
   watchLater,
+  createRating
 } from "../controllers/video";
 
 const videoRoutes = express.Router();
@@ -33,6 +34,7 @@ videoRoutes.post(
   uploadVideo
 );
 
+videoRoutes.patch("/ratings/addRating/:videoId", verifyToken, createRating);
 videoRoutes.get("/comments/:videoId", verifyToken, getComments);
 videoRoutes.post("/comments", verifyToken, CreateComment);
 videoRoutes.get("/watchlater", verifyToken, fetchWatchLaterVideos);
