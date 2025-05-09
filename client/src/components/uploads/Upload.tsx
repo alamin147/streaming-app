@@ -20,12 +20,12 @@ export default function VideoUploadModal({
   const { register, handleSubmit, setValue, watch, reset } = useForm();
   const [uploadProgress, setUploadProgress] = useState<number>(0);
   const [isUploading, setIsUploading] = useState<boolean>(false);
+  const [videoDuration, setVideoDuration] = useState<number>(0);
+  const [videoDetails, setVideoDetails] = useState<string>("");
 
-  // Watching form fields
   const thumbnail = watch("thumbnail");
   const videoFile = watch("video");
 
-  // Handle file selection
   const handleFileChange = (
     event: React.ChangeEvent<HTMLInputElement>,
     type: "thumbnail" | "video"
@@ -33,25 +33,62 @@ export default function VideoUploadModal({
     const file = event.target.files?.[0];
     if (file) {
       setValue(type, file);
+
+      if (type === "video") {
+        calculateVideoDuration(file);
+      }
     }
+  };
+
+  const calculateVideoDuration = (file: File) => {
+    const videoUrl = URL.createObjectURL(file);
+    const video = document.createElement('video');
+
+    video.onloadedmetadata = () => {
+      const duration = video.duration;
+      setVideoDuration(Math.round(duration));
+
+      let durationText = "";
+      const hours = Math.floor(duration / 3600);
+      const minutes = Math.floor((duration % 3600) / 60);
+      const seconds = Math.floor(duration % 60);
+
+      if (hours > 0) {
+        durationText = `${hours}hr${minutes > 0 ? ` ${minutes}min` : ''}`;
+      } else if (minutes > 0) {
+        durationText = `${minutes}min`;
+      } else {
+        durationText = `${seconds}sec`;
+      }
+
+      setVideoDetails(`${file.name} (${durationText})`);
+      URL.revokeObjectURL(videoUrl);
+    };
+
+    video.src = videoUrl;
+    video.onerror = () => {
+      console.error("Error loading video metadata");
+      URL.revokeObjectURL(videoUrl);
+    };
   };
 
   const [uploadVideo] = useUploadVideoMutation();
   const onSubmit = async (data: any) => {
     if (!data.video) return alert("Please select a video file.");
-    11929445
-    11534336
+
     if(data.video.size>(100*1024*1024))
     {
       let size=Number(data.video.size);
       toast.error(`Video must be under 100MB. Your video size is: ${(size/(1024*1024)).toFixed(2)}MB`)
       return;
     }
+
     const formData = new FormData();
     if (data.title) formData.append("title", data.title);
     if (data.desc) formData.append("desc", data.desc);
     if (data.thumbnail) formData.append("thumbnail", data.thumbnail);
     if (data.video) formData.append("video", data.video);
+    formData.append("duration", videoDuration.toString());
 
     try {
       setIsUploading(true);
@@ -60,12 +97,14 @@ export default function VideoUploadModal({
       const response = await uploadVideo(formData).unwrap();
 
       console.log(response);
-      alert("Video uploaded successfully!");
+      toast.success("Video uploaded successfully!");
       reset();
+      setVideoDuration(0);
+      setVideoDetails("");
       setIsOpens(false);
     } catch (error) {
       console.error("Upload failed:", error);
-      alert("Upload failed. Please try again.");
+      toast.error("Upload failed. Please try again.");
     } finally {
       setIsUploading(false);
     }
@@ -151,7 +190,7 @@ export default function VideoUploadModal({
               {videoFile ? (
                 <div className="text-sm text-center">
                   <Film className="w-10 h-10 text-yellow-500 mb-2" />
-                  <p>{videoFile.name}</p>
+                  <p>{videoDetails}</p>
                 </div>
               ) : (
                 <Film className="w-10 h-10 text-gray-400 mb-2" />

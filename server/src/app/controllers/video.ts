@@ -252,6 +252,7 @@ export const uploadVideo: any = async (req: Request, res: Response) => {
     let uploadedVideo: any;
     let imgUrl: any;
     let videoUrl: any;
+
     if (
         !req.files ||
         !(req.files as any).video ||
@@ -265,7 +266,6 @@ export const uploadVideo: any = async (req: Request, res: Response) => {
         );
     }
 
-    // console.log("files", req.files);
     const videoFile = (req.files as any).video[0];
     const thumbnailFile = (req.files as any).thumbnail[0];
 
@@ -278,9 +278,9 @@ export const uploadVideo: any = async (req: Request, res: Response) => {
             "Video or thumbnail size exceeds 100MB."
         );
     }
+    const { title, desc, duration } = req.body;
+    const videoDuration = duration ? parseInt(duration) : 0;
 
-
-    const { title, desc } = req.body;
     try {
         if (thumbnailFile) {
             const filename = `${title.replace(/ /g, "_")}_${new Date()
@@ -315,6 +315,7 @@ export const uploadVideo: any = async (req: Request, res: Response) => {
             des: desc,
             videoUrl: videoUrl,
             imgUrl: imgUrl,
+            duration: videoDuration 
         });
 
         const savedVideo = await newVideo.save();
