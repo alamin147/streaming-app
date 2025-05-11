@@ -4,6 +4,7 @@ import { X, Upload, ImageIcon, Film } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
 import { useUploadVideoMutation } from "@/redux/features/videos/videosApi";
 import toast from "react-hot-toast";
 
@@ -114,34 +115,42 @@ export default function VideoUploadModal({
 
     return (
         <div
-            className={`fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 ${
+            className={`fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 ${
                 isOpen ? "visible opacity-100" : "invisible opacity-0"
             } transition-opacity duration-300`}
             onClick={() => setIsOpens(false)}
         >
             <div
-                className="bg-white dark:bg-gray-900 p-6 rounded-2xl shadow-2xl w-full max-w-md relative transition-all duration-300"
+                className="bg-background border border-gray-800/20 dark:border-gray-100/10 p-6 rounded-lg shadow-2xl w-full max-w-[525px] relative transition-all duration-300"
                 onClick={(e) => e.stopPropagation()}
             >
-                {/* Close Button */}
-                <button
-                    className="absolute top-4 right-4 text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition-colors"
-                    onClick={() => setIsOpens(false)}
-                >
-                    <X className="w-5 h-5" />
-                </button>
+                <div className="absolute right-4 top-4">
+                    <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8 rounded-md opacity-70 ring-offset-background transition-opacity hover:opacity-100"
+                        onClick={() => setIsOpens(false)}
+                    >
+                        <X className="h-4 w-4" />
+                        <span className="sr-only">Close</span>
+                    </Button>
+                </div>
 
-                <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-6 text-center">
-                    Upload Your Video
-                </h2>
+                <div className="space-y-1.5 text-center sm:text-left mb-6">
+                    <h2 className="text-lg font-semibold leading-none tracking-tight">
+                        Upload Your Video
+                    </h2>
+                    <p className="text-sm text-muted-foreground">
+                        Fill in the details and upload your video
+                    </p>
+                </div>
 
                 <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
                     {/* Title */}
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                            Title
-                        </label>
+                    <div className="grid gap-2">
+                        <Label htmlFor="title">Title</Label>
                         <Input
+                            id="title"
                             type="text"
                             placeholder="Enter video title"
                             {...register("title", { required: true })}
@@ -149,74 +158,103 @@ export default function VideoUploadModal({
                     </div>
 
                     {/* Description */}
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                            Description
-                        </label>
+                    <div className="grid gap-2">
+                        <Label htmlFor="desc">Description</Label>
                         <Textarea
+                            id="desc"
                             placeholder="Describe your video"
+                            className="resize-none min-h-[80px]"
                             {...register("desc")}
                         />
                     </div>
 
-                    {/* Thumbnail Upload */}
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                            Thumbnail
-                        </label>
-                        <div className="border-2 border-dashed rounded-lg p-4 flex flex-col items-center">
-                            {thumbnail ? (
-                                <img
-                                    src={URL.createObjectURL(thumbnail)}
-                                    alt="Thumbnail preview"
-                                    className="w-full h-40 object-cover rounded-md"
-                                />
-                            ) : (
-                                <ImageIcon className="w-10 h-10 text-gray-400 mb-2" />
-                            )}
-                            <label className="mt-2 inline-flex items-center px-4 py-2 bg-yellow-500 hover:bg-yellow-400 text-black rounded-lg cursor-pointer transition-colors">
-                                <span>Browse files</span>
-                                <input
-                                    type="file"
-                                    accept="image/*"
-                                    className="hidden"
-                                    onChange={(e) =>
-                                        handleFileChange(e, "thumbnail")
-                                    }
-                                />
-                            </label>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {/* Thumbnail Upload */}
+                        <div className="grid gap-2">
+                            <Label htmlFor="thumbnail">Thumbnail</Label>
+                            <div className="relative h-32 border border-dashed rounded-md p-1 flex flex-col items-center justify-center bg-muted/20 hover:bg-muted/30 transition-colors">
+                                {thumbnail ? (
+                                    <>
+                                        <img
+                                            src={URL.createObjectURL(thumbnail)}
+                                            alt="Thumbnail preview"
+                                            className="w-full h-full object-cover rounded-md"
+                                        />
+                                        <div className="absolute inset-0 bg-black/30 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity rounded-md">
+                                            <label className="cursor-pointer">
+                                                <span className="inline-flex items-center px-4 py-2 bg-secondary text-secondary-foreground hover:bg-secondary/80 rounded-md text-sm font-medium">Change</span>
+                                                <input
+                                                    type="file"
+                                                    accept="image/*"
+                                                    className="hidden"
+                                                    onChange={(e) => handleFileChange(e, "thumbnail")}
+                                                />
+                                            </label>
+                                        </div>
+                                    </>
+                                ) : (
+                                    <>
+                                        <ImageIcon className="h-10 w-10 text-muted-foreground mb-2" />
+                                        <label className="cursor-pointer">
+                                            <span className="inline-flex items-center px-4 py-2 bg-yellow-500/20 text-yellow-500 hover:bg-yellow-500/30 rounded-md text-sm font-medium">
+                                                Choose Image
+                                            </span>
+                                            <input
+                                                type="file"
+                                                accept="image/*"
+                                                className="hidden"
+                                                onChange={(e) => handleFileChange(e, "thumbnail")}
+                                            />
+                                        </label>
+                                    </>
+                                )}
+                            </div>
+                        </div>
+
+                        {/* Video Upload */}
+                        <div className="grid gap-2">
+                            <Label htmlFor="video">Video File</Label>
+                            <div className="relative h-32 border border-dashed rounded-md p-1 flex flex-col items-center justify-center bg-muted/20 hover:bg-muted/30 transition-colors">
+                                {videoFile ? (
+                                    <>
+                                        <div className="text-sm text-center">
+                                            <Film className="h-8 w-8 text-yellow-500 mb-2 mx-auto" />
+                                            <p className="text-xs font-medium mb-2 line-clamp-1">{videoDetails}</p>
+                                            <label className="cursor-pointer">
+                                                <span className="inline-flex items-center px-4 py-2 bg-yellow-500/20 text-yellow-500 hover:bg-yellow-500/30 rounded-md text-sm font-medium">
+                                                    Change Video
+                                                </span>
+                                                <input
+                                                    type="file"
+                                                    accept="video/*"
+                                                    className="hidden"
+                                                    onChange={(e) => handleFileChange(e, "video")}
+                                                />
+                                            </label>
+                                        </div>
+                                    </>
+                                ) : (
+                                    <>
+                                        <Film className="h-10 w-10 text-muted-foreground mb-2" />
+                                        <label className="cursor-pointer">
+                                            <span className="inline-flex items-center px-4 py-2 bg-yellow-500/20 text-yellow-500 hover:bg-yellow-500/30 rounded-md text-sm font-medium">
+                                                Choose Video
+                                            </span>
+                                            <input
+                                                type="file"
+                                                accept="video/*"
+                                                className="hidden"
+                                                onChange={(e) => handleFileChange(e, "video")}
+                                            />
+                                        </label>
+                                    </>
+                                )}
+                            </div>
                         </div>
                     </div>
 
-                    {/* Video Upload */}
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                            Video File
-                        </label>
-                        <div className="border-2 border-dashed rounded-lg p-4 flex flex-col items-center">
-                            {videoFile ? (
-                                <div className="text-sm text-center">
-                                    <Film className="w-10 h-10 text-yellow-500 mb-2" />
-                                    <p>{videoDetails}</p>
-                                </div>
-                            ) : (
-                                <Film className="w-10 h-10 text-gray-400 mb-2" />
-                            )}
-                            <label className="mt-2 inline-flex items-center px-4 py-2 bg-yellow-500 hover:bg-yellow-400 text-black rounded-lg cursor-pointer transition-colors">
-                                <span>Browse files</span>
-                                <input
-                                    type="file"
-                                    accept="video/*"
-                                    className="hidden"
-                                    onChange={(e) =>
-                                        handleFileChange(e, "video")
-                                    }
-                                />
-                            </label>
-                        </div>
-                    </div>
                     {/* Buttons */}
-                    <div className="flex justify-end gap-3 mt-6">
+                    <div className="flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2 pt-4 mt-2 border-t border-gray-800/20 dark:border-gray-100/10">
                         <Button
                             type="button"
                             variant="outline"
@@ -227,10 +265,10 @@ export default function VideoUploadModal({
                         <Button
                             type="submit"
                             disabled={isUploading}
-                            className="bg-yellow-500 hover:bg-yellow-400 text-black transition-colors"
+                            className="bg-yellow-500 hover:bg-yellow-600 text-black transition-colors"
                         >
                             <Upload className="w-4 h-4 mr-2" />
-                            {isUploading ? "Uploading..." : "Upload"}
+                            {isUploading ? "Uploading..." : "Upload Video"}
                         </Button>
                     </div>
                 </form>
