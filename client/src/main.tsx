@@ -16,6 +16,7 @@ import { Toaster } from "react-hot-toast";
 import {SingleVideo} from "./pages/singleVideoPage/SingleVideo.tsx";
 import MyDashboard from "./pages/dashboard/myDashboard/MyDashboard.tsx";
 import MyVideos from "./pages/dashboard/myVideos/MyVideos.tsx";
+import EditProfile from "./pages/dashboard/editProfile/EditProfile.tsx";
 
 const router = createBrowserRouter([
   {
@@ -42,6 +43,10 @@ const router = createBrowserRouter([
   {
     path: "/dashboard/my-videos",
     element: <MyVideos />,
+  },
+  {
+    path: "/dashboard/edit-profile",
+    element: <EditProfile />,
   },
 ]);
 
