@@ -113,7 +113,7 @@ const data = {
   dashboard: [
     {
       title: "Dashboard",
-      url: "/dashboard",
+      url: "/dashboard/my-dashboard",
       icon: MdDashboard,
     },
     {

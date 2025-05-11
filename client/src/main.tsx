@@ -14,6 +14,8 @@ import LoginPage from "./pages/login/Login.tsx";
 import { RegisterPage } from "./pages/register/Register.tsx";
 import { Toaster } from "react-hot-toast";
 import {SingleVideo} from "./pages/singleVideoPage/SingleVideo.tsx";
+import MyDashboard from "./pages/dashboard/myDashboard/MyDashboard.tsx";
+
 const router = createBrowserRouter([
   {
     path: "/",
@@ -31,6 +33,10 @@ const router = createBrowserRouter([
   {
     path: "/register",
     element: <RegisterPage />,
+  },
+  {
+    path: "/dashboard/my-dashboard",
+    element: <MyDashboard />,
   },
 ]);
 
