@@ -8,7 +8,7 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
-import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
+import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import {
   Card,
   CardContent,
@@ -70,6 +70,7 @@ export default function EditProfile() {
       <SidebarInset>
         <header className="flex h-16 shrink-0 items-center gap-2 border-b border-gray-800/10 dark:border-gray-100/10">
           <div className="flex items-center gap-2 px-4">
+              {<SidebarTrigger className=" flex md:hidden -ml-1" />}
             <Breadcrumb>
               <BreadcrumbList>
                 <BreadcrumbItem className="hidden md:block">
@@ -289,7 +290,7 @@ export default function EditProfile() {
                   </div>
                 </div>
               </CardContent>
-            </Card> 
+            </Card>
 
             {/* Email Preferences */}
             <Card className="border border-gray-800/20 dark:border-gray-100/10">

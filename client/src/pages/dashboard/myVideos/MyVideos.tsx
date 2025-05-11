@@ -7,29 +7,23 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
-import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
+import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import {
   Card,
   CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Separator } from "@/components/ui/separator";
-import { PlaySquare, Search, Edit2, Trash2, MoreHorizontal, Filter, Eye, ThumbsUp, Clock } from "lucide-react";
+import { Search, Edit2, Trash2, MoreHorizontal, Filter, Eye, ThumbsUp, Clock } from "lucide-react";
 import { useState } from "react";
-import { getUserInfo } from "@/redux/authUlits";
-import { Link } from "react-router-dom";
+
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 
+
 export default function MyVideos() {
-  const user = getUserInfo();
   const [searchQuery, setSearchQuery] = useState("");
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
@@ -106,6 +100,7 @@ export default function MyVideos() {
       <SidebarInset>
         <header className="flex h-16 shrink-0 items-center gap-2 border-b border-gray-800/10 dark:border-gray-100/10">
           <div className="flex items-center gap-2 px-4">
+              {<SidebarTrigger className=" flex md:hidden -ml-1" />}
             <Breadcrumb>
               <BreadcrumbList>
                 <BreadcrumbItem className="hidden md:block">
@@ -133,12 +128,7 @@ export default function MyVideos() {
               <h1 className="text-2xl font-bold tracking-tight">My Videos</h1>
               <p className="text-muted-foreground">Manage your uploaded content</p>
             </div>
-            <Link to="/">
-              <Button className="bg-yellow-500 hover:bg-yellow-600 text-black">
-                <PlaySquare className="mr-2 h-4 w-4" />
-                Upload New Video
-              </Button>
-            </Link>
+
           </div>
 
           {/* Search and Filter Bar */}
@@ -171,7 +161,6 @@ export default function MyVideos() {
               </div>
             </CardContent>
           </Card>
-
           {/* Videos List */}
           <div className="space-y-4">
             {filteredVideos.length === 0 ? (

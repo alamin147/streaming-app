@@ -7,7 +7,11 @@ import {
     BreadcrumbPage,
     BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
-import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
+import {
+    SidebarInset,
+    SidebarProvider,
+    SidebarTrigger,
+} from "@/components/ui/sidebar";
 import {
     Card,
     CardContent,
@@ -29,9 +33,12 @@ import { FaPlay } from "react-icons/fa";
 import { useEffect, useState } from "react";
 import { getUserInfo } from "@/redux/authUlits";
 import { Link } from "react-router-dom";
+import VideoUploadModal from "@/components/uploads/Upload";
+import { RiVideoUploadFill } from "react-icons/ri";
 
 export default function MyDashboard() {
     const [progress, setProgress] = useState(13);
+    const [isOpen, setIsOpen] = useState(false);
     const user = getUserInfo();
     useEffect(() => {
         const timer = setTimeout(() => setProgress(66), 500);
@@ -68,6 +75,7 @@ export default function MyDashboard() {
             <SidebarInset>
                 <header className="flex h-16 shrink-0 items-center gap-2 border-b border-gray-800/10 dark:border-gray-100/10">
                     <div className="flex items-center gap-2 px-4">
+                        {<SidebarTrigger className=" flex md:hidden -ml-1" />}
                         <Breadcrumb>
                             <BreadcrumbList>
                                 <BreadcrumbItem className="hidden md:block">
@@ -86,6 +94,7 @@ export default function MyDashboard() {
                         </Breadcrumb>
                     </div>
                 </header>
+                {<VideoUploadModal isOpen={isOpen} setIsOpens={setIsOpen} />}
 
                 <div className="flex flex-1 flex-col gap-6 p-6 overflow-auto">
                     {/* Welcome Section */}
@@ -99,12 +108,13 @@ export default function MyDashboard() {
                             </p>
                         </div>
                         <div className="flex items-center gap-2">
-                            <Link to="/">
-                                <button className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2 bg-yellow-500 text-black">
-                                    <PlaySquare className="mr-2 h-4 w-4" />
-                                    Upload Video
-                                </button>
-                            </Link>
+                            <button
+                                onClick={() => setIsOpen(true)}
+                                className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2 bg-yellow-500 text-black"
+                            >
+                                <RiVideoUploadFill className="mr-2 h-4 w-4" />
+                                Upload Video
+                            </button>
                         </div>
                     </div>
 
