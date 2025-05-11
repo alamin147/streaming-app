@@ -4,3 +4,5 @@
 /client/.env
 *.webp
 stream.ts
+*.jpg
+*.mp4

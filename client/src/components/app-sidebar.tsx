@@ -22,12 +22,17 @@ import {
   SidebarMenu,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
+import { getUserInfo } from "@/redux/authUlits";
+import { FaUser } from "react-icons/fa";
+import { MdDashboard } from "react-icons/md";
+import { IoIosVideocam } from "react-icons/io"
 const data = {
   user: {
     name: "shadcn",
     email: "m@example.com",
     avatar: "/avatars/shadcn.jpg",
   },
+
   navMain: [
     {
       title: "Home",
@@ -78,13 +83,14 @@ const data = {
       icon: Settings,
     },
   ],
+
   navSecondary: [
     {
       title: "Log out",
       url: "#",
       icon: DoorOpen,
     },
-    
+
   ],
   projects: [
     {
@@ -103,10 +109,29 @@ const data = {
       icon: Film,
     },
   ],
+
+  dashboard: [
+    {
+      title: "Dashboard",
+      url: "/dashboard",
+      icon: MdDashboard,
+    },
+    {
+      title: "My videos",
+      url: "/dashboard/my-videos",
+      icon: IoIosVideocam,
+    },
+    {
+      title: "Edit Profile",
+       url: "/dashboard/edit-profile",
+      icon: FaUser,
+    },
+  ],
 };
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
+    const user = getUserInfo();
   return (
     <Sidebar variant="inset"  {...props}>
       <SidebarHeader>
@@ -122,10 +147,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
-        <NavMain items={data.navMain}  />
+        <NavMain title="Menu" items={data.navMain}  />
         <NavProjects projects={data.projects} />
+        {user && <NavMain title="Dashboard" items={data.dashboard}  />}
         <NavSecondary items={data.navSecondary} className="mt-auto" />
-       
+
       </SidebarContent>
       <SidebarFooter>
         {/* <NavUser user={data.user} /> */}

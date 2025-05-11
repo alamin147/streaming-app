@@ -12,4 +12,45 @@ body {
     font-smooth: always;
     -webkit-tap-highlight-color: transparent;
     -webkit-touch-callout: none;
+}
+
+video::-webkit-media-controls-fullscreen-button,
+video::-webkit-media-controls-mute-button,
+video::-webkit-media-controls-volume-slider,
+video::-webkit-media-controls-overflow-button {
+  display: none !important;
+}
+
+video::-webkit-media-controls-fullscreen-button {
+  display: none !important;
+}
+
+.video-container:-webkit-full-screen,
+.video-container:-moz-full-screen,
+.video-container:fullscreen {
+  width: 100vw !important;
+  height: 100vh !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.video-container:-webkit-full-screen video,
+.video-container:-moz-full-screen video,
+.video-container:fullscreen video {
+  max-width: 100% !important;
+  max-height: 100% !important;
+}
+
+@media (orientation: landscape) and (max-width: 768px) {
+  .video-container {
+    width: 100vw;
+    height: 100vh;
   }
+}
+
+@media (max-width: 768px) {
+  video::-webkit-media-controls-panel {
+    opacity: 0.4 !important;
+  }
+}

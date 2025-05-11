@@ -8,6 +8,7 @@ import { IoIosMoon } from "react-icons/io";
 import { Avatar, AvatarFallback } from "@radix-ui/react-avatar";
 import { Button } from "@/components/ui/button";
 import Hls from "hls.js";
+import screenfull from "screenfull";
 import {
     useAddToWatchLaterMutation,
     useGetSingleVideoQuery,
@@ -22,7 +23,9 @@ import RatingSection from "@/components/ratingSection/RatingSection";
 export const SingleVideo = () => {
     const videoId: any = useParams();
     const [isPlaying, setIsPlaying] = useState(false);
+    const [isMuted, setIsMuted] = useState(false);
     const videoRef = useRef<HTMLVideoElement>(null);
+    const containerRef = useRef<HTMLDivElement>(null);
     const user = getUserInfo();
     const { theme, setTheme } = useTheme();
     const [called, setCalled] = useState(true);
@@ -36,6 +39,13 @@ export const SingleVideo = () => {
     const [viewCounted, setViewCounted] = useState(false);
     const [watchTimer, setWatchTimer] = useState<NodeJS.Timeout | null>(null);
     const [recordVideoView] = useRecordVideoViewMutation();
+    const [isFullscreen, setIsFullscreen] = useState(false);
+    const [showOptions, setShowOptions] = useState(false);
+    const [playbackSpeed, setPlaybackSpeed] = useState(1);
+
+    const [volume, setVolume] = useState(1);
+    const [currentTime, setCurrentTime] = useState(0);
+    const [duration, setDuration] = useState(0);
 
     useEffect(() => {
         window.scrollTo(0, 0);
@@ -128,6 +138,58 @@ export const SingleVideo = () => {
         }
     };
 
+    const toggleMute = () => {
+        if (videoRef.current) {
+            videoRef.current.muted = !videoRef.current.muted;
+            setIsMuted(videoRef.current.muted);
+        }
+    };
+
+    const handleTimeUpdate = () => {
+        if (videoRef.current) {
+            setCurrentTime(videoRef.current.currentTime);
+        }
+    };
+
+    const handleLoadedMetadata = () => {
+        if (videoRef.current) {
+            setDuration(videoRef.current.duration);
+        }
+    };
+
+    const handleVolumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const newVolume = parseFloat(e.target.value);
+        setVolume(newVolume);
+        if (videoRef.current) {
+            videoRef.current.volume = newVolume;
+            setIsMuted(newVolume === 0);
+        }
+    };
+
+    const handleSeek = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const seekTime = parseFloat(e.target.value);
+        setCurrentTime(seekTime);
+        if (videoRef.current) {
+            videoRef.current.currentTime = seekTime;
+        }
+    };
+
+    const formatTime = (timeInSeconds: number) => {
+        const minutes = Math.floor(timeInSeconds / 60);
+        const seconds = Math.floor(timeInSeconds % 60);
+        return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+    };
+
+    const togglePlay = () => {
+        if (videoRef.current) {
+            if (videoRef.current.paused) {
+                videoRef.current.play();
+            } else {
+                videoRef.current.pause();
+            }
+        }
+    };
+
     useEffect(() => {
         return () => {
             if (watchTimer) {
@@ -135,6 +197,57 @@ export const SingleVideo = () => {
             }
         };
     }, [watchTimer]);
+
+    useEffect(() => {
+        const handleFullscreenChange = () => {
+            if (screenfull.isEnabled) {
+                setIsFullscreen(screenfull.isFullscreen);
+
+                if (screenfull.isFullscreen && window.screen.orientation) {
+                    try {
+                        if (window.innerWidth < 768) {
+                            window.screen.orientation.lock('landscape').catch(() => {
+                                console.log('Orientation lock not supported');
+                            });
+                        }
+                    } catch (e) {
+                        console.error('Failed to lock orientation', e);
+                    }
+                }
+            }
+        };
+
+        if (screenfull.isEnabled) {
+            screenfull.on('change', handleFullscreenChange);
+        }
+
+        const fullscreenChangeEvents = [
+            'fullscreenchange',
+            'webkitfullscreenchange',
+            'mozfullscreenchange',
+            'MSFullscreenChange'
+        ];
+
+        fullscreenChangeEvents.forEach(eventName => {
+            document.addEventListener(eventName, handleFullscreenChange);
+        });
+
+        return () => {
+            if (screenfull.isEnabled) {
+                screenfull.off('change', handleFullscreenChange);
+            }
+
+            fullscreenChangeEvents.forEach(eventName => {
+                document.removeEventListener(eventName, handleFullscreenChange);
+            });
+        };
+    }, []);
+
+    const toggleFullscreen = () => {
+        if (containerRef.current && screenfull.isEnabled) {
+            screenfull.toggle(containerRef.current);
+        }
+    };
 
     const LoadingSpinner = () => (
         <div className="min-h-screen flex items-center justify-center">
@@ -236,17 +349,197 @@ export const SingleVideo = () => {
                 <div className="min-hscreen bg-black text-gray-200">
                     {/* Video Player */}
                     <div className="w-full bg-gray-100 dark:bg-gray-900">
-                        <div className="relative w-full aspect-video max-h-[80vh]">
+                            <div ref={containerRef} className="relative w-full aspect-video max-h-[80vh] video-container">
                             <video
                                 ref={videoRef}
-                                controls
                                 className="w-full h-full object-contain"
                                 poster={imgUrl}
                                 onPlay={handleVideoStateChange}
                                 onPause={handleVideoStateChange}
+                                onTimeUpdate={handleTimeUpdate}
+                                onLoadedMetadata={handleLoadedMetadata}
+                                onVolumeChange={() => {
+                                    if (videoRef.current) {
+                                        setIsMuted(videoRef.current.muted);
+                                        setVolume(videoRef.current.muted ? 0 : videoRef.current.volume);
+                                    }
+                                }}
+                                playsInline
+                                controls={false}
                             ></video>
 
-                            {/* Play button overlay */}
+                            {/* Fully custom controls */}
+                            <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black to-transparent opacity-0 transition-opacity duration-300 hover:opacity-100 p-2 flex flex-col">
+                                {/* Progress bar */}
+                                <div className="w-full flex items-center gap-2 mb-1">
+                                    <span className="text-white text-xs">{formatTime(currentTime)}</span>
+                                    <input
+                                        type="range"
+                                        min="0"
+                                        max={duration || 100}
+                                        value={currentTime}
+                                        onChange={handleSeek}
+                                        className="flex-grow h-1 bg-gray-500 rounded-full appearance-none [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-3 [&::-webkit-slider-thumb]:w-3 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-yellow-500"
+                                    />
+                                    <span className="text-white text-xs">{formatTime(duration)}</span>
+                                </div>
+
+                                {/* Controls row */}
+                                <div className="flex items-center justify-between">
+                                    <div className="flex items-center gap-2">
+                                        <button
+                                            onClick={togglePlay}
+                                            className="text-white p-1.5"
+                                        >
+                                            {isPlaying ? (
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                                    <rect x="6" y="4" width="4" height="16"></rect>
+                                                    <rect x="14" y="4" width="4" height="16"></rect>
+                                                </svg>
+                                            ) : (
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                                    <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                                                </svg>
+                                            )}
+                                        </button>
+
+                                        <div className="flex items-center gap-2">
+                                            <button
+                                                onClick={toggleMute}
+                                                className="text-white p-1.5"
+                                            >
+                                                {isMuted ? (
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                                        <path d="M11 5L6 9H2v6h4l5 4V5z"></path>
+                                                        <line x1="23" y1="9" x2="17" y2="15"></line>
+                                                        <line x1="17" y1="9" x2="23" y2="15"></line>
+                                                    </svg>
+                                                ) : (
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                                        <path d="M11 5L6 9H2v6h4l5 4V5z"></path>
+                                                        <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+                                                    </svg>
+                                                )}
+                                            </button>
+                                            <input
+                                                type="range"
+                                                min="0"
+                                                max="1"
+                                                step="0.01"
+                                                value={volume}
+                                                onChange={handleVolumeChange}
+                                                className="w-16 h-1 bg-gray-500 rounded-full appearance-none [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-3 [&::-webkit-slider-thumb]:w-3 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-yellow-500"
+                                            />
+                                        </div>
+                                    </div>
+
+                                    {/* Controls row - right side */}
+                                    <div className="flex items-center gap-3">
+                                        <button
+                                            onClick={toggleFullscreen}
+                                            className="text-white p-1.5"
+                                        >
+                                            {isFullscreen ? (
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                                    <path d="M4 14h6m0 0v6m0-6l-7 7m17-11h-6m0 0V4m0 6l7-7"></path>
+                                                </svg>
+                                            ) : (
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                                    <path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16h3a2 2 0 0 1 2 2v3"></path>
+                                                </svg>
+                                            )}
+                                        </button>
+
+                                        {/* Options dropdown */}
+                                        <div className="relative">
+                                            <button
+                                                onClick={() => setShowOptions(!showOptions)}
+                                                className="text-white p-1.5"
+                                                aria-label="Options"
+                                            >
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                                    <circle cx="12" cy="12" r="1"></circle>
+                                                    <circle cx="19" cy="12" r="1"></circle>
+                                                    <circle cx="5" cy="12" r="1"></circle>
+                                                </svg>
+                                            </button>
+
+                                            {/* Dropdown menu for options */}
+                                            {showOptions && (
+                                                <div className="absolute right-0 bottom-12 bg-black bg-opacity-90 rounded-md shadow-lg p-3 w-56 z-20">
+                                                    {/* Playback speed options */}
+                                                    <div className="mb-3">
+                                                        <p className="text-white text-sm font-medium mb-1">Playback Speed</p>
+                                                        <div className="flex flex-wrap gap-2">
+                                                            {[0.5, 0.75, 1, 1.25, 1.5, 2].map(speed => (
+                                                                <button
+                                                                    key={speed}
+                                                                    onClick={() => {
+                                                                        if (videoRef.current) {
+                                                                            videoRef.current.playbackRate = speed;
+                                                                            setPlaybackSpeed(speed);
+                                                                            setShowOptions(false);
+                                                                        }
+                                                                    }}
+                                                                    className={`text-xs px-2 py-1 rounded ${
+                                                                        playbackSpeed === speed
+                                                                        ? 'bg-yellow-500 text-black font-medium'
+                                                                        : 'bg-gray-700 text-white'
+                                                                    }`}
+                                                                >
+                                                                    {speed === 1 ? 'Normal' : `${speed}x`}
+                                                                </button>
+                                                            ))}
+                                                        </div>
+                                                    </div>
+
+                                                    {/* Quality selection */}
+                                                    <div className="mb-3">
+                                                        <p className="text-white text-sm font-medium mb-1">Quality</p>
+                                                        <select
+                                                            className="w-full bg-gray-700 text-white px-2 py-1 rounded text-sm"
+                                                            onChange={(e) => {
+                                                                // HLS quality selection would be implemented here
+                                                                console.log("Selected quality:", e.target.value);
+                                                                setShowOptions(false);
+                                                            }}
+                                                        >
+                                                            <option value="auto">Auto</option>
+                                                            <option value="1080p">1080p</option>
+                                                            <option value="720p">720p</option>
+                                                            <option value="480p">480p</option>
+                                                            <option value="360p">360p</option>
+                                                        </select>
+                                                    </div>
+
+                                                    {/* Picture-in-Picture */}
+                                                    <button
+                                                        onClick={() => {
+                                                            if (videoRef.current && document.pictureInPictureEnabled) {
+                                                                if (document.pictureInPictureElement) {
+                                                                    document.exitPictureInPicture();
+                                                                } else {
+                                                                    videoRef.current.requestPictureInPicture();
+                                                                }
+                                                                setShowOptions(false);
+                                                            }
+                                                        }}
+                                                        className="w-full text-left text-sm bg-gray-700 hover:bg-gray-600 text-white px-3 py-2 rounded flex items-center gap-2"
+                                                    >
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                                            <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+                                                            <rect x="12" y="12" width="10" height="5" rx="2" ry="2"></rect>
+                                                        </svg>
+                                                        <span>Picture-in-Picture</span>
+                                                    </button>
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Keep your existing play button overlay */}
                             {!isPlaying && (
                                 <div
                                     className="absolute inset-0 flex items-center justify-center cursor-pointer bg-black bg-opacity-30 transition-opacity hover:bg-opacity-20"
