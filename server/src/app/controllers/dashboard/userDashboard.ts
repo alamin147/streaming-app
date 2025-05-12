@@ -15,3 +15,25 @@ export const getMyVideos = async (
     response(res, 500, false, err.message || "Internal Server Error");
   }
 };
+export const updateMyVideos = async (
+  req: Request,
+  res: Response,
+
+) => {
+  try {
+    const userId=req.user.id;
+    const videoId=req.params.videoId;
+    const { title, des } = req.body;
+    const video = await Video.findOneAndUpdate(
+      { _id: videoId, userId },
+      { title, des },
+      { new: true }
+    );
+    if (!video) {
+      return response(res, 404, false, "Video not found");
+    }
+    response(res, 200, true, "Video updated successfully", { video });
+  } catch (err: any) {
+    response(res, 500, false, err.message || "Internal Server Error");
+  }
+};

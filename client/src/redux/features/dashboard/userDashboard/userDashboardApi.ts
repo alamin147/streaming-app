@@ -13,7 +13,18 @@ const userDashboardApi = baseApi.injectEndpoints({
       },
       providesTags: ["myVideosUser"],
     }),
+   updateMyVideos: builder.mutation({
+      query: (data) => {
+        console.log(data)
+        return {
+          url:  `/dashboard/user/my-videos/${data.videoId}`,
+          method: "PATCH",
+          body: data,
+        };
+      },
+      invalidatesTags: ["myVideosUser"],
+    }),
   }),
 });
 
-export const { useGetMyVideosQuery } = userDashboardApi;
+export const { useGetMyVideosQuery, useUpdateMyVideosMutation } = userDashboardApi;

@@ -14,84 +14,59 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Search, Edit2, Trash2, MoreHorizontal, Filter, Eye, ThumbsUp, Clock } from "lucide-react";
+import { Search, Edit2, Trash2, MoreHorizontal, Filter, Eye, Clock,Star } from "lucide-react";
 import { useState } from "react";
-
+import {FaCalendarWeek } from 'react-icons/fa'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { useGetMyVideosQuery } from "@/redux/features/dashboard/userDashboard/userDashboardApi";
+import { useGetMyVideosQuery, useUpdateMyVideosMutation } from "@/redux/features/dashboard/userDashboard/userDashboardApi";
+import { toast } from "react-hot-toast";
 
 export default function MyVideos() {
   const [searchQuery, setSearchQuery] = useState("");
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [selectedVideo, setSelectedVideo] = useState<any>(null);
-const {data:myVideo} = useGetMyVideosQuery(undefined)
+  const [editedTitle, setEditedTitle] = useState("");
+  const [editedDescription, setEditedDescription] = useState("");
+  const {data:myVideo, refetch} = useGetMyVideosQuery(undefined)
 
-// console.log(myVideo?.data?.myVideos )
-// const myVideos = [
-//     {
-//       id: "1",
-//       title: "Epic Adventure Movie",
-//       description: "An amazing adventure through fantastical lands",
-//       views: 2543,
-//       likes: 423,
-//       imgUrl: "/original-80ca8c0c7cc530cd5bb0a0962acf369a.webp",
-//       duration: "2:15:30",
-//       createdAt: "2025-04-15",
-//       category: "Adventure"
-//     },
-//     {
-//       id: "2",
-//       title: "Action Thriller",
-//       description: "Non-stop action in this thrilling movie",
-//       views: 1876,
-//       likes: 321,
-//       imgUrl: "/original-9f342183ecc26d3bc8bc66e7ba537228.webp",
-//       duration: "1:58:22",
-//       createdAt: "2025-04-28",
-//       category: "Action"
-//     },
-//     {
-//       id: "3",
-//       title: "Sci-Fi Journey",
-//       description: "Explore the depths of space in this sci-fi epic",
-//       views: 3254,
-//       likes: 542,
-//       imgUrl: "/original-7ad6eb1e183e6a0719a1045bf9d6b589.webp",
-//       duration: "2:24:15",
-//       createdAt: "2025-05-05",
-//       category: "Sci-Fi"
-//     },
-//     {
-//       id: "4",
-//       title: "Mystery Thriller",
-//       description: "A twisted tale of mystery and suspense",
-//       views: 1453,
-//       likes: 312,
-//       imgUrl: "/MV5BZGRiZDZhZjItM2M3ZC00Y2IyLTk3Y2MtMWY5YjliNDFkZTJlXkEyXkFqcGc@.jpg",
-//       duration: "2:05:47",
-//       createdAt: "2025-05-10",
-//       category: "Mystery"
-//     },
-//   ];
+  const [updateMyVideos, { isLoading }] = useUpdateMyVideosMutation()
 
-  // Filter videos based on search query
 const myVideos = myVideo?.data?.myVideos || [];
-console.log(myVideos)
-  const filteredVideos = myVideos?.filter(video =>
+  const filteredVideos = myVideos?.filter((video:any) =>
     video?.title.toLowerCase().includes(searchQuery?.toLowerCase()) ||
     video?.des.toLowerCase().includes(searchQuery?.toLowerCase())
   );
 
-  // Handle edit dialog open
-  const handleEditClick = (video: any) => {
+  const handleEditClick = async(video: any) => {
     setSelectedVideo(video);
+    setEditedTitle(video.title);
+    setEditedDescription(video.des);
     setIsEditDialogOpen(true);
   };
 
+  const handleEditSubmit = async () => {
+    try {
+      const res = await updateMyVideos({
+        videoId: selectedVideo._id,
+        title: editedTitle,
+        des: editedDescription,
+      }).unwrap();
+
+      if (res.status === 200) {
+        toast.success("Video updated successfully");
+        setIsEditDialogOpen(false);
+        refetch(); // Refresh the videos list
+      } else {
+        toast.error("Failed to update video");
+      }
+    } catch (error) {
+      toast.error("An error occurred while updating the video");
+    }
+  }
   const handleDeleteClick = (video: any) => {
     setSelectedVideo(video);
     setIsDeleteDialogOpen(true);
@@ -172,14 +147,14 @@ console.log(myVideos)
                 <p className="text-muted-foreground mt-2">Try adjusting your search query</p>
               </div>
             ) : (
-              filteredVideos?.map((video) => (
+              filteredVideos?.map((video:any) => (
                 <Card key={video._id} className="border border-gray-800/20 dark:border-gray-100/10 overflow-hidden hover:border-yellow-500/30 transition-colors">
                   <div className="flex flex-col sm:flex-row">
-                    <div className="relative sm:w-48 h-40 sm:h-auto">
+                    <div className="relative sm:w-48 h-40 max-h-48 sm:h-auto">
                       <img
                         src={video.imgUrl}
                         alt={video.title}
-                        className="w-full h-full object-cover"
+                        className="w-full h-full obejct-cover"
                       />
                       <div className="absolute bottom-2 right-2 bg-black bg-opacity-70 text-white text-xs px-2 py-1 rounded">
                         {video.duration}
@@ -198,16 +173,6 @@ console.log(myVideos)
                               <span className="sr-only">More</span>
                             </Button>
                           </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end">
-                            <DropdownMenuItem onClick={() => handleEditClick(video)}>
-                              <Edit2 className="mr-2 h-4 w-4" />
-                              Edit
-                            </DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => handleDeleteClick(video)} className="text-red-500 focus:text-red-500">
-                              <Trash2 className="mr-2 h-4 w-4" />
-                              Delete
-                            </DropdownMenuItem>
-                          </DropdownMenuContent>
                         </DropdownMenu>
                       </div>
 
@@ -217,20 +182,26 @@ console.log(myVideos)
                           <span>{video?.views?.toLocaleString()}</span>
                         </div>
                         <div className="flex items-center gap-1">
-                          <ThumbsUp className="h-3.5 w-3.5" />
-                          <span>{video?.likes?.toLocaleString()}</span>
+                          <Star className="h-3.5 w-3.5" />
+                          <span>{video?.ratings?.toLocaleString()}</span>
                         </div>
                         <div className="flex items-center gap-1">
-                          <Clock className="h-3.5 w-3.5" />
-                          <span>Uploaded {video?.createdAt}</span>
+                          <FaCalendarWeek className="h-3.5 w-3.5" />
+                          <span>{video?.createdAt?.split('T')[0]}</span>
+                          <Clock className="ms-2 h-3.5 w-3.5" />
+                          <span>{(video?.createdAt?.split('T')[1]).split('.')[0]}</span>
                         </div>
                       </div>
 
                       <div className="mt-4 flex justify-between items-center">
                         <div>
-                          <span className="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent bg-yellow-500/10 text-yellow-500 hover:bg-yellow-500/20">
-                            {video?.category}
-                          </span>
+                            {
+                                video?.tags?.map((tag: string, index: number) => (
+                                   <span key={index} className="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent bg-yellow-500/10 text-yellow-500 hover:bg-yellow-500/20 mr-1">
+                                    {tag}
+                                  </span >
+                                    ))
+                            }
                         </div>
                         <div className="flex gap-2">
                           <Button
@@ -275,23 +246,42 @@ console.log(myVideos)
             <div className="grid gap-4 py-4">
               <div className="grid gap-2">
                 <Label htmlFor="title">Title</Label>
-                <Input id="title" defaultValue={selectedVideo?.title} />
+                <Input
+                  id="title"
+                  value={editedTitle}
+                  onChange={(e) => setEditedTitle(e.target.value)}
+                />
               </div>
               <div className="grid gap-2">
                 <Label htmlFor="description">Description</Label>
-                <Textarea id="description" defaultValue={selectedVideo?.des} />
+                <Textarea
+                className="max-h-60"
+                  id="description"
+                  value={editedDescription}
+                  onChange={(e) => setEditedDescription(e.target.value)}
+                />
               </div>
-              <div className="grid gap-2">
-                <Label htmlFor="category">Category</Label>
-                <Input id="category" defaultValue={selectedVideo?.category} />
+              <div className="">
+                <p  className="mb-1">Tags:</p>
+                {
+                    selectedVideo?.tags?.map((tag: string, index: number) => (
+                                   <span key={index+`13`} className="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent bg-yellow-500/10 text-yellow-500 hover:bg-yellow-500/20 mr-1">
+                                    {tag}
+                                  </span >
+                                    ))
+                            }
               </div>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-2 gap-4 mt-3">
                 <div className="grid gap-2">
                   <Label htmlFor="thumbnail">Thumbnail</Label>
-                  <div className="relative h-32 bg-muted rounded-md overflow-hidden">
-                    <img src={selectedVideo?.imgUrl} alt={selectedVideo.title} className="w-full h-full object-cover" />
+                  <div className="relative w-full h-32 bg-muted rounded-md overflow-hidden">
+                    <img
+                      src={selectedVideo?.imgUrl}
+                      alt={selectedVideo?.title}
+                      className="w-full h-full object-cover"
+                    />
                     <div className="absolute inset-0 bg-black/30 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity">
-                      <Button variant="secondary" size="sm">Change</Button>
+                      {/* <Button variant="secondary" size="sm">Change</Button> */}
                     </div>
                   </div>
                 </div>
@@ -307,8 +297,12 @@ console.log(myVideos)
                       <span>{selectedVideo?.views?.toLocaleString()}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-muted-foreground">Likes:</span>
-                      <span>{selectedVideo?.likes?.toLocaleString()}</span>
+                      <span className="text-muted-foreground">Ratings:</span>
+                      <span>{selectedVideo?.ratings?.toLocaleString()}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Video Uploaded:</span>
+                      <span>{(selectedVideo?.createdAt)?.split('T')[0]?.toLocaleString()}</span>
                     </div>
                   </div>
                 </div>
@@ -319,8 +313,12 @@ console.log(myVideos)
             <Button variant="outline" onClick={() => setIsEditDialogOpen(false)}>
               Cancel
             </Button>
-            <Button className="bg-yellow-500 hover:bg-yellow-600 text-black">
-              Save Changes
+            <Button
+              className="bg-yellow-500 hover:bg-yellow-600 text-black"
+              onClick={handleEditSubmit}
+              disabled={isLoading}
+            >
+              {isLoading ? "Saving..." : "Save Changes"}
             </Button>
           </DialogFooter>
         </DialogContent>
