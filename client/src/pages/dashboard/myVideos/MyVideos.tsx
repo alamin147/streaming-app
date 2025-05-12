@@ -21,65 +21,69 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-
+import { useGetMyVideosQuery } from "@/redux/features/dashboard/userDashboard/userDashboardApi";
 
 export default function MyVideos() {
   const [searchQuery, setSearchQuery] = useState("");
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [selectedVideo, setSelectedVideo] = useState<any>(null);
+const {data:myVideo} = useGetMyVideosQuery(undefined)
 
-  const myVideos = [
-    {
-      id: "1",
-      title: "Epic Adventure Movie",
-      description: "An amazing adventure through fantastical lands",
-      views: 2543,
-      likes: 423,
-      imgUrl: "/original-80ca8c0c7cc530cd5bb0a0962acf369a.webp",
-      duration: "2:15:30",
-      createdAt: "2025-04-15",
-      category: "Adventure"
-    },
-    {
-      id: "2",
-      title: "Action Thriller",
-      description: "Non-stop action in this thrilling movie",
-      views: 1876,
-      likes: 321,
-      imgUrl: "/original-9f342183ecc26d3bc8bc66e7ba537228.webp",
-      duration: "1:58:22",
-      createdAt: "2025-04-28",
-      category: "Action"
-    },
-    {
-      id: "3",
-      title: "Sci-Fi Journey",
-      description: "Explore the depths of space in this sci-fi epic",
-      views: 3254,
-      likes: 542,
-      imgUrl: "/original-7ad6eb1e183e6a0719a1045bf9d6b589.webp",
-      duration: "2:24:15",
-      createdAt: "2025-05-05",
-      category: "Sci-Fi"
-    },
-    {
-      id: "4",
-      title: "Mystery Thriller",
-      description: "A twisted tale of mystery and suspense",
-      views: 1453,
-      likes: 312,
-      imgUrl: "/MV5BZGRiZDZhZjItM2M3ZC00Y2IyLTk3Y2MtMWY5YjliNDFkZTJlXkEyXkFqcGc@.jpg",
-      duration: "2:05:47",
-      createdAt: "2025-05-10",
-      category: "Mystery"
-    },
-  ];
+// console.log(myVideo?.data?.myVideos )
+// const myVideos = [
+//     {
+//       id: "1",
+//       title: "Epic Adventure Movie",
+//       description: "An amazing adventure through fantastical lands",
+//       views: 2543,
+//       likes: 423,
+//       imgUrl: "/original-80ca8c0c7cc530cd5bb0a0962acf369a.webp",
+//       duration: "2:15:30",
+//       createdAt: "2025-04-15",
+//       category: "Adventure"
+//     },
+//     {
+//       id: "2",
+//       title: "Action Thriller",
+//       description: "Non-stop action in this thrilling movie",
+//       views: 1876,
+//       likes: 321,
+//       imgUrl: "/original-9f342183ecc26d3bc8bc66e7ba537228.webp",
+//       duration: "1:58:22",
+//       createdAt: "2025-04-28",
+//       category: "Action"
+//     },
+//     {
+//       id: "3",
+//       title: "Sci-Fi Journey",
+//       description: "Explore the depths of space in this sci-fi epic",
+//       views: 3254,
+//       likes: 542,
+//       imgUrl: "/original-7ad6eb1e183e6a0719a1045bf9d6b589.webp",
+//       duration: "2:24:15",
+//       createdAt: "2025-05-05",
+//       category: "Sci-Fi"
+//     },
+//     {
+//       id: "4",
+//       title: "Mystery Thriller",
+//       description: "A twisted tale of mystery and suspense",
+//       views: 1453,
+//       likes: 312,
+//       imgUrl: "/MV5BZGRiZDZhZjItM2M3ZC00Y2IyLTk3Y2MtMWY5YjliNDFkZTJlXkEyXkFqcGc@.jpg",
+//       duration: "2:05:47",
+//       createdAt: "2025-05-10",
+//       category: "Mystery"
+//     },
+//   ];
 
   // Filter videos based on search query
-  const filteredVideos = myVideos.filter(video =>
-    video.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    video.description.toLowerCase().includes(searchQuery.toLowerCase())
+const myVideos = myVideo?.data?.myVideos || [];
+console.log(myVideos)
+  const filteredVideos = myVideos?.filter(video =>
+    video?.title.toLowerCase().includes(searchQuery?.toLowerCase()) ||
+    video?.des.toLowerCase().includes(searchQuery?.toLowerCase())
   );
 
   // Handle edit dialog open
@@ -88,7 +92,6 @@ export default function MyVideos() {
     setIsEditDialogOpen(true);
   };
 
-  // Handle delete dialog open
   const handleDeleteClick = (video: any) => {
     setSelectedVideo(video);
     setIsDeleteDialogOpen(true);
@@ -163,14 +166,14 @@ export default function MyVideos() {
           </Card>
           {/* Videos List */}
           <div className="space-y-4">
-            {filteredVideos.length === 0 ? (
+            {filteredVideos?.length === 0 ? (
               <div className="text-center py-12">
                 <h3 className="text-xl font-medium">No videos found</h3>
                 <p className="text-muted-foreground mt-2">Try adjusting your search query</p>
               </div>
             ) : (
-              filteredVideos.map((video) => (
-                <Card key={video.id} className="border border-gray-800/20 dark:border-gray-100/10 overflow-hidden hover:border-yellow-500/30 transition-colors">
+              filteredVideos?.map((video) => (
+                <Card key={video._id} className="border border-gray-800/20 dark:border-gray-100/10 overflow-hidden hover:border-yellow-500/30 transition-colors">
                   <div className="flex flex-col sm:flex-row">
                     <div className="relative sm:w-48 h-40 sm:h-auto">
                       <img
@@ -186,7 +189,7 @@ export default function MyVideos() {
                       <div className="flex justify-between items-start">
                         <div>
                           <h3 className="font-medium text-lg">{video.title}</h3>
-                          <p className="text-muted-foreground text-sm mt-1 line-clamp-2">{video.description}</p>
+                          <p className="text-muted-foreground text-sm mt-1 line-clamp-2">{video.des}</p>
                         </div>
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
@@ -211,22 +214,22 @@ export default function MyVideos() {
                       <div className="mt-4 flex items-center text-sm text-muted-foreground gap-4">
                         <div className="flex items-center gap-1">
                           <Eye className="h-3.5 w-3.5" />
-                          <span>{video.views.toLocaleString()}</span>
+                          <span>{video?.views?.toLocaleString()}</span>
                         </div>
                         <div className="flex items-center gap-1">
                           <ThumbsUp className="h-3.5 w-3.5" />
-                          <span>{video.likes.toLocaleString()}</span>
+                          <span>{video?.likes?.toLocaleString()}</span>
                         </div>
                         <div className="flex items-center gap-1">
                           <Clock className="h-3.5 w-3.5" />
-                          <span>Uploaded {video.createdAt}</span>
+                          <span>Uploaded {video?.createdAt}</span>
                         </div>
                       </div>
 
                       <div className="mt-4 flex justify-between items-center">
                         <div>
                           <span className="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent bg-yellow-500/10 text-yellow-500 hover:bg-yellow-500/20">
-                            {video.category}
+                            {video?.category}
                           </span>
                         </div>
                         <div className="flex gap-2">
@@ -272,21 +275,21 @@ export default function MyVideos() {
             <div className="grid gap-4 py-4">
               <div className="grid gap-2">
                 <Label htmlFor="title">Title</Label>
-                <Input id="title" defaultValue={selectedVideo.title} />
+                <Input id="title" defaultValue={selectedVideo?.title} />
               </div>
               <div className="grid gap-2">
                 <Label htmlFor="description">Description</Label>
-                <Textarea id="description" defaultValue={selectedVideo.description} />
+                <Textarea id="description" defaultValue={selectedVideo?.des} />
               </div>
               <div className="grid gap-2">
                 <Label htmlFor="category">Category</Label>
-                <Input id="category" defaultValue={selectedVideo.category} />
+                <Input id="category" defaultValue={selectedVideo?.category} />
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div className="grid gap-2">
                   <Label htmlFor="thumbnail">Thumbnail</Label>
                   <div className="relative h-32 bg-muted rounded-md overflow-hidden">
-                    <img src={selectedVideo.imgUrl} alt={selectedVideo.title} className="w-full h-full object-cover" />
+                    <img src={selectedVideo?.imgUrl} alt={selectedVideo.title} className="w-full h-full object-cover" />
                     <div className="absolute inset-0 bg-black/30 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity">
                       <Button variant="secondary" size="sm">Change</Button>
                     </div>
@@ -297,15 +300,15 @@ export default function MyVideos() {
                   <div className="space-y-2 text-sm">
                     <div className="flex justify-between">
                       <span className="text-muted-foreground">Duration:</span>
-                      <span>{selectedVideo.duration}</span>
+                      <span>{selectedVideo?.duration}</span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-muted-foreground">Views:</span>
-                      <span>{selectedVideo.views.toLocaleString()}</span>
+                      <span>{selectedVideo?.views?.toLocaleString()}</span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-muted-foreground">Likes:</span>
-                      <span>{selectedVideo.likes.toLocaleString()}</span>
+                      <span>{selectedVideo?.likes?.toLocaleString()}</span>
                     </div>
                   </div>
                 </div>
