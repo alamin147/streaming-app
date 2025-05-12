@@ -37,3 +37,21 @@ export const updateMyVideos = async (
     response(res, 500, false, err.message || "Internal Server Error");
   }
 };
+
+export const deleteMyVideos = async (
+  req: Request,
+  res: Response,
+
+) => {
+  try {
+    const userId=req.user.id;
+    const videoId=req.params.videoId;
+    const video = await Video.findOneAndDelete({ _id: videoId, userId });
+    if (!video) {
+      return response(res, 404, false, "Video not found");
+    }
+    response(res, 200, true, "Video deleted successfully", { video });
+  } catch (err: any) {
+    response(res, 500, false, err.message || "Internal Server Error");
+  }
+};

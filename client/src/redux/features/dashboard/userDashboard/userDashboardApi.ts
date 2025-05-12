@@ -24,7 +24,17 @@ const userDashboardApi = baseApi.injectEndpoints({
       },
       invalidatesTags: ["myVideosUser"],
     }),
+    deleteMyVideos: builder.mutation({
+      query: (data) => {
+        return {
+          url:  `/dashboard/user/my-videos/${data.videoId}`,
+          method: "DELETE",
+          body: data,
+        };
+      },
+      invalidatesTags: ["myVideosUser"],
+  }),
   }),
 });
 
-export const { useGetMyVideosQuery, useUpdateMyVideosMutation } = userDashboardApi;
+export const { useGetMyVideosQuery, useUpdateMyVideosMutation , useDeleteMyVideosMutation} = userDashboardApi;

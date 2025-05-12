@@ -21,7 +21,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { useGetMyVideosQuery, useUpdateMyVideosMutation } from "@/redux/features/dashboard/userDashboard/userDashboardApi";
+import { useGetMyVideosQuery, useUpdateMyVideosMutation, useDeleteMyVideosMutation } from "@/redux/features/dashboard/userDashboard/userDashboardApi";
 import { toast } from "react-hot-toast";
 
 export default function MyVideos() {
@@ -33,7 +33,8 @@ export default function MyVideos() {
   const [editedDescription, setEditedDescription] = useState("");
   const {data:myVideo, refetch} = useGetMyVideosQuery(undefined)
 
-  const [updateMyVideos, { isLoading }] = useUpdateMyVideosMutation()
+  const [updateMyVideos, { isLoading: isUpdateLoading }] = useUpdateMyVideosMutation()
+  const [deleteMyVideos, { isLoading: isDeleteLoading }] = useDeleteMyVideosMutation()
 
 const myVideos = myVideo?.data?.myVideos || [];
   const filteredVideos = myVideos?.filter((video:any) =>
@@ -59,7 +60,7 @@ const myVideos = myVideo?.data?.myVideos || [];
       if (res.status === 200) {
         toast.success("Video updated successfully");
         setIsEditDialogOpen(false);
-        refetch(); // Refresh the videos list
+        refetch();
       } else {
         toast.error("Failed to update video");
       }
@@ -70,6 +71,26 @@ const myVideos = myVideo?.data?.myVideos || [];
   const handleDeleteClick = (video: any) => {
     setSelectedVideo(video);
     setIsDeleteDialogOpen(true);
+  };
+
+  const handleDeleteSubmit = async () => {
+    try {
+      if (!selectedVideo) return;
+
+      const res = await deleteMyVideos({
+        videoId: selectedVideo._id
+      }).unwrap();
+
+      if (res.status === 200) {
+        toast.success("Video deleted successfully");
+        setIsDeleteDialogOpen(false);
+        refetch();
+      } else {
+        toast.error("Failed to delete video");
+      }
+    } catch (error) {
+      toast.error("An error occurred while deleting the video");
+    }
   };
 
   return (
@@ -316,9 +337,9 @@ const myVideos = myVideo?.data?.myVideos || [];
             <Button
               className="bg-yellow-500 hover:bg-yellow-600 text-black"
               onClick={handleEditSubmit}
-              disabled={isLoading}
+              disabled={isUpdateLoading}
             >
-              {isLoading ? "Saving..." : "Save Changes"}
+              {isUpdateLoading ? "Saving..." : "Save Changes"}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -350,8 +371,12 @@ const myVideos = myVideo?.data?.myVideos || [];
             <Button variant="outline" onClick={() => setIsDeleteDialogOpen(false)}>
               Cancel
             </Button>
-            <Button variant="destructive">
-              Delete Permanently
+            <Button
+              variant="destructive"
+              onClick={handleDeleteSubmit}
+              disabled={isDeleteLoading}
+            >
+              {isDeleteLoading ? "Deleting..." : "Delete Permanently"}
             </Button>
           </DialogFooter>
         </DialogContent>
