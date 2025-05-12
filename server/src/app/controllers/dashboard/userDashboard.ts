@@ -1,6 +1,9 @@
 import { Request, Response } from "express";
 import { response } from "../../utils/utils";
 import Video from "../../models/Video";
+import Comment from "../../models/Comment";
+import RecentVideo from "../../models/RecentVideos";
+import WatchLater from "../../models/WatchLater";
 
 export const getMyVideos = async (
   req: Request,
@@ -46,11 +49,23 @@ export const deleteMyVideos = async (
   try {
     const userId=req.user.id;
     const videoId=req.params.videoId;
-    const video = await Video.findOneAndDelete({ _id: videoId, userId });
+    const video = await Video.findOne({ _id: videoId, userId });
+
     if (!video) {
       return response(res, 404, false, "Video not found");
     }
-    response(res, 200, true, "Video deleted successfully", { video });
+
+    await Promise.all([
+      Video.findByIdAndDelete(videoId),
+
+      Comment.deleteMany({ videoId }),
+
+      RecentVideo.deleteMany({ videoId }),
+
+      WatchLater.deleteMany({ videoId })
+    ]);
+
+    response(res, 200, true, "Video and all related data deleted successfully", { video });
   } catch (err: any) {
     response(res, 500, false, err.message || "Internal Server Error");
   }
