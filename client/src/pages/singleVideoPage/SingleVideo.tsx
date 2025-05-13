@@ -22,6 +22,7 @@ import RatingSection from "@/components/ratingSection/RatingSection";
 import { AppSidebar } from "@/components/app-sidebar";
 import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
+import { UserAndTheme } from "@/lib/UserAndTheme";
 
 export const SingleVideo = () => {
     const videoId: any = useParams();
@@ -279,14 +280,14 @@ export const SingleVideo = () => {
                     ? res.message
                     : "Video failed to add in watch later"
             );
-    }; 
+    };
 
     return (
         <>
          <SidebarProvider>
             <AppSidebar />
             <SidebarInset>
-     <header className="flex h-16 shrink-0 items-center gap-2 border-b border-gray-800/10 dark:border-gray-100/10">
+     <header className="flex h-16 shrink-0 items-center gap-2 border-b border-gray-800/10 dark:border-gray-100/10 pe-4 justify-between">
                         <div className="flex items-center gap-2 px-4">
                             {<SidebarTrigger className=" flex md:hidden -ml-1" />}
                             <Breadcrumb>
@@ -306,6 +307,7 @@ export const SingleVideo = () => {
                                 </BreadcrumbList>
                             </Breadcrumb>
                         </div>
+                     <UserAndTheme on={true}/>
                     </header>
             <div className="py-8 px-4 md:px-8">
                 <div className="min-hscreen bg-black text-gray-200">

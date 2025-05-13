@@ -34,7 +34,17 @@ const userDashboardApi = baseApi.injectEndpoints({
       },
       invalidatesTags: ["myVideosUser"],
   }),
+
+  editProfile: builder.mutation({
+    query: (data) => {
+      return {
+        url:  `/dashboard/user/edit-profile`,
+        method: "PATCH",
+        body: data,
+      };
+    }
+  }),
   }),
 });
 
-export const { useGetMyVideosQuery, useUpdateMyVideosMutation , useDeleteMyVideosMutation} = userDashboardApi;
+export const { useGetMyVideosQuery, useUpdateMyVideosMutation , useDeleteMyVideosMutation, useEditProfileMutation} = userDashboardApi;

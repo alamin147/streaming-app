@@ -13,7 +13,6 @@ import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
@@ -22,47 +21,47 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { getUserInfo } from "@/redux/authUlits";
-import { Avatar } from "@/components/ui/avatar";
-import { Camera, Save, User, Mail, AtSign, MapPin, Calendar, Link as LinkIcon } from "lucide-react";
+import { Camera, Save, User, Mail, AtSign, MapPin, Link as LinkIcon } from "lucide-react";
 import { UserAndTheme } from "@/lib/UserAndTheme";
-
+import { useEditProfileMutation } from "@/redux/features/dashboard/userDashboard/userDashboardApi";
+import toast from "react-hot-toast";
+import { useDispatch } from "react-redux";
+import { jwtDecode } from "jwt-decode";
+import { setUser } from "@/redux/features/auth/authSlice";
+import coverImage from "@/assets/profile_banner.png";
 export default function EditProfile() {
   const user = getUserInfo();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
-  const [coverPreview, setCoverPreview] = useState<string | null>(null);
+  const [avatarPreview] = useState<string | null>(null);
+  const [name, setName] = useState(user?.name || '');
+  const [bio, setBio] = useState(user?.bio || 'Film enthusiast and content creator. I love sharing my passion for cinema with everyone!');
 
-  const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = () => {
-        setAvatarPreview(reader.result as string);
-      };
-      reader.readAsDataURL(file);
-    }
+  const getFirstChar = () => {
+    return user?.name ? user.name.charAt(0).toUpperCase() : name.charAt(0).toUpperCase() || 'U';
   };
 
-  const handleCoverChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = () => {
-        setCoverPreview(reader.result as string);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
+  const [editProfile] = useEditProfileMutation();
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const dispatch = useDispatch();
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsSubmitting(true);
 
-    // Simulate API call
-    setTimeout(() => {
+    try {
+      const response = await editProfile({ name,bio }).unwrap();
+      if (response.success) {
+         const decoded = jwtDecode(response?.data?.token);
+        dispatch(setUser({ user: decoded, token:response?.data?.token }));
+        toast.success(response.message || "Profile updated successfully");
+      } else {
+        toast.error(response.message || "Failed to update profile");
+      }
+    } catch (error: any) {
+      toast.error(error?.data?.message || "Something went wrong");
+    } finally {
       setIsSubmitting(false);
-      // Add success notification here
-    }, 1500);
+    }
   };
 
   return (
@@ -106,22 +105,17 @@ export default function EditProfile() {
             {/* Cover Image Section */}
             <Card className="border border-gray-800/20 dark:border-gray-100/10 overflow-hidden">
               <div className="relative h-48 md:h-64 w-full bg-muted">
-                {coverPreview ? (
-                  <img src={coverPreview} alt="Cover" className="w-full h-full object-cover" />
+                {coverImage ? (
+                  <img src={coverImage} alt="Cover" className="w-full h-full object-cover" />
                 ) : (
                   <div className="w-full h-full bg-gradient-to-r from-gray-800/50 to-gray-600/50"></div>
                 )}
-                <label className="absolute bottom-4 right-4 cursor-pointer">
-                  <div className="bg-black/70 hover:bg-black/80 text-white rounded-full p-2.5 transition-colors">
+                <div className="absolute bottom-4 right-4 opacity-60 cursor-not-allowed">
+                  <div className="bg-black/70 text-white rounded-full p-2.5 transition-colors">
                     <Camera className="h-5 w-5" />
                   </div>
-                  <input
-                    type="file"
-                    accept="image/*"
-                    className="hidden"
-                    onChange={handleCoverChange}
-                  />
-                </label>
+                  <span className="sr-only">Cover image upload disabled</span>
+                </div>
               </div>
 
               <CardContent className="relative pt-12 md:pt-16">
@@ -131,28 +125,23 @@ export default function EditProfile() {
                       {avatarPreview ? (
                         <img src={avatarPreview} alt="Avatar" className="w-full h-full object-cover" />
                       ) : (
-                        <div className="w-full h-full flex items-center justify-center bg-gray-700">
-                          <User className="h-12 w-12 text-gray-400" />
+                        <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-yellow-500 to-yellow-700">
+                          <span className="text-3xl md:text-5xl font-bold text-white">{getFirstChar()}</span>
                         </div>
                       )}
                     </div>
-                    <label className="absolute bottom-0 right-0 cursor-pointer">
-                      <div className="bg-black/70 hover:bg-black/80 text-white rounded-full p-1.5 transition-colors">
+                    <div className="absolute bottom-0 right-0 opacity-60 cursor-not-allowed">
+                      <div className="bg-black/70 text-white rounded-full p-1.5 transition-colors">
                         <Camera className="h-4 w-4" />
                       </div>
-                      <input
-                        type="file"
-                        accept="image/*"
-                        className="hidden"
-                        onChange={handleAvatarChange}
-                      />
-                    </label>
+                      <span className="sr-only">Avatar upload disabled</span>
+                    </div>
                   </div>
                 </div>
 
                 <div className="pt-4 md:pt-6">
                   <h2 className="text-xl font-semibold">{user?.name || 'Your Name'}</h2>
-                  <p className="text-muted-foreground text-sm">@{user?.username || 'username'}</p>
+                  <p className="text-muted-foreground text-sm">@{ user?.username ? user.username : 'username'}</p>
                 </div>
               </CardContent>
             </Card>
@@ -167,53 +156,60 @@ export default function EditProfile() {
               <CardContent className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-1.5">
-                    <Label htmlFor="name">Full Name</Label>
+                    <Label htmlFor="name">Full Name <span className="text-xs text-yellow-500">(Editable)</span></Label>
                     <div className="relative">
                       <User className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                       <Input
                         id="name"
-                        className="pl-9"
-                        defaultValue={user?.name || ''}
+                        className="pl-9 border-yellow-500/30 focus-visible:ring-yellow-500/30"
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
                         placeholder="Your full name"
                       />
                     </div>
                   </div>
 
                   <div className="space-y-1.5">
-                    <Label htmlFor="username">Username</Label>
+                    <Label htmlFor="username">Username <span className="text-xs text-muted-foreground">(Read-only)</span></Label>
                     <div className="relative">
                       <AtSign className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                       <Input
                         id="username"
-                        className="pl-9"
-                        defaultValue={user?.username || ''}
+                        className="pl-9 bg-muted/30"
+                        value={user && 'username' in user ? user.username : ''}
+                        disabled
+                        readOnly
                         placeholder="Your username"
                       />
                     </div>
                   </div>
 
                   <div className="space-y-1.5">
-                    <Label htmlFor="email">Email Address</Label>
+                    <Label htmlFor="email">Email Address <span className="text-xs text-muted-foreground">(Read-only)</span></Label>
                     <div className="relative">
                       <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                       <Input
                         id="email"
                         type="email"
-                        className="pl-9"
-                        defaultValue={user?.email || ''}
+                        className="pl-9 bg-muted/30"
+                        value={user?.email || ''}
+                        disabled
+                        readOnly
                         placeholder="Your email address"
                       />
                     </div>
                   </div>
 
                   <div className="space-y-1.5">
-                    <Label htmlFor="location">Location</Label>
+                    <Label htmlFor="location">Location <span className="text-xs text-muted-foreground">(Read-only)</span></Label>
                     <div className="relative">
                       <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                       <Input
                         id="location"
-                        className="pl-9"
+                        className="pl-9 bg-muted/30"
                         defaultValue="New York, USA"
+                        disabled
+                        readOnly
                         placeholder="Your location"
                       />
                     </div>
@@ -221,12 +217,13 @@ export default function EditProfile() {
                 </div>
 
                 <div className="space-y-1.5">
-                  <Label htmlFor="bio">Bio</Label>
+                  <Label htmlFor="bio">Bio <span className="text-xs text-yellow-500">(Editable)</span></Label>
                   <Textarea
                     id="bio"
                     placeholder="Tell others about yourself"
-                    className="min-h-[120px] resize-none"
-                    defaultValue="Film enthusiast and content creator. I love sharing my passion for cinema with everyone!"
+                    className="min-h-[120px] resize-none border-yellow-500/30 focus-visible:ring-yellow-500/30"
+                    value={bio}
+                    onChange={(e) => setBio(e.target.value)}
                   />
                 </div>
               </CardContent>
@@ -236,7 +233,7 @@ export default function EditProfile() {
             <Card className="border border-gray-800/20 dark:border-gray-100/10">
               <CardHeader>
                 <CardTitle>Social Links</CardTitle>
-                <CardDescription>Connect your social media accounts</CardDescription>
+                <CardDescription>Social media accounts <span className="text-xs text-muted-foreground">(Read-only)</span></CardDescription>
               </CardHeader>
 
               <CardContent className="space-y-4">
@@ -247,8 +244,10 @@ export default function EditProfile() {
                       <LinkIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                       <Input
                         id="website"
-                        className="pl-9"
+                        className="pl-9 bg-muted/30"
                         placeholder="https://yourwebsite.com"
+                        disabled
+                        readOnly
                       />
                     </div>
                   </div>
@@ -259,8 +258,10 @@ export default function EditProfile() {
                       <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 text-sm font-bold">𝕏</span>
                       <Input
                         id="twitter"
-                        className="pl-9"
+                        className="pl-9 bg-muted/30"
                         placeholder="@username"
+                        disabled
+                        readOnly
                       />
                     </div>
                   </div>
@@ -273,8 +274,10 @@ export default function EditProfile() {
                       </span>
                       <Input
                         id="instagram"
-                        className="pl-9"
+                        className="pl-9 bg-muted/30"
                         placeholder="username"
+                        disabled
+                        readOnly
                       />
                     </div>
                   </div>
@@ -287,8 +290,10 @@ export default function EditProfile() {
                       </span>
                       <Input
                         id="youtube"
-                        className="pl-9"
+                        className="pl-9 bg-muted/30"
                         placeholder="channel name"
+                        disabled
+                        readOnly
                       />
                     </div>
                   </div>
@@ -300,11 +305,11 @@ export default function EditProfile() {
             <Card className="border border-gray-800/20 dark:border-gray-100/10">
               <CardHeader>
                 <CardTitle>Email Preferences</CardTitle>
-                <CardDescription>Manage your email notifications</CardDescription>
+                <CardDescription>Email notification settings <span className="text-xs text-muted-foreground">(Read-only)</span></CardDescription>
               </CardHeader>
 
               <CardContent>
-                <div className="space-y-3">
+                <div className="space-y-3 opacity-80">
                   {['comments', 'subscribers', 'videos', 'newsletter'].map((item) => (
                     <div key={item} className="flex items-center justify-between">
                       <div>
@@ -316,8 +321,8 @@ export default function EditProfile() {
                           {item === 'newsletter' && "Receive our monthly newsletter with tips and updates"}
                         </p>
                       </div>
-                      <div className="flex items-center h-6 w-11 rounded-full bg-muted p-1 cursor-pointer" role="checkbox" aria-checked="true">
-                        <div className="h-4 w-4 rounded-full bg-yellow-500 transition-all duration-200"></div>
+                      <div className="flex items-center h-6 w-11 rounded-full bg-muted p-1 cursor-not-allowed" role="checkbox" aria-checked="true" aria-disabled="true">
+                        <div className="h-4 w-4 rounded-full bg-yellow-500/70 transition-all duration-200"></div>
                       </div>
                     </div>
                   ))}

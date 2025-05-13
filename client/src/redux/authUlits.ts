@@ -5,9 +5,11 @@ import { useSelector } from "react-redux";
 export type TUser = {
   id: string;
   name: string;
+  username: string;
   email: string;
   role: string;
   photo: string;
+  bio: string;
 };
 
 const isValidJwt = (token: string): boolean => {

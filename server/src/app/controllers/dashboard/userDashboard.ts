@@ -4,6 +4,8 @@ import Video from "../../models/Video";
 import Comment from "../../models/Comment";
 import RecentVideo from "../../models/RecentVideos";
 import WatchLater from "../../models/WatchLater";
+import User from "../../models/User";
+import jwt from "jsonwebtoken";
 
 export const getMyVideos = async (
   req: Request,
@@ -66,6 +68,43 @@ export const deleteMyVideos = async (
     ]);
 
     response(res, 200, true, "Video and all related data deleted successfully", { video });
+  } catch (err: any) {
+    response(res, 500, false, err.message || "Internal Server Error");
+  }
+};
+
+export const editProfile = async (
+  req: Request,
+  res: Response,
+) => {
+  try {
+    const userId = req.user.id;
+    const { name, bio } = req.body;
+
+    const user = await User.findByIdAndUpdate(
+      userId,
+      { name, bio },
+      { new: true }
+    );
+console.log(user)
+    if (!user) {
+      return response(res, 404, false, "User not found");
+    }
+    const token = jwt.sign(
+          {
+            id: user._id,
+            name: user.name,
+            username: user.username,
+            email: user.email,
+          },
+          process.env.JWTSECRET as string
+        );
+
+    res.cookie("token", token, {
+      httpOnly: true,
+      expires: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000),
+    });
+    response(res, 200, true, "Profile updated successfully", { token });
   } catch (err: any) {
     response(res, 500, false, err.message || "Internal Server Error");
   }
