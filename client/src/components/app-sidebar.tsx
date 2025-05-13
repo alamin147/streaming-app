@@ -73,16 +73,8 @@ const data = {
         },
       ],
     },
-    {
-      title: "History",
-      url: "/history",
-      icon: History,
-    },
-    {
-      title: "Settings",
-      url: "/settings",
-      icon: Settings,
-    },
+
+
   ],
 
   navSecondary: [
@@ -99,16 +91,12 @@ const data = {
       url: "#",
       icon: BookmarkPlus,
     },
-    {
-      name: "Movies",
-      url: "#",
-      icon: TvMinimalPlay,
+     {
+      name: "History",
+      url: "/history",
+      icon: History,
     },
-    {
-      name: "Series",
-      url: "#",
-      icon: Film,
-    },
+
   ],
 
   dashboard: [
