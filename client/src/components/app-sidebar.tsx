@@ -26,6 +26,7 @@ import { getUserInfo } from "@/redux/authUlits";
 import { FaUser } from "react-icons/fa";
 import { MdDashboard } from "react-icons/md";
 import { IoIosVideocam } from "react-icons/io"
+import { FaUserShield } from "react-icons/fa6";
 const data = {
   user: {
     name: "shadcn",
@@ -127,6 +128,14 @@ const data = {
       icon: FaUser,
     },
   ],
+  adminDashboard: [
+    {
+      title: "Dashboard",
+      url: "/dashboard/adminDashboard",
+      icon: FaUserShield,
+    },
+
+  ],
 };
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
@@ -150,6 +159,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <NavMain title="Menu" items={data.navMain}  />
         <NavProjects projects={data.projects} />
         {user && <NavMain title="Dashboard" items={data.dashboard}  />}
+        {user && <NavMain title="Admin Dashboard" items={data.adminDashboard}  />}
         <NavSecondary items={data.navSecondary} className="mt-auto" />
 
       </SidebarContent>

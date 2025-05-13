@@ -17,6 +17,7 @@ import {SingleVideo} from "./pages/singleVideoPage/SingleVideo.tsx";
 import MyDashboard from "./pages/dashboard/myDashboard/MyDashboard.tsx";
 import MyVideos from "./pages/dashboard/myVideos/MyVideos.tsx";
 import EditProfile from "./pages/dashboard/editProfile/EditProfile.tsx";
+import AdminDashboard from "./pages/dashboard/adminDashboard/adminDashboard.tsx";
 
 const router = createBrowserRouter([
   {
@@ -47,6 +48,10 @@ const router = createBrowserRouter([
   {
     path: "/dashboard/edit-profile",
     element: <EditProfile />,
+  },
+  {
+    path: "/dashboard/adminDashboard",
+    element: <AdminDashboard />,
   },
 ]);
 

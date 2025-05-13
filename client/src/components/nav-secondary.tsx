@@ -26,16 +26,16 @@ export function NavSecondary({
 } & React.ComponentPropsWithoutRef<typeof SidebarGroup>) {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const token = useAppSelector(useCurrentToken); 
+  const token = useAppSelector(useCurrentToken);
 
   const handleLogout = () => {
-    dispatch(logout()); 
-    navigate("/"); 
+    dispatch(logout());
+    navigate("/");
   };
 
   React.useEffect(() => {
     if (!token) {
-      navigate("/"); 
+      navigate("/");
     }
   }, [token, navigate]);
   const user = getUserInfo();
@@ -46,7 +46,7 @@ export function NavSecondary({
         <SidebarMenu>
           {items.map((item) => (
             <SidebarMenuItem key={item.title}>
-              <SidebarMenuButton asChild size="sm">
+              <SidebarMenuButton asChild size="sm" >
                 {user&&<Button
                   onClick={handleLogout}
                   className="hover:bg-yellow-300 w-full hover:text-black"

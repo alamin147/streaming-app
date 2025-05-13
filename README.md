@@ -1,6 +1,6 @@
 # streaming-app
 # Todo
-    - admin
+    - admin(graph, all videos)
     - create new model for tags(action, adv, hr..)
     - redirect to login if cookie is missing
     - all delete has a issue
