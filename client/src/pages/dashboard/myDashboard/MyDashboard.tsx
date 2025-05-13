@@ -35,6 +35,7 @@ import { getUserInfo } from "@/redux/authUlits";
 import { Link } from "react-router-dom";
 import VideoUploadModal from "@/components/uploads/Upload";
 import { RiVideoUploadFill } from "react-icons/ri";
+import { UserAndTheme } from "@/lib/UserAndTheme";
 
 export default function MyDashboard() {
     const [progress, setProgress] = useState(13);
@@ -73,7 +74,7 @@ export default function MyDashboard() {
         <SidebarProvider>
             <AppSidebar />
             <SidebarInset>
-                <header className="flex h-16 shrink-0 items-center gap-2 border-b border-gray-800/10 dark:border-gray-100/10">
+                <header className="flex justify-between h-16 shrink-0 items-center gap-2 border-b border-gray-800/10 dark:border-gray-100/10 pe-4">
                     <div className="flex items-center gap-2 px-4">
                         {<SidebarTrigger className=" flex md:hidden -ml-1" />}
                         <Breadcrumb>
@@ -93,6 +94,7 @@ export default function MyDashboard() {
                             </BreadcrumbList>
                         </Breadcrumb>
                     </div>
+                    <UserAndTheme on={true}/>
                 </header>
                 {<VideoUploadModal isOpen={isOpen} setIsOpens={setIsOpen} />}
 

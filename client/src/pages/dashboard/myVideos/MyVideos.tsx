@@ -23,6 +23,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useGetMyVideosQuery, useUpdateMyVideosMutation, useDeleteMyVideosMutation } from "@/redux/features/dashboard/userDashboard/userDashboardApi";
 import { toast } from "react-hot-toast";
+import { UserAndTheme } from "@/lib/UserAndTheme";
 
 export default function MyVideos() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -97,7 +98,7 @@ const myVideos = myVideo?.data?.myVideos || [];
     <SidebarProvider>
       <AppSidebar />
       <SidebarInset>
-        <header className="flex h-16 shrink-0 items-center gap-2 border-b border-gray-800/10 dark:border-gray-100/10">
+        <header className="flex h-16 shrink-0 items-center gap-2 border-b border-gray-800/10 dark:border-gray-100/10 pe-4 justify-between">
           <div className="flex items-center gap-2 px-4">
               {<SidebarTrigger className=" flex md:hidden -ml-1" />}
             <Breadcrumb>
@@ -109,7 +110,7 @@ const myVideos = myVideo?.data?.myVideos || [];
                 </BreadcrumbItem>
                 <BreadcrumbSeparator className="hidden md:block" />
                 <BreadcrumbItem>
-                  <BreadcrumbLink href="/dashboard">Dashboard</BreadcrumbLink>
+                  <BreadcrumbLink href="/dashboard/my-dashboard">Dashboard</BreadcrumbLink>
                 </BreadcrumbItem>
                 <BreadcrumbSeparator className="hidden md:block" />
                 <BreadcrumbItem>
@@ -118,6 +119,7 @@ const myVideos = myVideo?.data?.myVideos || [];
               </BreadcrumbList>
             </Breadcrumb>
           </div>
+        <UserAndTheme on={true}/>
         </header>
 
         <div className="flex flex-1 flex-col gap-6 p-6 overflow-auto">

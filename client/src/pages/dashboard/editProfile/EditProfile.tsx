@@ -24,6 +24,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { getUserInfo } from "@/redux/authUlits";
 import { Avatar } from "@/components/ui/avatar";
 import { Camera, Save, User, Mail, AtSign, MapPin, Calendar, Link as LinkIcon } from "lucide-react";
+import { UserAndTheme } from "@/lib/UserAndTheme";
 
 export default function EditProfile() {
   const user = getUserInfo();
@@ -68,7 +69,7 @@ export default function EditProfile() {
     <SidebarProvider>
       <AppSidebar />
       <SidebarInset>
-        <header className="flex h-16 shrink-0 items-center gap-2 border-b border-gray-800/10 dark:border-gray-100/10">
+        <header className="flex h-16 shrink-0 items-center gap-2 border-b border-gray-800/10 dark:border-gray-100/10 justify-between pe-4">
           <div className="flex items-center gap-2 px-4">
               {<SidebarTrigger className=" flex md:hidden -ml-1" />}
             <Breadcrumb>
@@ -80,7 +81,9 @@ export default function EditProfile() {
                 </BreadcrumbItem>
                 <BreadcrumbSeparator className="hidden md:block" />
                 <BreadcrumbItem>
-                  <BreadcrumbLink href="/dashboard">Dashboard</BreadcrumbLink>
+
+                  <BreadcrumbLink href="/dashboard/my-dashboard" >Dashboard</BreadcrumbLink>
+
                 </BreadcrumbItem>
                 <BreadcrumbSeparator className="hidden md:block" />
                 <BreadcrumbItem>
@@ -89,6 +92,7 @@ export default function EditProfile() {
               </BreadcrumbList>
             </Breadcrumb>
           </div>
+        <UserAndTheme on={true}/>
         </header>
 
         <div className="flex flex-1 flex-col gap-6 p-6 overflow-auto">

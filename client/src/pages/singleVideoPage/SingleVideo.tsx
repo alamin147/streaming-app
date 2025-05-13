@@ -19,6 +19,9 @@ import {
 import toast from "react-hot-toast";
 import CommentSection from "@/components/commentSection/CommentSection";
 import RatingSection from "@/components/ratingSection/RatingSection";
+import { AppSidebar } from "@/components/app-sidebar";
+import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
 
 export const SingleVideo = () => {
     const videoId: any = useParams();
@@ -276,75 +279,34 @@ export const SingleVideo = () => {
                     ? res.message
                     : "Video failed to add in watch later"
             );
-    };
+    }; 
 
     return (
         <>
-            <div className="flex h-16 shrik-0 items-center justify-between gap-2  py-8 px-4 md:px-8">
-                <div className="flex items-center gap-4">
-                    <NavLink
-                        to="/"
-                        className={({ isActive }) =>
-                            `hover:text-yellow-400 text-sm md:text-lg font-medium ${
-                                isActive ? "text-yellow-400" : ""
-                            }`
-                        }
-                    >
-                        Home
-                    </NavLink>
-                    <NavLink
-                        to="/movies"
-                        className={({ isActive }) =>
-                            `hover:text-yellow-400 text-sm md:text-lg font-medium ${
-                                isActive ? "text-yellow-400" : ""
-                            }`
-                        }
-                    >
-                        Movies
-                    </NavLink>
-                    <NavLink
-                        to="/#trending"
-                        className={({ isActive }) =>
-                            `hover:text-yellow-400 text-sm md:text-lg font-medium ${
-                                isActive ? "text-yellow-400" : ""
-                            }`
-                        }
-                    >
-                        Trending
-                    </NavLink>
-                </div>
-                <div className="flex items-center gap-4">
-                    {theme == "dark" ? (
-                        <Sun
-                            onClick={() => setTheme("light")}
-                            className="cursor-pointer  w-6 h-6 md:w-7 md:h-7 text-yellow-600"
-                            size={24}
-                        />
-                    ) : (
-                        <IoIosMoon
-                            onClick={() => setTheme("dark")}
-                            className="cursor-pointer  w-6 h-6 md:w-7 md:h-7 text-black"
-                        />
-                    )}
-                    {user ? (
-                        <Avatar className="h-10 w-10 overflow-hidden rounded-full bg-gray-200 dark:bg-gray-800">
-                            <AvatarFallback className="h-full w-full border-2 flex items-center justify-center text-black dark:text-white font-bold ">
-                                {user.name.charAt(0)}
-                                {user.name.charAt(user.name.indexOf(" ") + 1)}
-                            </AvatarFallback>
-                        </Avatar>
-                    ) : (
-                        <Link to="/login">
-                            <Button
-                                className="py-5 px-5 md:text-lg dark:bg-yellow-500"
-                                size="sm"
-                            >
-                                Login
-                            </Button>
-                        </Link>
-                    )}
-                </div>
-            </div>
+         <SidebarProvider>
+            <AppSidebar />
+            <SidebarInset>
+     <header className="flex h-16 shrink-0 items-center gap-2 border-b border-gray-800/10 dark:border-gray-100/10">
+                        <div className="flex items-center gap-2 px-4">
+                            {<SidebarTrigger className=" flex md:hidden -ml-1" />}
+                            <Breadcrumb>
+                                <BreadcrumbList>
+                                    <BreadcrumbItem className="hidden md:block">
+                                        <BreadcrumbLink href="/">
+                                            <span className="text-yellow-500 font-bold">
+                                                N
+                                            </span>
+                                            Movies
+                                        </BreadcrumbLink>
+                                    </BreadcrumbItem>
+                                    <BreadcrumbSeparator className="hidden md:block" />
+                                    <BreadcrumbItem>
+                                        <BreadcrumbPage>Video</BreadcrumbPage>
+                                    </BreadcrumbItem>
+                                </BreadcrumbList>
+                            </Breadcrumb>
+                        </div>
+                    </header>
             <div className="py-8 px-4 md:px-8">
                 <div className="min-hscreen bg-black text-gray-200">
                     {/* Video Player */}
@@ -692,6 +654,8 @@ export const SingleVideo = () => {
                 {/* Comment Section */}
                 <CommentSection videoId={videoId} _id={_id} />
             </div>
+            </SidebarInset>
+             </SidebarProvider>
         </>
     );
 };

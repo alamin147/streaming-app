@@ -22,17 +22,16 @@ import {
     BreadcrumbList,
     BreadcrumbSeparator,
 } from "../ui/breadcrumb";
+import { UserAndTheme } from "@/lib/UserAndTheme";
 
 export default function Sidebar() {
     const user = getUserInfo();
-
-    const { theme, setTheme } = useTheme();
     const [isOpen, setIsOpen] = useState(false);
     return (
         <SidebarProvider>
             <AppSidebar />
             <SidebarInset>
-                <header className="flex h-16 shrink-0 items-center justify-between gap-2 px-4">
+                <header className="flex h-16 shrink-0 items-center justify-between gap-2 px-4 ">
                     <div className="flex items-center gap-4">
                         {<SidebarTrigger className=" flex md:hidden -ml-1" />}
 
@@ -97,38 +96,12 @@ export default function Sidebar() {
                                 size={24}
                             />
                         )}
-                        {theme == "dark" ? (
-                            <Sun
-                                onClick={() => setTheme("light")}
-                                className="cursor-pointer  w-6 h-6 md:w-7 md:h-7 text-yellow-600"
-                                size={24}
-                            />
-                        ) : (
-                            <IoIosMoon
-                                onClick={() => setTheme("dark")}
-                                className="cursor-pointer  w-6 h-6 md:w-7 md:h-7 text-black"
-                            />
-                        )}
-                        {user ? (
-                            <Avatar className="border-2 border-gray-700 flex items-center justify-center text-black dark:text-white font-bold">
-                                {user.name.charAt(0)}
-                                {user.name.charAt(user.name.indexOf(" ") + 1)}
-                            </Avatar>
-                        ) : (
-                            <Link to="/login">
-                                <Button
-                                    className="py-5 px-5 md:text-lg dark:bg-yellow-500"
-                                    size="sm"
-                                >
-                                    Login
-                                </Button>
-                            </Link>
-                        )}
+                        <UserAndTheme on={false}/>
                     </div>
                 </header>
                 {<VideoUploadModal isOpen={isOpen} setIsOpens={setIsOpen} />}
                 {/* main data */}
-                <Carousel />
+                <Carousel  />
             </SidebarInset>
         </SidebarProvider>
     );
