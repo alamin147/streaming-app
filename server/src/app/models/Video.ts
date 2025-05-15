@@ -49,7 +49,7 @@ const VideoSchema = new mongoose.Schema(
         },
         status:{
             type: String,
-            enum: ["Pending","Under Review", "Published"],
+            enum: ["Pending","Under Review", "Published","Rejected"],
             default: "Pending"
         }
     },

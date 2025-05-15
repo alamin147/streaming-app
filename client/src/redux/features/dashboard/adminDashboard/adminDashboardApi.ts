@@ -13,7 +13,21 @@ const userDashboardApi = baseApi.injectEndpoints({
       providesTags: ["adminVideos"],
     }),
 
+    changeVideoStatus: builder.mutation({
+      query: ({videoId, status}) => {
+        return {
+          url: `/dashboard/admin/change-video-status/${videoId}`,
+          method: "PATCH",
+          body: {status},
+        };
+      },
+      invalidatesTags: ["adminVideos"],
+    }),
+
   }),
 });
 
-export const { useGetAllVideosQuery} = userDashboardApi;
+export const {
+  useGetAllVideosQuery,
+  useChangeVideoStatusMutation
+} = userDashboardApi;
