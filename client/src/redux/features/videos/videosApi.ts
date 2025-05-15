@@ -30,7 +30,6 @@ const videoApi = baseApi.injectEndpoints({
         };
       },
     }),
-
     uploadRecentVideos: builder.mutation({
       query: (data) => {
         return {

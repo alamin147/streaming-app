@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 const VideoSchema = new mongoose.Schema(
     {
+        //change userId to user
         userId: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "User",
@@ -45,6 +46,11 @@ const VideoSchema = new mongoose.Schema(
         howManyRated:{
             type: Number,
             default: 0,
+        },
+        status:{
+            type: String,
+            enum: ["Pending","Under Review", "Published"],
+            default: "Pending"
         }
     },
     { timestamps: true }
