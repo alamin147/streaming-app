@@ -9,6 +9,7 @@ import { response } from "./app/utils/utils";
 import cookieParser from "cookie-parser";
 import userDashboardRoutes from "./app/routes/dashboard/userDashboardRoutes";
 import adminDashboardRoutes from "./app/routes/dashboard/adminDashboardRoutes";
+import userManagementRoutes from "./app/routes/dashboard/userManagementRoutes";
 
 export const app = express();
 dotenv.config();
@@ -26,6 +27,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use("/api/v1/users", userRoutes);
 app.use("/api/v1/dashboard/user", userDashboardRoutes);
 app.use("/api/v1/dashboard/admin", adminDashboardRoutes);
+app.use("/api/v1/dashboard/admin/users", userManagementRoutes);
 app.use("/api/v1/videos", videoRoutes);
 app.use("/api/v1/auth", authRoutes);
 
