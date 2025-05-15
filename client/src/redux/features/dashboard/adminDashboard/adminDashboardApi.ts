@@ -24,10 +24,21 @@ const userDashboardApi = baseApi.injectEndpoints({
       invalidatesTags: ["adminVideos"],
     }),
 
+    deleteVideo: builder.mutation({
+      query: (videoId) => {
+        return {
+          url: `/dashboard/admin/delete-video/${videoId}`,
+          method: "DELETE",
+        };
+      },
+      invalidatesTags: ["adminVideos"],
+    }),
+
   }),
 });
 
 export const {
   useGetAllVideosQuery,
-  useChangeVideoStatusMutation
+  useChangeVideoStatusMutation,
+  useDeleteVideoMutation
 } = userDashboardApi;

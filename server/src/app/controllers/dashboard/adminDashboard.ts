@@ -47,3 +47,29 @@ export const changeVideoStatus = async (
         response(res, 500, false, err.message || "Internal Server Error");
     }
 };
+
+export const deleteVideo = async (
+    req: Request,
+    res: Response,
+) => {
+    try {
+        const { videoId } = req.params;
+
+        const video = await Video.findById(videoId);
+
+        if (!video) {
+            return response(res, 404, false, "Video not found");
+        }
+
+        await Promise.all([
+            Video.findByIdAndDelete(videoId),
+            Comment.deleteMany({ videoId }),
+            RecentVideo.deleteMany({ videoId }),
+            WatchLater.deleteMany({ videoId })
+        ]);
+
+        response(res, 200, true, "Video deleted successfully");
+    } catch (err: any) {
+        response(res, 500, false, err.message || "Internal Server Error");
+    }
+};

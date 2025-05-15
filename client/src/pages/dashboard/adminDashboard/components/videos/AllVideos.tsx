@@ -1,21 +1,24 @@
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
-import { useChangeVideoStatusMutation, useGetAllVideosQuery } from "@/redux/features/dashboard/adminDashboard/adminDashboardApi"
+import { useChangeVideoStatusMutation, useDeleteVideoMutation, useGetAllVideosQuery } from "@/redux/features/dashboard/adminDashboard/adminDashboardApi"
 import { TabsContent } from "@radix-ui/react-tabs"
-import { Download,  Filter,  Search } from "lucide-react"
+import { Download, Filter, Search, Trash2 } from "lucide-react"
 import { useState } from "react"
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Label } from "@/components/ui/label"
 import { toast } from "react-hot-toast"
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog"
 
 const AllVideos = () => {
     const {data, isLoading} = useGetAllVideosQuery(undefined)
     const allVideos = data?.data?.videos || []
     const [changeVideoStatus, { isLoading: isStatusChanging }] = useChangeVideoStatusMutation()
+    const [deleteVideo, { isLoading: isDeleting }] = useDeleteVideoMutation()
 
     const [isStatusDialogOpen, setIsStatusDialogOpen] = useState(false)
+    const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
     const [selectedVideo, setSelectedVideo] = useState<any>(null)
     const [selectedStatus, setSelectedStatus] = useState("")
 
@@ -23,6 +26,11 @@ const AllVideos = () => {
         setSelectedVideo(video)
         setSelectedStatus(video.status)
         setIsStatusDialogOpen(true)
+    }
+
+    const handleOpenDeleteDialog = (video: any) => {
+        setSelectedVideo(video)
+        setIsDeleteDialogOpen(true)
     }
 
     const handleStatusChange = async () => {
@@ -36,6 +44,17 @@ const AllVideos = () => {
         } catch (error) {
             console.error("Failed to change status:", error)
             toast.error("Failed to change video status")
+        }
+    }
+
+    const handleDeleteVideo = async () => {
+        try {
+            await deleteVideo(selectedVideo._id).unwrap()
+            toast.success("Video deleted successfully")
+            setIsDeleteDialogOpen(false)
+        } catch (error) {
+            console.error("Failed to delete video:", error)
+            toast.error("Failed to delete video")
         }
     }
 
@@ -115,7 +134,15 @@ const AllVideos = () => {
                               </span>
                             </td>
                             <td className="py-3 px-4 text-center">
-                             <Button className="px-5 py-0.5 rounded-full text-xs font-medium cursor-pointer bg-red-500 text-white hover:bg-red-400">Delete</Button>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                className="h-8 w-8 p-0 text-red-500 hover:text-red-700 hover:bg-red-100/30"
+                                onClick={() => handleOpenDeleteDialog(video)}
+                              >
+                                <Trash2 className="h-4 w-4" />
+                                <span className="sr-only">Delete</span>
+                              </Button>
                             </td>
                           </tr>
                         ))}
@@ -182,6 +209,29 @@ const AllVideos = () => {
                 </DialogFooter>
             </DialogContent>
         </Dialog>
+
+        {/* Delete Confirmation Dialog */}
+        <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+            <AlertDialogContent>
+                <AlertDialogHeader>
+                    <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                    <AlertDialogDescription>
+                        This will permanently delete the video "{selectedVideo?.title}" and all associated data including comments.
+                        This action cannot be undone.
+                    </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogAction
+                        className="text-white bg-red-500 hover:bg-red-600"
+                        onClick={handleDeleteVideo}
+                        disabled={isDeleting}
+                    >
+                        {isDeleting ? "Deleting..." : "Delete Video"}
+                    </AlertDialogAction>
+                </AlertDialogFooter>
+            </AlertDialogContent>
+        </AlertDialog>
     </>
   )
 }
