@@ -38,6 +38,23 @@ export const verifyToken = (
     next();
   });
 };
+export const verifyAdminToken = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const token = req.cookies.token;
+  if (!token)
+    return next(createError(401, false, "You are not authenticated!"));
+
+  jwt.verify(token, process.env.JWTSECRET as string, (err: any, user: any) => {
+    if (err) return next(createError(403, false, "Token is not valid!"));
+    if(user.role !== "admin")
+      return next(createError(403, false, "You are not authorized to access this resource"));
+    req.user = user;
+    next();
+  });
+};
 
 export const utils = {
   hashPassword,

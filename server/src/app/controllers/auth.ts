@@ -42,7 +42,6 @@ export const signin = async (req: Request, res: Response) => {
       .lean();
 
     if (!user) return response(res, 404, false, "User Not Found");
-
     const checkPass = await bcrypt.compare(password, user.password);
 
     if (!checkPass) return response(res, 400, false, "Password is wrong");
@@ -53,6 +52,7 @@ export const signin = async (req: Request, res: Response) => {
         name: user.name,
         username: user.username,
         email: user.email,
+        role: user.role
       },
       process.env.JWTSECRET as string
     );
@@ -66,45 +66,6 @@ export const signin = async (req: Request, res: Response) => {
       user: restuser,
       token,
     });
-  } catch (err: any) {
-    response(res, 500, true, err?.message || "Server Error");
-  }
-};
-
-export const googleAuth = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
-    const user = await User.findOne({ email: req.body.email }).lean();
-    if (user) {
-      const token = jwt.sign({ id: user._id }, process.env.JWTSECRET as string);
-
-      res.cookie("token", token, {
-        httpOnly: true,
-      });
-      response(res, 200, true, "User logged in successfully", {
-        user,
-      });
-    } else {
-      const newUser = new User({
-        ...req.body,
-        fromGoogle: true,
-      });
-      const savedUser = await newUser.save();
-      const token = jwt.sign(
-        { id: savedUser._id },
-        process.env.JWTSECRET as string
-      );
-
-      res.cookie("token", token, {
-        httpOnly: true,
-      });
-      response(res, 200, true, "User logged in successfully", {
-        user: savedUser,
-      });
-    }
   } catch (err: any) {
     response(res, 500, true, err?.message || "Server Error");
   }

@@ -2,7 +2,8 @@ import mongoose from "mongoose";
 const VideoSchema = new mongoose.Schema(
     {
         userId: {
-            type: String,
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "User",
             required: true,
         },
         title: {
@@ -18,6 +19,7 @@ const VideoSchema = new mongoose.Schema(
         },
         videoUrl: {
             type: String,
+            required: true,
         },
         views: {
             type: Number,
@@ -26,6 +28,11 @@ const VideoSchema = new mongoose.Schema(
         tags: {
             type: [String],
             default: [],
+        },
+        category:{
+        type: String,
+        enum: ["movies", "documentaries", "tv shows"],
+        default: "movies"
         },
         duration:{
             type: Number,

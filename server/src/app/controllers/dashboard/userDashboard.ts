@@ -86,7 +86,6 @@ export const editProfile = async (
       { name, bio },
       { new: true }
     );
-console.log(user)
     if (!user) {
       return response(res, 404, false, "User not found");
     }
@@ -96,6 +95,7 @@ console.log(user)
             name: user.name,
             username: user.username,
             email: user.email,
+            role:user.role
           },
           process.env.JWTSECRET as string
         );
