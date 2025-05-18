@@ -34,7 +34,6 @@ const progress = 76;
                           </p>
                         </div>
                       </div>
-
                       <div>
                         <div className="flex items-center justify-between mb-2">
                           <h4 className="text-sm font-medium">Storage Usage</h4>
