@@ -3,6 +3,16 @@ import { baseApi } from '../../../api/baseApi';
 const userDashboardApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
 
+   getDashboardStats: builder.query({
+      query: () => {
+        return {
+          url: "/dashboard/admin/stats",
+          method: "GET",
+        };
+      },
+      providesTags: ["adminVideos"],
+    }),
+
    getAllVideos: builder.query({
       query: () => {
         return {
@@ -38,6 +48,7 @@ const userDashboardApi = baseApi.injectEndpoints({
 });
 
 export const {
+  useGetDashboardStatsQuery,
   useGetAllVideosQuery,
   useChangeVideoStatusMutation,
   useDeleteVideoMutation

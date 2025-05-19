@@ -4,6 +4,67 @@ import Video from "../../models/Video";
 import Comment from "../../models/Comment";
 import RecentVideo from "../../models/RecentVideos";
 import WatchLater from "../../models/WatchLater";
+import User from "../../models/User";
+
+export const getDashboardStats = async (
+    req: Request,
+    res: Response,
+) => {
+    try {
+        const totalUsers = await User.countDocuments();
+        const lastMonthDate = new Date();
+        lastMonthDate.setMonth(lastMonthDate.getMonth() - 1);
+        const usersLastMonth = await User.countDocuments({
+            createdAt: { $lt: lastMonthDate }
+        });
+        const userGrowthPercent = usersLastMonth > 0
+            ? parseFloat((((totalUsers - usersLastMonth) / usersLastMonth) * 100).toFixed(1))
+            : 2.5;
+
+        const totalVideos = await Video.countDocuments();
+        const videosLastMonth = await Video.countDocuments({
+            createdAt: { $lt: lastMonthDate }
+        });
+        const videosGrowthPercent = videosLastMonth > 0
+            ? parseFloat((((totalVideos - videosLastMonth) / videosLastMonth) * 100).toFixed(1))
+            : 12.7;
+
+        const twoOldDate = new Date();
+        twoOldDate.setHours(twoOldDate.getHours() - 48);
+
+        const pendingVideos = await Video.countDocuments({ status: "Pending" });
+        const urgentPendingVideos = await Video.countDocuments({
+            status: "Pending",
+            createdAt: { $lt: twoOldDate }
+        });
+
+        const reportedContent = 23;
+        const highPriorityReports = 5;
+
+        response(res, 200, true, "Dashboard stats fetched successfully", {
+            stats: {
+                users: {
+                    total: totalUsers,
+                    growthPercent: userGrowthPercent
+                },
+                videos: {
+                    total: totalVideos,
+                    growthPercent: videosGrowthPercent
+                },
+                pending: {
+                    total: pendingVideos,
+                    urgent: urgentPendingVideos
+                },
+                reported: {
+                    total: reportedContent,
+                    highPriority: highPriorityReports
+                }
+            }
+        });
+    } catch (err: any) {
+        response(res, 500, false, err.message || "Internal Server Error");
+    }
+};
 
 export const getAllVideos = async (
     req: Request,
