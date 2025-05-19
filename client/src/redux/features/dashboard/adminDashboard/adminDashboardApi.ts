@@ -23,6 +23,16 @@ const userDashboardApi = baseApi.injectEndpoints({
       providesTags: ["adminVideos"],
     }),
 
+    getContentDistribution: builder.query({
+      query: () => {
+        return {
+          url: "/dashboard/admin/content-distribution",
+          method: "GET",
+        };
+      },
+      providesTags: ["adminVideos"],
+    }),
+
     getPendingVideos: builder.query({
       query: () => {
         return {
@@ -80,6 +90,7 @@ const userDashboardApi = baseApi.injectEndpoints({
 export const {
   useGetDashboardStatsQuery,
   useGetAllVideosQuery,
+  useGetContentDistributionQuery,
   useChangeVideoStatusMutation,
   useDeleteVideoMutation,
   useGetPendingVideosQuery,
