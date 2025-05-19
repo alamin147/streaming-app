@@ -66,6 +66,50 @@ export const getDashboardStats = async (
     }
 };
 
+export const getContentDistribution = async (
+    req: Request,
+    res: Response,
+) => {
+    try {
+        const distribution = await Video.aggregate([
+            {
+                $group: {
+                    _id: "$category",
+                    count: { $sum: 1 }
+                }
+            },
+            {
+                $project: {
+                    _id: 0,
+                    name: {
+                        $cond: [
+                            { $eq: ["$_id", "movies"] },
+                            "Movies",
+                            { $cond: [
+                                { $eq: ["$_id", "tv shows"] },
+                                "TV Shows",
+                                "Documentaries"
+                            ]}
+                        ]
+                    },
+                    value: "$count"
+                }
+            }
+        ]);
+        const categories = ["Movies", "TV Shows", "Documentaries"];
+        const distributionMap = new Map(distribution.map(item => [item.name, item.value]));
+
+        const finalDistribution = categories.map(category => ({
+            name: category,
+            value: distributionMap.get(category) || 0
+        }));
+
+        response(res, 200, true, "Content distribution fetched successfully", { distribution: finalDistribution });
+    } catch (err: any) {
+        response(res, 500, false, err.message || "Internal Server Error");
+    }
+};
+
 export const getAllVideos = async (
     req: Request,
     res: Response,
