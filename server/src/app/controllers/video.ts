@@ -30,7 +30,17 @@ export const getVideo = async (
 ) => {
     try {
         const video = await Video.findById(req.params.id).lean();
-
+        if (!video) {
+            return response(res, 404, false, "Video not found");
+        }
+        if (video.status !== "Published") {
+            if (!req.user) {
+                return response(res, 403, false, "This video is not available");
+            }
+            if (video.userId.toString() !== req.user.id && req.user.role !== "admin") {
+                return response(res, 403, false, "This video is not available");
+            }
+        }
         response(res, 200, true, "Video fetched successfully", { video });
     } catch (err) {
         next(err);
@@ -203,7 +213,10 @@ export const fetchVideos = async (
     next: NextFunction
 ) => {
     try {
-        const videos = await Video.aggregate([{ $sample: { size: 20 } }]);
+        const videos = await Video.aggregate([
+            { $match: { status: "Published" } },
+            { $sample: { size: 20 } }
+        ]);
         response(res, 200, true, "Videos fetched successfully", { videos });
     } catch (err: any) {
         response(res, 500, false, err.message || "Internal Server Error");
@@ -216,7 +229,7 @@ export const trendingVideos = async (
     next: NextFunction
 ) => {
     try {
-        const videos = await Video.find().sort({ views: -1 });
+        const videos = await Video.find({ status: "Published" }).sort({ views: -1 });
         response(res, 200, true, "Trending videos fetched successfully", {
             videos,
         });
@@ -228,7 +241,10 @@ export const trendingVideos = async (
 export const getByTag = async (req: Request, res: Response) => {
     try {
         const tags = (req.query.tags as string).split(",");
-        const videos = await Video.find({ tags: { $in: tags } }).limit(20);
+        const videos = await Video.find({
+            tags: { $in: tags },
+            status: "Published"
+        }).limit(20);
         response(res, 200, true, "Videos fetched successfully", { videos });
     } catch (err: any) {
         response(res, 500, false, err.message || "Internal Server Error");
@@ -240,6 +256,7 @@ export const search = async (req: Request, res: Response) => {
         const query = req.query.q as string;
         const videos = await Video.find({
             title: { $regex: query, $options: "i" },
+            status: "Published"
         }).limit(40);
         response(res, 200, true, "Videos fetched successfully", { videos });
     } catch (err: any) {
@@ -315,7 +332,7 @@ export const uploadVideo: any = async (req: Request, res: Response) => {
             des: desc,
             videoUrl: videoUrl,
             imgUrl: imgUrl,
-            duration: videoDuration 
+            duration: videoDuration
         });
 
         const savedVideo = await newVideo.save();
