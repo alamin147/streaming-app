@@ -100,7 +100,7 @@ export default function VideoUploadModal({
             const response = await uploadVideo(formData).unwrap();
 
             console.log(response);
-            toast.success("Video uploaded successfully!");
+            toast.success("Video uploaded successfully! It will be available after approval.");
             reset();
             setVideoDuration(0);
             setVideoDetails("");
@@ -251,6 +251,14 @@ export default function VideoUploadModal({
                                 )}
                             </div>
                         </div>
+                    </div>
+
+                    {/* Moderation notice */}
+                    <div className="p-3 rounded-md bg-blue-500/10 border border-blue-500/20 text-sm">
+                        <p className="text-blue-500">
+                            <span className="font-medium">Note:</span> Uploaded videos require admin approval before appearing publicly.
+                            You can view your video's status in the "My Videos" section.
+                        </p>
                     </div>
 
                     {/* Buttons */}

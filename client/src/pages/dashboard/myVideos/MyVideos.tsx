@@ -24,6 +24,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useGetMyVideosQuery, useUpdateMyVideosMutation, useDeleteMyVideosMutation } from "@/redux/features/dashboard/userDashboard/userDashboardApi";
 import { toast } from "react-hot-toast";
 import { UserAndTheme } from "@/lib/UserAndTheme";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 export default function MyVideos() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -214,6 +215,35 @@ const myVideos = myVideo?.data?.myVideos || [];
                           <Clock className="ms-2 h-3.5 w-3.5" />
                           <span>{(video?.createdAt?.split('T')[1]).split('.')[0]}</span>
                         </div>
+
+                        {/* Show video status with tooltip */}
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger>
+                              <div className={`px-2 py-0.5 text-xs rounded-full ${
+                                video.status === "Published"
+                                  ? "bg-green-500/20 text-green-500"
+                                  : video.status === "Pending"
+                                    ? "bg-yellow-500/20 text-yellow-500"
+                                    : video.status === "Rejected"
+                                      ? "bg-red-500/20 text-red-500"
+                                      : "bg-blue-500/20 text-blue-500"
+                              }`}>
+                                {video.status}
+                              </div>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                              {video.status === "Published"
+                                ? "This video is available to all users"
+                                : video.status === "Pending"
+                                  ? "This video is awaiting approval from administrators"
+                                  : video.status === "Rejected"
+                                    ? "This video was rejected by administrators"
+                                    : "This video is under review"
+                              }
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
                       </div>
 
                       <div className="mt-4 flex justify-between items-center">
