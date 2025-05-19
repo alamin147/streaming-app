@@ -1,12 +1,9 @@
 import { useState, useRef, useEffect } from "react";
-import { Star, Play, Sun } from "lucide-react";
+import { Star, Play } from "lucide-react";
 import { BsFillBookmarkPlusFill, BsBookmarkCheckFill } from "react-icons/bs";
-import { Link, NavLink, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { getUserInfo } from "@/redux/authUlits";
 import { useTheme } from "@/components/themeProvider/ThemeProvider";
-import { IoIosMoon } from "react-icons/io";
-import { Avatar, AvatarFallback } from "@radix-ui/react-avatar";
-import { Button } from "@/components/ui/button";
 import Hls from "hls.js";
 import screenfull from "screenfull";
 import {
@@ -19,6 +16,7 @@ import {
 import toast from "react-hot-toast";
 import CommentSection from "@/components/commentSection/CommentSection";
 import RatingSection from "@/components/ratingSection/RatingSection";
+import ReportVideoDialog from "@/components/reportVideoDialog/ReportVideoDialog";
 import { AppSidebar } from "@/components/app-sidebar";
 import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
@@ -30,8 +28,6 @@ export const SingleVideo = () => {
     const [isMuted, setIsMuted] = useState(false);
     const videoRef = useRef<HTMLVideoElement>(null);
     const containerRef = useRef<HTMLDivElement>(null);
-    const user = getUserInfo();
-    const { theme, setTheme } = useTheme();
     const [called, setCalled] = useState(true);
     const [uploadRecentVideos] = useUploadRecentVideosMutation();
     const [addToWatchLater] = useAddToWatchLaterMutation();
@@ -210,7 +206,7 @@ export const SingleVideo = () => {
                 if (screenfull.isFullscreen && window.screen.orientation) {
                     try {
                         if (window.innerWidth < 768) {
-                            window.screen.orientation.lock('landscape').catch(() => {
+                            window.screen.orientation?.lock('landscape').catch(() => {
                                 console.log('Orientation lock not supported');
                             });
                         }
@@ -551,17 +547,20 @@ export const SingleVideo = () => {
                                             </div>
                                         </div>
 
-                                        {isBookmarked?.data?.bookmarked ? (
-                                            <BsBookmarkCheckFill
-                                                className="text-2xl md:text-3xl text-yellow-600 dark:text-yellow-500 cursor-pointer"
-                                                onClick={handleAddToWatchLater}
-                                            />
-                                        ) : (
-                                            <BsFillBookmarkPlusFill
-                                                className="text-2xl md:text-3xl text-gray-700 dark:text-gray-400 hover:text-yellow-600 dark:hover:text-yellow-500 cursor-pointer"
-                                                onClick={handleAddToWatchLater}
-                                            />
-                                        )}
+                                        <div className="flex items-center gap-4">
+                                            {isBookmarked?.data?.bookmarked ? (
+                                                <BsBookmarkCheckFill
+                                                    className="text-2xl md:text-3xl text-yellow-600 dark:text-yellow-500 cursor-pointer"
+                                                    onClick={handleAddToWatchLater}
+                                                />
+                                            ) : (
+                                                <BsFillBookmarkPlusFill
+                                                    className="text-2xl md:text-3xl text-gray-700 dark:text-gray-400 hover:text-yellow-600 dark:hover:text-yellow-500 cursor-pointer"
+                                                    onClick={handleAddToWatchLater}
+                                                />
+                                            )}
+                                            <ReportVideoDialog videoId={_id} />
+                                        </div>
                                     </div>
                                 </div>
 
