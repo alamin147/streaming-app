@@ -31,9 +31,9 @@ const PendingVideos = () => {
   const handleReject = async (id: string) => {
     try {
       await rejectVideo(id).unwrap()
-      toast("Video rejected successfully. The creator will be notified.", { icon: '✅' })
+      toast.success("Video rejected successfully. The creator will be notified.")
     } catch (error) {
-      toast("Failed to reject video", { icon: '❌' })
+      toast.error("Failed to reject video")
     }
   }
 
@@ -124,9 +124,6 @@ const PendingVideos = () => {
                             src={video.imgUrl}
                             alt={video.title}
                             className="w-full h-full object-cover"
-                            onError={(e: any) => {
-                              e.target.src = "/original-80ca8c0c7cc530cd5bb0a0962acf369a.webp"; // Fallback image
-                            }}
                           />
                         </div>
                         <div className="flex-1 min-w-0">
