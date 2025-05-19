@@ -10,6 +10,7 @@ import cookieParser from "cookie-parser";
 import userDashboardRoutes from "./app/routes/dashboard/userDashboardRoutes";
 import adminDashboardRoutes from "./app/routes/dashboard/adminDashboardRoutes";
 import userManagementRoutes from "./app/routes/dashboard/userManagementRoutes";
+import reportRoutes from "./app/routes/report";
 
 export const app = express();
 dotenv.config();
@@ -30,11 +31,12 @@ app.use("/api/v1/dashboard/admin", adminDashboardRoutes);
 app.use("/api/v1/dashboard/admin/users", userManagementRoutes);
 app.use("/api/v1/videos", videoRoutes);
 app.use("/api/v1/auth", authRoutes);
+app.use("/api/v1/reports", reportRoutes);
 
 app.use((err: any, req: Request, res: Response, next: NextFunction) => {
   response(res, 500, false, `${err.message}` || "Something went wrong");
 });
-//
+
 app.listen(5000, () => {
   connectDB();
   console.log("server running on 5000");
