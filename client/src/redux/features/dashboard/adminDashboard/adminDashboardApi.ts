@@ -23,6 +23,16 @@ const userDashboardApi = baseApi.injectEndpoints({
       providesTags: ["adminVideos"],
     }),
 
+    getPendingVideos: builder.query({
+      query: () => {
+        return {
+          url: "/dashboard/admin/pending-videos",
+          method: "GET",
+        };
+      },
+      providesTags: ["adminVideos"],
+    }),
+
     changeVideoStatus: builder.mutation({
       query: ({videoId, status}) => {
         return {
@@ -44,6 +54,26 @@ const userDashboardApi = baseApi.injectEndpoints({
       invalidatesTags: ["adminVideos"],
     }),
 
+    approveVideo: builder.mutation({
+      query: (videoId) => {
+        return {
+          url: `/dashboard/admin/approve-video/${videoId}`,
+          method: "PATCH",
+        };
+      },
+      invalidatesTags: ["adminVideos"],
+    }),
+
+    rejectVideo: builder.mutation({
+      query: (videoId) => {
+        return {
+          url: `/dashboard/admin/reject-video/${videoId}`,
+          method: "PATCH",
+        };
+      },
+      invalidatesTags: ["adminVideos"],
+    }),
+
   }),
 });
 
@@ -51,5 +81,8 @@ export const {
   useGetDashboardStatsQuery,
   useGetAllVideosQuery,
   useChangeVideoStatusMutation,
-  useDeleteVideoMutation
+  useDeleteVideoMutation,
+  useGetPendingVideosQuery,
+  useApproveVideoMutation,
+  useRejectVideoMutation
 } = userDashboardApi;
