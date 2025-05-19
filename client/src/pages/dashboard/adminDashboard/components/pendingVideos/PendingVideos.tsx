@@ -126,6 +126,7 @@ const PendingVideos = () => {
                             className="w-full h-full object-cover"
                           />
                         </div>
+                        
                         <div className="flex-1 min-w-0">
                           <h4 className="text-sm font-semibold truncate">
                             {video.title}
