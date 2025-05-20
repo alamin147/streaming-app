@@ -29,6 +29,7 @@ const videoApi = baseApi.injectEndpoints({
           method: "GET",
         };
       },
+        providesTags: ["singleVideo"],
     }),
     uploadRecentVideos: builder.mutation({
       query: (data) => {

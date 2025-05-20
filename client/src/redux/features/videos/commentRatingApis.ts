@@ -31,9 +31,8 @@ const videoFeatures = baseApi.injectEndpoints({
           body: data,
         };
       },
-      invalidatesTags: ["video"],
+      invalidatesTags: ["singleVideo"],
     }),
-
   }),
 });
 

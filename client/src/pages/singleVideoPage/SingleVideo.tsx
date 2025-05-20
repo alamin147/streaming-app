@@ -32,10 +32,8 @@ export const SingleVideo = () => {
     const [uploadRecentVideos] = useUploadRecentVideosMutation();
     const [addToWatchLater] = useAddToWatchLaterMutation();
     const { data: singleVideo, isLoading } = useGetSingleVideoQuery(videoId);
-
     const { data: isBookmarked, isLoading: bookmarkedLoad } =
         useIsBookmarkedQuery(videoId);
-
     const [viewCounted, setViewCounted] = useState(false);
     const [watchTimer, setWatchTimer] = useState<NodeJS.Timeout | null>(null);
     const [recordVideoView] = useRecordVideoViewMutation();
@@ -59,8 +57,10 @@ export const SingleVideo = () => {
         videoUrl = "",
         views = 0,
         _id = "",
+        createdAt = "",
+        ratings = 0,
     } = video;
-
+console.log(video)
     useEffect(() => {
         if (videoRef.current && videoUrl) {
             if (videoUrl.includes(".m3u8") && Hls.isSupported()) {
@@ -559,15 +559,12 @@ export const SingleVideo = () => {
                                         </div>
                                     </div>
                                 </div>
-
-
                                 <RatingSection
                                 category={video.category}
                                     videoId={_id}
                                     videoRating={video.ratings || 0}
                                     howManyRated={video.howManyRated || 0}
                                 />
-
                                 {/* Badges and Rating */}
                                 <div className="flex justify-between flex-wrap items-center gap-3">
                                     <div className="flex flex-wrap items-center gap-3">
@@ -577,7 +574,7 @@ export const SingleVideo = () => {
                                         <div className="flex items-center gap-1 text-yellow-600 dark:text-yellow-500">
                                             <Star className="fill-yellow-600 dark:fill-yellow-500 h-5 w-5" />
                                             <span className="font-medium">
-                                                7.8
+                                              {ratings}
                                             </span>
                                         </div>
                                         <span className="text-gray-600 dark:text-gray-400">
@@ -589,7 +586,7 @@ export const SingleVideo = () => {
                                         <div className="flex flex-wrap gap-2">
                                             {video.tags && video.tags.length > 0 && (
                                                 <>
-                                                    <span className=" text-white px-3 py-1  text-md font-medium">
+                                                    <span className=" text-gray-600 dark:text-gray-400 px-3 py-1  text-md font-medium">
                                                         Tags:
                                                     </span>
                                                     {video.tags.map((tag:string, index:number) => (
@@ -612,10 +609,10 @@ export const SingleVideo = () => {
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-2 mt-2">
                                     <div className="flex">
                                         <span className="w-28 text-gray-600 dark:text-gray-400">
-                                            Country:
+                                            Uploaded by:
                                         </span>
                                         <span className="text-gray-800 dark:text-gray-200">
-                                            Japan
+                                          {video?.userId?.name || "Unknown"}
                                         </span>
                                     </div>
 
@@ -624,7 +621,7 @@ export const SingleVideo = () => {
                                             Released:
                                         </span>
                                         <span className="text-gray-800 dark:text-gray-200">
-                                            2024-10-03
+                                            {createdAt?.split("T")[0] || "Unknown"}
                                         </span>
                                     </div>
 
@@ -633,8 +630,8 @@ export const SingleVideo = () => {
                                             Production:
                                         </span>
                                         <span className="text-gray-800 dark:text-gray-200">
-                                            Telecom Animation Film, UNLIMITED
-                                            PRODUCE by TMS, TMS Music
+                                            N Movies, Limited
+
                                         </span>
                                     </div>
                                     <div className="flex col-span-1 md:col-span-2">
@@ -642,8 +639,7 @@ export const SingleVideo = () => {
                                             Casts:
                                         </span>
                                         <span className="text-gray-800 dark:text-gray-200">
-                                            Chiaki Kobayashi, Reina Ueda, Yuuma
-                                            Uchida, Shoya Chiba, Shogo Sakata
+                                           Unknown
                                         </span>
                                     </div>
                                 </div>

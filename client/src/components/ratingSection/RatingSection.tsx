@@ -46,9 +46,9 @@ const RatingSection = ({ category,videoId, videoRating, howManyRated, className 
   };
 
   return (
-    <div className={`flex justify-between ${className}`}>
+    <div className={`-ms-3 flex justify-between ${className}`}>
         <div className="flex flex-wrap gap-2">
-                                            <span className="text-black dark:text-white px-3 py-1  text-md font-medium">
+                                            <span className="text-gray-600 dark:text-gray-400 px-3 py-1  text-md font-medium">
                                                 Category:
                                             </span>
                                             <span className=" text-black dark:text-white px-3 py-1  text-md font-medium">

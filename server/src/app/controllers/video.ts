@@ -29,7 +29,10 @@ export const getVideo = async (
     next: NextFunction
 ) => {
     try {
-        const video = await Video.findById(req.params.id).lean();
+        const video = await Video.findById(req.params.id).populate({
+            path: "userId",
+            select: "name",
+        }).lean();
         if (!video) {
             return response(res, 404, false, "Video not found");
         }

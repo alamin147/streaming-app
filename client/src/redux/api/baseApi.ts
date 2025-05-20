@@ -17,6 +17,6 @@ export const baseApi = createApi({
   }
 ),
 
-tagTypes:["video","user","recent","watchLater","comment","myVideosUser","adminVideos"],
+tagTypes:["video","user","recent","watchLater","comment","myVideosUser","adminVideos","singleVideo"],
   endpoints: () => ({}),
 });
