@@ -9,9 +9,10 @@ interface RatingSectionProps {
   videoRating: number;
   howManyRated: number;
   className?: string;
+  category: string;
 }
 
-const RatingSection = ({ videoId, videoRating, howManyRated, className = "" }: RatingSectionProps) => {
+const RatingSection = ({ category,videoId, videoRating, howManyRated, className = "" }: RatingSectionProps) => {
   const user = getUserInfo();
   const [rating, setRating] = useState<number | null>(null);
   const [hoveredRating, setHoveredRating] = useState<number | null>(null);
@@ -45,8 +46,17 @@ const RatingSection = ({ videoId, videoRating, howManyRated, className = "" }: R
   };
 
   return (
-    <div className={`flex justify-end ${className}`}>
-      <div className="flex items-center gap-2">
+    <div className={`flex justify-between ${className}`}>
+        <div className="flex flex-wrap gap-2">
+                                            <span className="text-black dark:text-white px-3 py-1  text-md font-medium">
+                                                Category:
+                                            </span>
+                                            <span className=" text-black dark:text-white px-3 py-1  text-md font-medium">
+                                                {category.charAt(0).toUpperCase() + category.slice(1)}
+                                            </span>
+                                        </div>
+      <div className="flex items-center justify-between gap-2">
+
         <span className="text-gray-700 dark:text-gray-300 font-medium mr-2">
         Score:</span>
         {[1, 2, 3, 4, 5].map((star) => (

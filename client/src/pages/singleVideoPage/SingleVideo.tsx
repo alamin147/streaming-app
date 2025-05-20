@@ -392,8 +392,6 @@ export const SingleVideo = () => {
                                             />
                                         </div>
                                     </div>
-
-                                    {/* Controls row - right side */}
                                     <div className="flex items-center gap-3">
                                         <button
                                             onClick={toggleFullscreen}
@@ -498,8 +496,6 @@ export const SingleVideo = () => {
                                     </div>
                                 </div>
                             </div>
-
-                            {/* Keep your existing play button overlay */}
                             {!isPlaying && (
                                 <div
                                     className="absolute inset-0 flex items-center justify-center cursor-pointer bg-black bg-opacity-30 transition-opacity hover:bg-opacity-20"
@@ -564,8 +560,9 @@ export const SingleVideo = () => {
                                     </div>
                                 </div>
 
-                                {/* Replace the rating system with the new component */}
+
                                 <RatingSection
+                                category={video.category}
                                     videoId={_id}
                                     videoRating={video.ratings || 0}
                                     howManyRated={video.howManyRated || 0}
@@ -588,19 +585,22 @@ export const SingleVideo = () => {
                                         </span>
                                     </div>
 
-                                    <div className="flex flex-wrap gap-2">
-                                        <span className="bg-gray-700 text-white px-3 py-1 rounded-full text-md font-medium">
-                                            Genre:
-                                        </span>
-                                        <span className="bg-red-400 text-black px-3 py-1 rounded-full text-sm font-medium">
-                                            Action
-                                        </span>
-                                        <span className="bg-yellow-400 text-black px-3 py-1 rounded-full text-sm font-medium">
-                                            Comedy
-                                        </span>
-                                        <span className="bg-green-400 text-black px-3 py-1 rounded-full text-sm font-medium">
-                                            Horror
-                                        </span>
+                                    <div className="space-y-2">
+                                        <div className="flex flex-wrap gap-2">
+                                            {video.tags && video.tags.length > 0 && (
+                                                <>
+                                                    <span className=" text-white px-3 py-1  text-md font-medium">
+                                                        Tags:
+                                                    </span>
+                                                    {video.tags.map((tag:string, index:number) => (
+                                                        <span key={index} className="bg-gray-500 text-white px-3 py-1 rounded-full text-sm font-medium">
+                                                            {tag}
+                                                        </span>
+                                                    ))}
+                                                </>
+                                            )}
+                                        </div>
+
                                     </div>
                                 </div>
 
