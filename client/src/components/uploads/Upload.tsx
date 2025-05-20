@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useUploadVideoMutation } from "@/redux/features/videos/videosApi";
 import toast from "react-hot-toast";
 
@@ -13,14 +14,19 @@ interface VideoUploadModalProps {
     setIsOpens: (open: boolean) => void;
 }
 
-export default function VideoUploadModal({
-    isOpen,
-    setIsOpens,
-}: VideoUploadModalProps) {
+const CATEGORIES = ["movies", "documentaries", "tv shows", "web series", "short films", "educational", "music videos", "sports"] as const;
+const TAGS = ["action", "horror", "comedy", "drama", "thriller", "romance", "adventure", "sci-fi", "fantasy", "animation", "documentary", "crime", "mystery", "family"] as const;
+
+type Category = typeof CATEGORIES[number];
+type Tag = typeof TAGS[number];
+
+export default function VideoUploadModal({ isOpen, setIsOpens }: VideoUploadModalProps) {
     const { register, handleSubmit, setValue, watch, reset } = useForm();
     const [isUploading, setIsUploading] = useState<boolean>(false);
     const [videoDuration, setVideoDuration] = useState<number>(0);
     const [videoDetails, setVideoDetails] = useState<string>("");
+    const [selectedTags, setSelectedTags] = useState<Tag[]>([]);
+    const [selectedCategory, setSelectedCategory] = useState<Category>("movies");
 
     const thumbnail = watch("thumbnail");
     const videoFile = watch("video");
@@ -32,7 +38,6 @@ export default function VideoUploadModal({
         const file = event.target.files?.[0];
         if (file) {
             setValue(type, file);
-
             if (type === "video") {
                 calculateVideoDuration(file);
             }
@@ -53,9 +58,7 @@ export default function VideoUploadModal({
             const seconds = Math.floor(duration % 60);
 
             if (hours > 0) {
-                durationText = `${hours}hr${
-                    minutes > 0 ? ` ${minutes}min` : ""
-                }`;
+                durationText = `${hours}hr${minutes > 0 ? ` ${minutes}min` : ""}`;
             } else if (minutes > 0) {
                 durationText = `${minutes}min`;
             } else {
@@ -74,6 +77,7 @@ export default function VideoUploadModal({
     };
 
     const [uploadVideo] = useUploadVideoMutation();
+
     const onSubmit = async (data: any) => {
         if (!data.video) return alert("Please select a video file.");
 
@@ -94,16 +98,18 @@ export default function VideoUploadModal({
         if (data.thumbnail) formData.append("thumbnail", data.thumbnail);
         if (data.video) formData.append("video", data.video);
         formData.append("duration", videoDuration.toString());
+        formData.append("category", selectedCategory);
+        formData.append("tags", JSON.stringify(selectedTags));
 
         try {
             setIsUploading(true);
             const response = await uploadVideo(formData).unwrap();
-
-            console.log(response);
             toast.success("Video uploaded successfully! It will be available after approval.");
             reset();
             setVideoDuration(0);
             setVideoDetails("");
+            setSelectedTags([]);
+            setSelectedCategory("movies");
             setIsOpens(false);
         } catch (error) {
             console.error("Upload failed:", error);
@@ -111,6 +117,19 @@ export default function VideoUploadModal({
         } finally {
             setIsUploading(false);
         }
+    };
+
+    const handleTagToggle = (tag: Tag) => {
+        setSelectedTags(prev => {
+            if (prev.includes(tag)) {
+                return prev.filter(t => t !== tag);
+            }
+            if (prev.length >= 5) {
+                toast.error("You can select up to 5 tags only");
+                return prev;
+            }
+            return [...prev, tag];
+        });
     };
 
     return (
@@ -146,7 +165,6 @@ export default function VideoUploadModal({
                 </div>
 
                 <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
-                    {/* Title */}
                     <div className="grid gap-2">
                         <Label htmlFor="title">Title</Label>
                         <Input
@@ -157,7 +175,6 @@ export default function VideoUploadModal({
                         />
                     </div>
 
-                    {/* Description */}
                     <div className="grid gap-2">
                         <Label htmlFor="desc">Description</Label>
                         <Textarea
@@ -166,6 +183,44 @@ export default function VideoUploadModal({
                             className="resize-none min-h-[80px]"
                             {...register("desc")}
                         />
+                    </div>
+
+                    {/* Category Selection */}
+                    <div className="grid gap-2">
+                        <Label htmlFor="category">Category</Label>
+                        <Select value={selectedCategory} onValueChange={(value: Category) => setSelectedCategory(value)}>
+                            <SelectTrigger className="w-full">
+                                <SelectValue placeholder="Select category" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                {CATEGORIES.map((category) => (
+                                    <SelectItem key={category} value={category}>
+                                        {category.charAt(0).toUpperCase() + category.slice(1)}
+                                    </SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
+                    </div>
+
+                    {/* Tags Selection */}
+                    <div className="grid gap-2">
+                        <Label>Tags (select up to 5)</Label>
+                        <div className="flex flex-wrap gap-2">
+                            {TAGS.map((tag) => (
+                                <button
+                                    key={tag}
+                                    type="button"
+                                    onClick={() => handleTagToggle(tag)}
+                                    className={`px-3 py-1 rounded-full text-sm font-medium transition-colors ${
+                                        selectedTags.includes(tag)
+                                            ? 'bg-yellow-500 text-black'
+                                            : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'
+                                    }`}
+                                >
+                                    {tag}
+                                </button>
+                            ))}
+                        </div>
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
