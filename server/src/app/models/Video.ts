@@ -1,7 +1,10 @@
 import mongoose from "mongoose";
+
+const VALID_TAGS = ["action", "horror", "comedy", "drama", "thriller", "romance", "adventure", "sci-fi", "fantasy", "animation", "documentary", "crime", "mystery", "family"];
+const VALID_CATEGORIES = ["movies", "documentaries", "tv shows", "web series", "short films", "educational", "music videos", "sports"];
+
 const VideoSchema = new mongoose.Schema(
     {
-        //change userId to user
         userId: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "User",
@@ -29,10 +32,16 @@ const VideoSchema = new mongoose.Schema(
         tags: {
             type: [String],
             default: [],
+            validate: {
+                validator: function(v: string[]) {
+                    return v.length <= 5 && v.every(tag => VALID_TAGS.includes(tag));
+                },
+                message: "Invalid tags or too many tags. Maximum 5 tags allowed."
+            }
         },
         category:{
         type: String,
-        enum: ["movies", "documentaries", "tv shows"],
+        enum: VALID_CATEGORIES,
         default: "movies"
         },
         duration:{

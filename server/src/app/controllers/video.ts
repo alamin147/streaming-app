@@ -295,10 +295,15 @@ export const uploadVideo: any = async (req: Request, res: Response) => {
             "Video or thumbnail size exceeds 100MB."
         );
     }
-    const { title, desc, duration } = req.body;
+    const { title, desc, duration, category, tags } = req.body;
     const videoDuration = duration ? parseInt(duration) : 0;
+    let parsedTags: string[] = [];
 
     try {
+        if (tags) {
+            parsedTags = JSON.parse(tags);
+        }
+
         if (thumbnailFile) {
             const filename = `${title.replace(/ /g, "_")}_${new Date()
                 .toISOString()
@@ -314,6 +319,8 @@ export const uploadVideo: any = async (req: Request, res: Response) => {
                 imgUrl = uploadedThumbnail?.secure_url as string;
             }
         }
+
+        // Upload video
         if (videoFile) {
             const filename = `${title.replace(/ /g, "_")}_${new Date()
                 .toISOString()
@@ -332,7 +339,9 @@ export const uploadVideo: any = async (req: Request, res: Response) => {
             des: desc,
             videoUrl: videoUrl,
             imgUrl: imgUrl,
-            duration: videoDuration
+            duration: videoDuration,
+            category: category,
+            tags: parsedTags
         });
 
         const savedVideo = await newVideo.save();
