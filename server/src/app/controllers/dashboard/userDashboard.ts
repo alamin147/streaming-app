@@ -26,17 +26,29 @@ export const updateMyVideos = async (
 
 ) => {
   try {
-    const userId=req.user.id;
-    const videoId=req.params.videoId;
-    const { title, des } = req.body;
+    const userId = req.user.id;
+    const videoId = req.params.videoId;
+    const { title, des, category, tags } = req.body;
+
+    let updateData: any = { title, des };
+
+    if (category) {
+      updateData.category = category;
+    }
+    if (tags) {
+      updateData.tags = JSON.parse(tags);
+    }
+
     const video = await Video.findOneAndUpdate(
       { _id: videoId, userId },
-      { title, des },
+      updateData,
       { new: true }
     );
+
     if (!video) {
-      return response(res, 404, false, "Video not found");
+      return response(res, 404, false, "Video not found or unauthorized");
     }
+
     response(res, 200, true, "Video updated successfully", { video });
   } catch (err: any) {
     response(res, 500, false, err.message || "Internal Server Error");
