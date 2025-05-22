@@ -59,7 +59,7 @@ const Sliders = () => {
                     <div className="text-sm md:text-lg flex items-center gap-2  text-white z-10 mb-2">
                       <span className="text-yellow-500">⭐ 8.5 |</span>
                       <span className="flex items-center gap-1">2021 |</span>
-                      <span>18+ |</span>
+                      <span>12+ |</span>
                       <span>1.20 hr </span>
                     </div>
 
@@ -87,7 +87,7 @@ const Sliders = () => {
                     <div className="flex gap-4 md:gap-8 mt-2 z-10 items-center">
                       <button className="px-2 md:px-4 py-2  bg-yellow-500 rounded-md hover:bg-yellow-400 flex font-semibold gap-1.5 text-black text-sm  md:text-lg">
                         <FaPlay className="mt-0.5 md:mt-1 " />
-                        Watch NowMovies
+                        Watch Now
                       </button>
 
                       <button className="group hover:text-yellow-500 text-sm  md:text-lg flex items-center gap-2 text-white rounded-md ">
