@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input"
 import { Check, Search, X } from "lucide-react"
 import { useGetPendingVideosQuery, useApproveVideoMutation, useRejectVideoMutation } from "@/redux/features/dashboard/adminDashboard/adminDashboardApi"
 import { useState } from "react"
-import { format, formatDistanceToNow } from "date-fns"
+import { formatDistanceToNow } from "date-fns"
 import toast from "react-hot-toast"
 
 const PendingVideos = () => {

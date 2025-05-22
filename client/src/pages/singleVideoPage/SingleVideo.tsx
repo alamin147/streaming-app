@@ -203,7 +203,7 @@ export const SingleVideo = () => {
                 if (screenfull.isFullscreen && window.screen.orientation) {
                     try {
                         if (window.innerWidth < 768) {
-                            window.screen.orientation?.lock('landscape').catch(() => {
+                            (window.screen.orientation as any)?.lock('landscape').catch(() => {
                                 console.log('Orientation lock not supported');
                             });
                         }
@@ -453,7 +453,7 @@ export const SingleVideo = () => {
                                                         <p className="text-white text-sm font-medium mb-1">Quality</p>
                                                         <select
                                                             className="w-full bg-gray-700 text-white px-2 py-1 rounded text-sm"
-                                                            onChange={(e) => {
+                                                            onChange={() => {
 
                                                                 setShowOptions(false);
                                                             }}

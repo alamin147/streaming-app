@@ -81,7 +81,7 @@ export default function VideoUploadModal({ isOpen, setIsOpens }: VideoUploadModa
         if (!data.video) return toast.error("Please select a video file.");
 
         if (data.video.size > 100 * 1024 * 1024) {
-            let size = Number(data.video.size);
+            const size = Number(data.video.size);
             toast.error(
                 `Video must be under 100MB. Your video size is: ${(
                     size /

@@ -1,4 +1,4 @@
-import { useGetRecentVideosQuery, useGetVideosQuery } from "@/redux/features/videos/videosApi";
+import { useGetVideosQuery } from "@/redux/features/videos/videosApi";
 import Footer from "@/components/footer/Footer";
 import { SidebarInset, SidebarProvider, SidebarTrigger, useSidebar } from "@/components/ui/sidebar";
 import VideosCards from "@/components/VideosCards/VideosCards";

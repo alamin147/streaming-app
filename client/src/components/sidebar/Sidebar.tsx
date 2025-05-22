@@ -4,17 +4,12 @@ import {
     SidebarProvider,
     SidebarTrigger,
 } from "@/components/ui/sidebar";
-import { useTheme } from "../themeProvider/ThemeProvider";
-import { Sun } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { IoIosMoon } from "react-icons/io";
 import { RiVideoUploadFill } from "react-icons/ri";
 import Carousel from "../carousel/Carousel";
-import { Link, NavLink } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import { useState } from "react";
 import VideoUploadModal from "../uploads/Upload";
 import { getUserInfo } from "@/redux/authUlits";
-import { Avatar } from "../ui/avatar";
 import {
     Breadcrumb,
     BreadcrumbItem,
