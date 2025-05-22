@@ -23,7 +23,7 @@ type Tag = typeof TAGS[number];
 export default function VideoUploadModal({ isOpen, setIsOpens }: VideoUploadModalProps) {
     const { register, handleSubmit, setValue, watch, reset } = useForm();
     const [isUploading, setIsUploading] = useState<boolean>(false);
-    const [videoDuration, setVideoDuration] = useState<number>(0);
+    const [videoDuration, setVideoDuration] = useState<string>("");
     const [videoDetails, setVideoDetails] = useState<string>("");
     const [selectedTags, setSelectedTags] = useState<Tag[]>([]);
     const [selectedCategory, setSelectedCategory] = useState<Category>("movies");
@@ -50,20 +50,19 @@ export default function VideoUploadModal({ isOpen, setIsOpens }: VideoUploadModa
 
         video.onloadedmetadata = () => {
             const duration = video.duration;
-            setVideoDuration(Math.round(duration));
-
-            let durationText = "";
             const hours = Math.floor(duration / 3600);
             const minutes = Math.floor((duration % 3600) / 60);
             const seconds = Math.floor(duration % 60);
 
-            if (hours > 0) {
-                durationText = `${hours}hr${minutes > 0 ? ` ${minutes}min` : ""}`;
-            } else if (minutes > 0) {
-                durationText = `${minutes}min`;
-            } else {
-                durationText = `${seconds}sec`;
-            }
+            let durationText = "";
+            const parts = [];
+
+            if (hours > 0) parts.push(`${hours}hr`);
+            if (minutes > 0 || hours > 0) parts.push(`${minutes}min`);
+            parts.push(`${seconds}sec`);
+
+            durationText = parts.join('');
+            setVideoDuration(durationText);
 
             setVideoDetails(`${file.name} (${durationText})`);
             URL.revokeObjectURL(videoUrl);
@@ -79,7 +78,7 @@ export default function VideoUploadModal({ isOpen, setIsOpens }: VideoUploadModa
     const [uploadVideo] = useUploadVideoMutation();
 
     const onSubmit = async (data: any) => {
-        if (!data.video) return alert("Please select a video file.");
+        if (!data.video) return toast.error("Please select a video file.");
 
         if (data.video.size > 100 * 1024 * 1024) {
             let size = Number(data.video.size);
@@ -97,16 +96,16 @@ export default function VideoUploadModal({ isOpen, setIsOpens }: VideoUploadModa
         if (data.desc) formData.append("desc", data.desc);
         if (data.thumbnail) formData.append("thumbnail", data.thumbnail);
         if (data.video) formData.append("video", data.video);
-        formData.append("duration", videoDuration.toString());
+        formData.append("duration", videoDuration);
         formData.append("category", selectedCategory);
         formData.append("tags", JSON.stringify(selectedTags));
 
         try {
             setIsUploading(true);
-            const response = await uploadVideo(formData).unwrap();
+            await uploadVideo(formData).unwrap();
             toast.success("Video uploaded successfully! It will be available after approval.");
             reset();
-            setVideoDuration(0);
+            setVideoDuration("");
             setVideoDetails("");
             setSelectedTags([]);
             setSelectedCategory("movies");
@@ -307,7 +306,6 @@ export default function VideoUploadModal({ isOpen, setIsOpens }: VideoUploadModa
                             </div>
                         </div>
                     </div>
-
                     {/* Moderation notice */}
                     <div className="p-3 rounded-md bg-blue-500/10 border border-blue-500/20 text-sm">
                         <p className="text-blue-500">
@@ -315,7 +313,6 @@ export default function VideoUploadModal({ isOpen, setIsOpens }: VideoUploadModa
                             You can view your video's status in the "My Videos" section.
                         </p>
                     </div>
-
                     {/* Buttons */}
                     <div className="flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2 pt-4 mt-2 border-t border-gray-800/20 dark:border-gray-100/10">
                         <Button

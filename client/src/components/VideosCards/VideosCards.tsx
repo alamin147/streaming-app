@@ -3,6 +3,7 @@ import Cards from "../cards/Cards";
 const VideosCards = ({ title, open, Videos }: any) => {
   const videos = Videos?.data?.videos || [];
 
+  console.log(title, videos);
   return (
     <div className="py-8 px-4 md:px-8">
       <h2 className="text-2xl font-bold mb-4 text-gray-900 dark:text-white">
@@ -19,6 +20,7 @@ const VideosCards = ({ title, open, Videos }: any) => {
               title={videoData.title}
               imgUrl={videoData.imgUrl}
               duration={videoData.duration}
+              category={videoData.category}
               createdAt={videoData.createdAt}
             />
           );

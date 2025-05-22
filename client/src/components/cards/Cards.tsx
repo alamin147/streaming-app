@@ -2,34 +2,20 @@ import { Dot } from "lucide-react";
 import { FaPlay } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 
-const formatDuration = (seconds: number): string => {
-    if (!seconds) return "0min";
-
-    const hours = Math.floor(seconds / 3600);
-    const minutes = Math.floor((seconds % 3600) / 60);
-    const secs = Math.floor(seconds % 60);
-
-    if (hours > 0) {
-        return `${hours}hr${minutes > 0 ? ` ${minutes}min` : ""}`;
-    } else if (minutes > 0) {
-        return `${minutes}min`;
-    } else {
-        return `${secs}sec`;
-    }
-};
-
 const Cards = ({
     _id,
     title,
     imgUrl,
     duration,
     createdAt,
+    category
 }: {
     _id: string;
     title: string;
     imgUrl: string;
     duration?: number;
     createdAt?: string;
+    category?: string;
 }) => {
     const navigate = useNavigate();
 
@@ -64,11 +50,11 @@ const Cards = ({
                 <div className="flex items-center">
                     <span>{year}</span>
                     <Dot />
-                    <span>{formatDuration(duration || 0)}</span>
+                    <span>{duration}</span>
                 </div>
                 <div>
                     <span className="border border-gray-500 text-[10px] sm:text-xs px-1.5 sm:px-2 py-0.5 rounded">
-                        Movie
+                        {`${category?.charAt(0)?.toUpperCase()}${category?.slice(1)}`||"Movies"}
                     </span>
                 </div>
             </div>

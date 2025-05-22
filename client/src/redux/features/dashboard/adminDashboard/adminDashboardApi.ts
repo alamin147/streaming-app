@@ -71,7 +71,7 @@ const userDashboardApi = baseApi.injectEndpoints({
           method: "PATCH",
         };
       },
-      invalidatesTags: ["adminVideos"],
+      invalidatesTags: ["adminVideos","video","myVideosUser"],
     }),
 
     rejectVideo: builder.mutation({
@@ -81,7 +81,7 @@ const userDashboardApi = baseApi.injectEndpoints({
           method: "PATCH",
         };
       },
-      invalidatesTags: ["adminVideos"],
+      invalidatesTags: ["adminVideos","video","myVideosUser"],
     }),
 
   }),

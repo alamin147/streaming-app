@@ -299,9 +299,7 @@ export const uploadVideo: any = async (req: Request, res: Response) => {
         );
     }
     const { title, desc, duration, category, tags } = req.body;
-    const videoDuration = duration ? parseInt(duration) : 0;
     let parsedTags: string[] = [];
-
     try {
         if (tags) {
             parsedTags = JSON.parse(tags);
@@ -335,18 +333,16 @@ export const uploadVideo: any = async (req: Request, res: Response) => {
                 videoUrl = uploadedVideo.eager[0].secure_url;
             }
         }
-
         const newVideo = new Video({
             userId: req.user.id,
             title,
             des: desc,
             videoUrl: videoUrl,
             imgUrl: imgUrl,
-            duration: videoDuration,
+            duration,
             category: category,
             tags: parsedTags
         });
-
         const savedVideo = await newVideo.save();
 
         response(res, 201, true, "Video uploaded successfully", savedVideo);

@@ -1,5 +1,4 @@
 # streaming-app
 # Todo
-    - duration
+    - remove dlt feature for admin
     - create all pages on the sidebar
-    - redirect to login if cookie is missing
