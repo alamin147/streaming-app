@@ -1,4 +1,4 @@
-import { useGetWatchLaterVideosQuery } from "@/redux/features/videos/videosApi";
+import { useGetRecentVideosQuery } from "@/redux/features/videos/videosApi";
 import Footer from "@/components/footer/Footer";
 import { SidebarInset, SidebarProvider, SidebarTrigger, useSidebar } from "@/components/ui/sidebar";
 import VideosCards from "@/components/VideosCards/VideosCards";
@@ -6,17 +6,17 @@ import { AppSidebar } from "@/components/app-sidebar";
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
 import { UserAndTheme } from "@/lib/UserAndTheme";
 
-const WatchLater = () => {
-    const { data: watchlaterVideos } = useGetWatchLaterVideosQuery(undefined);
+const RecentlyWatched = () => {
+    const { data: recentVideos } = useGetRecentVideosQuery(undefined);
 
     return (
         <SidebarProvider>
-            <WatchLaterContent videos={watchlaterVideos} />
+            <RecentContent videos={recentVideos} />
         </SidebarProvider>
     )
 }
 
-const WatchLaterContent = ({ videos }: { videos: any }) => {
+const RecentContent = ({ videos }: { videos: any }) => {
     const { open, setOpen, isMobile } = useSidebar();
 
     if (isMobile === true) {
@@ -39,7 +39,7 @@ const WatchLaterContent = ({ videos }: { videos: any }) => {
                                 </BreadcrumbItem>
                                 <BreadcrumbSeparator className="hidden md:block" />
                                 <BreadcrumbItem>
-                                    <BreadcrumbPage>Bookmark</BreadcrumbPage>
+                                    <BreadcrumbPage>History</BreadcrumbPage>
                                 </BreadcrumbItem>
                             </BreadcrumbList>
                         </Breadcrumb>
@@ -47,7 +47,7 @@ const WatchLaterContent = ({ videos }: { videos: any }) => {
                     <UserAndTheme on={true} />
                 </header>
                 <div className="min-h-screen">
-                    <VideosCards title="Watch Later" open={open} Videos={videos} />
+                    <VideosCards title="History" open={open} Videos={videos} />
                 </div>
                 <Footer />
             </SidebarInset>
@@ -55,4 +55,5 @@ const WatchLaterContent = ({ videos }: { videos: any }) => {
     )
 }
 
-export default WatchLater
+
+export default RecentlyWatched
