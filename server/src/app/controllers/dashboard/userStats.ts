@@ -1,7 +1,6 @@
 import { Request, Response } from "express";
 import { response } from "../../utils/utils";
 import Video from "../../models/Video";
-import RecentVideo from "../../models/RecentVideos";
 import Comment from "../../models/Comment";
 
 export const getUserStats = async (req: Request, res: Response) => {
@@ -15,7 +14,7 @@ export const getUserStats = async (req: Request, res: Response) => {
 
     const contentCount = videos.length;
 
-    const totalWatchTime = videos.reduce((acc, video) => acc + (video.duration || 0), 0);
+    const totalWatchTime = videos.reduce((acc, video) => acc + (typeof video.duration === 'string' ? parseInt(video.duration) : (video.duration || 0)), 0);
 
     const totalComments = await Comment.countDocuments({
       videoId: { $in: videos.map(v => v._id) }
@@ -39,7 +38,7 @@ export const getUserStats = async (req: Request, res: Response) => {
           totalViews,
           totalSubscribers,
           contentCount,
-          totalWatchTime: Math.round(totalWatchTime / 60), 
+          totalWatchTime: Math.round(totalWatchTime / 60),
         },
         performance: {
           viewsProgress,

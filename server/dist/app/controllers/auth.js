@@ -23,39 +23,64 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.googleAuth = exports.signin = exports.signup = void 0;
+exports.signin = exports.signup = void 0;
 const User_1 = __importDefault(require("../models/User"));
 const utils_1 = require("../utils/utils");
 const bcryptjs_1 = __importDefault(require("bcryptjs"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
-const signup = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+const signup = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const data = req.body;
-        const hash = yield utils_1.utils.hashPassword(data.password);
+        const { username, email, password } = req.body;
+        const existingUser = yield User_1.default.findOne({
+            $or: [{ email }, { username }],
+        });
+        if (existingUser) {
+            if (existingUser.email === email) {
+                return (0, utils_1.response)(res, 400, false, "Email is already registered.");
+            }
+            if (existingUser.username === username) {
+                return (0, utils_1.response)(res, 400, false, "Username is already taken.");
+            }
+        }
+        const hash = yield utils_1.utils.hashPassword(password);
         const newUser = new User_1.default(Object.assign(Object.assign({}, req.body), { password: hash }));
         yield newUser.save();
-        (0, utils_1.response)(res, 201, true, "User created successfully");
+        return (0, utils_1.response)(res, 201, true, "User created successfully");
     }
     catch (err) {
-        (0, utils_1.response)(res, 500, true, (err === null || err === void 0 ? void 0 : err.message) || "Server Error");
+        console.error("Signup error:", err);
+        return (0, utils_1.response)(res, 500, false, (err === null || err === void 0 ? void 0 : err.message) || "Server Error");
     }
 });
 exports.signup = signup;
-const signin = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+const signin = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const user = yield User_1.default.findOne({ username: req.body.username }).lean();
+        const { usernameOrEmail, password } = req.body;
+        const user = yield User_1.default.findOne({
+            $or: [{ email: usernameOrEmail }, { username: usernameOrEmail }],
+        })
+            .select("+password")
+            .lean();
         if (!user)
             return (0, utils_1.response)(res, 404, false, "User Not Found");
-        const checkPass = yield bcryptjs_1.default.compare(req.body.password, user.password);
+        const checkPass = yield bcryptjs_1.default.compare(password, user.password);
         if (!checkPass)
-            return (0, utils_1.response)(res, 400, false, "Invalid password");
-        const token = jsonwebtoken_1.default.sign({ id: user._id }, process.env.JWTSECRET);
-        const { password } = user, restuser = __rest(user, ["password"]);
+            return (0, utils_1.response)(res, 400, false, "Password is wrong");
+        const token = jsonwebtoken_1.default.sign({
+            id: user._id,
+            name: user.name,
+            username: user.username,
+            email: user.email,
+            role: user.role
+        }, process.env.JWTSECRET);
+        const { password: userPassword } = user, restuser = __rest(user, ["password"]);
         res.cookie("token", token, {
             httpOnly: true,
+            expires: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000),
         });
         (0, utils_1.response)(res, 200, true, "User logged in successfully", {
             user: restuser,
+            token,
         });
     }
     catch (err) {
@@ -63,32 +88,3 @@ const signin = (req, res, next) => __awaiter(void 0, void 0, void 0, function* (
     }
 });
 exports.signin = signin;
-const googleAuth = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        const user = yield User_1.default.findOne({ email: req.body.email }).lean();
-        if (user) {
-            const token = jsonwebtoken_1.default.sign({ id: user._id }, process.env.JWTSECRET);
-            res.cookie("token", token, {
-                httpOnly: true,
-            });
-            (0, utils_1.response)(res, 200, true, "User logged in successfully", {
-                user,
-            });
-        }
-        else {
-            const newUser = new User_1.default(Object.assign(Object.assign({}, req.body), { fromGoogle: true }));
-            const savedUser = yield newUser.save();
-            const token = jsonwebtoken_1.default.sign({ id: savedUser._id }, process.env.JWTSECRET);
-            res.cookie("token", token, {
-                httpOnly: true,
-            });
-            (0, utils_1.response)(res, 200, true, "User logged in successfully", {
-                user: savedUser,
-            });
-        }
-    }
-    catch (err) {
-        (0, utils_1.response)(res, 500, true, (err === null || err === void 0 ? void 0 : err.message) || "Server Error");
-    }
-});
-exports.googleAuth = googleAuth;

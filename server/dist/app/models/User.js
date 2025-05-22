@@ -30,5 +30,15 @@ const UserSchema = new mongoose_1.default.Schema({
         type: Boolean,
         default: false,
     },
+    role: {
+        type: String,
+        enum: ["user", "admin"],
+        default: "user"
+    },
+    status: {
+        type: String,
+        enum: ["active", "inactive"],
+        default: "active"
+    },
 }, { timestamps: true });
 exports.default = mongoose_1.default.model("User", UserSchema);

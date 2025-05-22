@@ -10,7 +10,6 @@ import cookieParser from "cookie-parser";
 import userDashboardRoutes from "./app/routes/dashboard/userDashboardRoutes";
 import adminDashboardRoutes from "./app/routes/dashboard/adminDashboardRoutes";
 import userManagementRoutes from "./app/routes/dashboard/userManagementRoutes";
-import engagementRoutes from "./app/routes/dashboard/engagementRoutes";
 import reportRoutes from "./app/routes/report";
 
 export const app = express();

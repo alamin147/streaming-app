@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.utils = exports.verifyToken = exports.response = void 0;
+exports.utils = exports.verifyAdminToken = exports.verifyToken = exports.response = void 0;
 const error_1 = require("../error/error");
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const bcryptjs_1 = __importDefault(require("bcryptjs"));
@@ -30,10 +30,10 @@ const response = (res, status, success, message, data) => {
 };
 exports.response = response;
 const verifyToken = (req, res, next) => {
-    const token = req.cookies.access_token;
+    const token = req.cookies.token;
     if (!token)
         return next((0, error_1.createError)(401, false, "You are not authenticated!"));
-    jsonwebtoken_1.default.verify(token, process.env.JWT, (err, user) => {
+    jsonwebtoken_1.default.verify(token, process.env.JWTSECRET, (err, user) => {
         if (err)
             return next((0, error_1.createError)(403, false, "Token is not valid!"));
         req.user = user;
@@ -41,6 +41,20 @@ const verifyToken = (req, res, next) => {
     });
 };
 exports.verifyToken = verifyToken;
+const verifyAdminToken = (req, res, next) => {
+    const token = req.cookies.token;
+    if (!token)
+        return next((0, error_1.createError)(401, false, "You are not authenticated!"));
+    jsonwebtoken_1.default.verify(token, process.env.JWTSECRET, (err, user) => {
+        if (err)
+            return next((0, error_1.createError)(403, false, "Token is not valid!"));
+        if (user.role !== "admin")
+            return next((0, error_1.createError)(403, false, "You are not authorized to access this resource"));
+        req.user = user;
+        next();
+    });
+};
+exports.verifyAdminToken = verifyAdminToken;
 exports.utils = {
     hashPassword,
 };

@@ -7,7 +7,7 @@ exports.connectDB = void 0;
 const mongoose_1 = __importDefault(require("mongoose"));
 const connectDB = () => {
     mongoose_1.default
-        .connect("mongodb://localhost:27017/streaming")
+        .connect(`${process.env.MONGO_URI}`)
         .then(() => {
         console.log("connected to DB");
     })
