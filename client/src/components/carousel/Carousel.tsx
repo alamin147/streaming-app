@@ -24,11 +24,11 @@ const Carousel = () => {
 
       <div>
         {/* trending */}
-        <VideosCards title="Trending" open={open} Videos={videos}/>
+        <VideosCards ids={"#trending"} title="Trending" open={open} Videos={videos}/>
         {/* recent */}
-        <VideosCards title="Recently Watched" open={open} Videos={recentvideos}/>
+        <VideosCards ids={"#history"} title="Recently Watched" open={open} Videos={recentvideos}/>
         {/* watch later */}
-        <VideosCards title="Watch Later" open={open} Videos={watelaterVideos}/>
+        <VideosCards ids={"#bookmark"} title="Watch Later" open={open} Videos={watelaterVideos}/>
 
         <Footer />
       </div>

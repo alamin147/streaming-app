@@ -88,12 +88,12 @@ const data = {
   projects: [
     {
       name: "Bookmark",
-      url: "#",
+      url: "/#bookmark",
       icon: BookmarkPlus,
     },
      {
       name: "History",
-      url: "/history",
+      url: "/#history",
       icon: History,
     },
 
