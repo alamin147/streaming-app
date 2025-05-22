@@ -32,6 +32,7 @@ const UserTab = () => {
     const [delayedSearch, setDelayedSearch] = useState("");
     const [userToDelete, setUserToDelete] = useState<string | null>(null);
     const [roleDialog, setRoleDialog] = useState({ isOpen: false, userId: "", currentRole: "" });
+    const [dropdownOpen, setDropdownOpen] = useState<string | null>(null);
 
     const handleSearch = (value: string) => {
         setSearchTerm(value);
@@ -52,23 +53,36 @@ const UserTab = () => {
     const [updateUserRole, { isLoading: isRoleUpdating }] = useUpdateUserRoleMutation();
     const [, { isLoading: isDeleting }] = useDeleteUserMutation();
 
-    const handleStatusToggle = async (userId: string, currentStatus: string) => {
+    const handleStatusToggle = (userId: string, currentStatus: string) => {
         const newStatus = currentStatus === "active" ? "inactive" : "active";
         try {
-            await updateUserStatus({ userId, status: newStatus }).unwrap();
-            toast.success(`User ${newStatus === "active" ? "activated" : "deactivated"} successfully`);
+            updateUserStatus({ userId, status: newStatus })
+                .unwrap()
+                .then(() => {
+                    toast.success(`User ${newStatus === "active" ? "activated" : "deactivated"} successfully`);
+                })
+                .catch(() => {
+                    toast.error("Failed to update user status");
+                });
         } catch (err) {
             toast.error("Failed to update user status");
         }
     };
 
-    const handleRoleChange = async (userId: string, role: string) => {
+    const handleRoleChange = (userId: string, role: string) => {
         try {
-            await updateUserRole({ userId, role }).unwrap();
-            toast.success(`User role updated to ${role}`);
-            setRoleDialog({ isOpen: false, userId: "", currentRole: "" });
+            updateUserRole({ userId, role })
+                .unwrap()
+                .then(() => {
+                    toast.success(`User role updated to ${role}`);
+                    setRoleDialog({ isOpen: false, userId: "", currentRole: "" });
+                })
+                .catch(() => {
+                    toast.error("Failed to update user role");
+                });
         } catch (err) {
             toast.error("Failed to update user role");
+            setRoleDialog({ isOpen: false, userId: "", currentRole: "" });
         }
     };
 
@@ -183,7 +197,12 @@ const UserTab = () => {
                                                     {format(new Date(user.createdAt), "MMM dd, yyyy")}
                                                 </td>
                                                 <td className="py-3 px-4 text-right">
-                                                    <DropdownMenu>
+                                                    <DropdownMenu
+                                                        open={dropdownOpen === user._id}
+                                                        onOpenChange={(open) => {
+                                                            setDropdownOpen(open ? user._id : null);
+                                                        }}
+                                                    >
                                                         <DropdownMenuTrigger asChild>
                                                             <Button variant="ghost" className="h-8 w-8 p-0">
                                                                 <MoreHorizontal className="h-4 w-4" />
@@ -192,12 +211,24 @@ const UserTab = () => {
                                                         <DropdownMenuContent align="end" className="w-[160px]">
                                                             <DropdownMenuLabel>Actions</DropdownMenuLabel>
                                                             <DropdownMenuSeparator />
-                                                            <DropdownMenuItem onClick={() => setRoleDialog({ isOpen: true, userId: user._id, currentRole: user.role })}>
+                                                            <DropdownMenuItem
+                                                                onClick={() => {
+                                                                    setDropdownOpen(null);
+                                                                    setTimeout(() => {
+                                                                        setRoleDialog({ isOpen: true, userId: user._id, currentRole: user.role });
+                                                                    }, 100);
+                                                                }}
+                                                            >
                                                                 <Edit2 className="h-4 w-4 mr-2" />
                                                                 Change Role
                                                             </DropdownMenuItem>
                                                             <DropdownMenuItem
-                                                                onClick={() => handleStatusToggle(user._id, user.status)}
+                                                                onClick={() => {
+                                                                    setDropdownOpen(null);
+                                                                    setTimeout(() => {
+                                                                        handleStatusToggle(user._id, user.status);
+                                                                    }, 100);
+                                                                }}
                                                                 disabled={isStatusUpdating}
                                                             >
                                                                 {user.status === "active" ? (
@@ -214,7 +245,12 @@ const UserTab = () => {
                                                             </DropdownMenuItem>
                                                             <DropdownMenuItem
                                                                 className="text-red-500"
-                                                                onClick={() => setUserToDelete(user._id)}
+                                                                onClick={() => {
+                                                                    setDropdownOpen(null);
+                                                                    setTimeout(() => {
+                                                                        setUserToDelete(user._id);
+                                                                    }, 100);
+                                                                }}
                                                             >
                                                                 <Trash2 className="h-4 w-4 mr-2" />
                                                                 Delete
@@ -271,7 +307,7 @@ const UserTab = () => {
                     <AlertDialogHeader>
                         <AlertDialogTitle>Are you sure?</AlertDialogTitle>
                         <AlertDialogDescription>
-                            {/* This action cannot be undone. This will permanently delete the user account and all associated data. */}
+
                             This is a portfolio project, so the delete function of admin part is disabled. Other edits, changes, and features are functional for admin. Because admin password is open to everyone for testing purposes.
                         </AlertDialogDescription>
                     </AlertDialogHeader>
