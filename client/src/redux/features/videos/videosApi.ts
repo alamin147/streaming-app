@@ -67,7 +67,7 @@ const videoApi = baseApi.injectEndpoints({
           body: data,
         };
       },
-      invalidatesTags: ["watchLater"],
+      invalidatesTags: ["watchLater","video","recent"],
     }),
     isBookmarked: builder.query({
       query: (data) => {

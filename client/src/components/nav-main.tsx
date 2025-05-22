@@ -1,4 +1,4 @@
-import { ChevronRight, type LucideIcon } from "lucide-react";
+import { ChevronRight} from "lucide-react";
 
 import {
   Collapsible,
@@ -26,7 +26,7 @@ title: string;
   items: {
     title: string;
     url: string;
-    icon: LucideIcon;
+    icon: any;
     isActive?: boolean;
     items?: {
       title: string;

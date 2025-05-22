@@ -1,10 +1,10 @@
 import Cards from "../cards/Cards";
 
-const VideosCards = ({ ids,title, open, Videos }: any) => {
+const VideosCards = ({ title, Videos }: any) => {
   const videos = Videos?.data?.videos || [];
 
   return (
-    <div id={ids} className="py-8 px-4 md:px-8">
+    <div className="py-8 px-4 md:px-8">
       <h2 className="text-2xl font-bold mb-4 text-gray-900 dark:text-white">
         {title}
       </h2>

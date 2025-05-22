@@ -18,6 +18,7 @@ import MyDashboard from "./pages/dashboard/myDashboard/MyDashboard.tsx";
 import MyVideos from "./pages/dashboard/myVideos/MyVideos.tsx";
 import EditProfile from "./pages/dashboard/editProfile/EditProfile.tsx";
 import AdminDashboard from "./pages/dashboard/adminDashboard/adminDashboard.tsx";
+import WatchLater from "./pages/watchLater/WatchLater.tsx";
 
 const router = createBrowserRouter([
   {
@@ -28,7 +29,6 @@ const router = createBrowserRouter([
     path: "video/:id",
     element: <SingleVideo />,
   },
-
   {
     path: "/login",
     element: <LoginPage />,
@@ -36,6 +36,18 @@ const router = createBrowserRouter([
   {
     path: "/register",
     element: <RegisterPage />,
+  },
+  {
+    path: "/bookmark",
+    element: <WatchLater />,
+  },
+  {
+    path: "/trending",
+    element: <WatchLater />,
+  },
+  {
+    path: "/history",
+    element: <WatchLater />,
   },
   {
     path: "/dashboard/my-dashboard",

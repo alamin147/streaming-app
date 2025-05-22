@@ -1,14 +1,9 @@
 import * as React from "react";
 import {
-  LayoutGrid,
   House,
-  ArrowDownToLine,
   History,
   Flame,
-  Settings,
   BookmarkPlus,
-  TvMinimalPlay,
-  Film,
   DoorOpen,
 } from "lucide-react";
 import { NavMain } from "@/components/nav-main";
@@ -33,7 +28,6 @@ const data = {
     email: "m@example.com",
     avatar: "/avatars/shadcn.jpg",
   },
-
   navMain: [
     {
       title: "Home",
@@ -41,59 +35,27 @@ const data = {
       icon: House,
     },
     {
-      title: "Download",
-      url: "/download",
-      icon: ArrowDownToLine,
-    },
-    {
       title: "Trending",
       url: "/trending",
       icon: Flame,
     },
-    {
-      title: "Category",
-      url: "/category",
-      icon: LayoutGrid,
-      items: [
-        {
-          title: "Action",
-          url: "/category/action",
-        },
-        {
-          title: "Adventure",
-          url: "/category/adventure",
-        },
-        {
-          title: "Horror",
-          url: "/category/horror",
-        },
-        {
-          title: "Comedy",
-          url: "/category/comedy",
-        },
-      ],
-    },
-
-
   ],
-
   navSecondary: [
     {
       title: "Log out",
       url: "#",
       icon: DoorOpen,
     },
-
   ],
   projects: [
     {
       name: "Bookmark",
-      url: "/#bookmark",
+      url: "/bookmark",
       icon: BookmarkPlus,
     },
      {
       name: "History",
-      url: "/#history",
+      url: "/history",
       icon: History,
     },
 
@@ -122,7 +84,6 @@ const data = {
       url: "/dashboard/adminDashboard",
       icon: FaUserShield,
     },
-
   ],
 };
 
@@ -149,10 +110,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         {user && <NavMain title="Dashboard" items={data.dashboard}  />}
         {user && <NavMain title="Admin Dashboard" items={data.adminDashboard}  />}
         <NavSecondary items={data.navSecondary} className="mt-auto" />
-
       </SidebarContent>
       <SidebarFooter>
-        {/* <NavUser user={data.user} /> */}
       </SidebarFooter>
     </Sidebar>
   );

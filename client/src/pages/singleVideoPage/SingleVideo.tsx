@@ -2,8 +2,6 @@ import { useState, useRef, useEffect } from "react";
 import { Star, Play } from "lucide-react";
 import { BsFillBookmarkPlusFill, BsBookmarkCheckFill } from "react-icons/bs";
 import { useParams } from "react-router-dom";
-import { getUserInfo } from "@/redux/authUlits";
-import { useTheme } from "@/components/themeProvider/ThemeProvider";
 import Hls from "hls.js";
 import screenfull from "screenfull";
 import {
@@ -456,7 +454,7 @@ export const SingleVideo = () => {
                                                         <select
                                                             className="w-full bg-gray-700 text-white px-2 py-1 rounded text-sm"
                                                             onChange={(e) => {
-                                                               
+
                                                                 setShowOptions(false);
                                                             }}
                                                         >
