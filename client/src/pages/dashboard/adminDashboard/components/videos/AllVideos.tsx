@@ -1,9 +1,9 @@
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
-import { useChangeVideoStatusMutation, useDeleteVideoMutation, useGetAllVideosQuery } from "@/redux/features/dashboard/adminDashboard/adminDashboardApi"
+import { useChangeVideoStatusMutation, useGetAllVideosQuery } from "@/redux/features/dashboard/adminDashboard/adminDashboardApi"
 import { TabsContent } from "@/components/ui/tabs"
-import { Download, Filter, Search, Trash2 } from "lucide-react"
+import { AlertCircleIcon, Download, Filter, Search, Trash2 } from "lucide-react"
 import { useState } from "react"
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
@@ -15,7 +15,7 @@ const AllVideos = () => {
     const {data, isLoading} = useGetAllVideosQuery(undefined)
     const allVideos = data?.data?.videos || []
     const [changeVideoStatus, { isLoading: isStatusChanging }] = useChangeVideoStatusMutation()
-    const [deleteVideo, { isLoading: isDeleting }] = useDeleteVideoMutation()
+    // const [deleteVideo, { isLoading: isDeleting }] = useDeleteVideoMutation()
 
     const [isStatusDialogOpen, setIsStatusDialogOpen] = useState(false)
     const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
@@ -49,8 +49,9 @@ const AllVideos = () => {
 
     const handleDeleteVideo = async () => {
         try {
-            await deleteVideo(selectedVideo._id).unwrap()
-            toast.success("Video deleted successfully")
+            // await deleteVideo(selectedVideo._id).unwrap()
+            toast.success("Video deleted funtion disabled")
+            // toast.success("Video deleted successfully")
             setIsDeleteDialogOpen(false)
         } catch (error) {
             console.error("Failed to delete video:", error)
@@ -214,10 +215,18 @@ const AllVideos = () => {
         <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
             <AlertDialogContent>
                 <AlertDialogHeader>
-                    <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-                    <AlertDialogDescription>
+                   <div className="flex items-center gap-2">
+                     <AlertDialogTitle>Are you absolutely sure?
+
+                    </AlertDialogTitle>
+                        <AlertCircleIcon className="text-yellow-500"/>
+                   </div>
+                    {/* <AlertDialogDescription>
                         This will permanently delete the video "{selectedVideo?.title}" and all associated data including comments.
                         This action cannot be undone.
+                    </AlertDialogDescription> */}
+                    <AlertDialogDescription>
+                        This is a portfolio project, so the delete function of admin part is disabled. Other edits, changes, and features are functional for admin. Because admin password is open to everyone for testing purposes.
                     </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
@@ -225,9 +234,10 @@ const AllVideos = () => {
                     <AlertDialogAction
                         className="text-white bg-red-500 hover:bg-red-600"
                         onClick={handleDeleteVideo}
-                        disabled={isDeleting}
-                    >
-                        {isDeleting ? "Deleting..." : "Delete Video"}
+                        // disabled={isDeleting}
+                        >
+                        {/* {isDeleting ? "Deleting..." : "Delete Video"} */}
+                       Delete Video
                     </AlertDialogAction>
                 </AlertDialogFooter>
             </AlertDialogContent>
