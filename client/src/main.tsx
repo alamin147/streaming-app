@@ -20,6 +20,7 @@ import EditProfile from "./pages/dashboard/editProfile/EditProfile.tsx";
 import AdminDashboard from "./pages/dashboard/adminDashboard/adminDashboard.tsx";
 import WatchLater from "./pages/watchLater/WatchLater.tsx";
 import RecentlyWatched from "./pages/recentlyWatched/RecentlyWatched.tsx";
+import TrendingVideos from "./pages/trending/TrendingVideos.tsx";
 
 const router = createBrowserRouter([
   {
@@ -44,7 +45,7 @@ const router = createBrowserRouter([
   },
   {
     path: "/trending",
-    element: <WatchLater />,
+    element: <TrendingVideos />,
   },
   {
     path: "/history",
