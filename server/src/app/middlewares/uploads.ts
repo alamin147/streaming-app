@@ -12,16 +12,19 @@ export const uploadFile = async (
     api_secret: process.env.CLOUD_API_SECRET,
   });
   try {
+
     if (type == "vid") {
       const uploadResult = await cloudinary.uploader.upload(path, {
         public_id: fileName,
+        folder: process.env.CLOUDINARY_FOLDER,
         resource_type: "video",
         eager: [{ format: "m3u8", streaming_profile: "hd" }],
-      });
+    });
 
-      return uploadResult;
-    } else {
-      const uploadResult = await cloudinary.uploader.upload(path, {
+    return uploadResult;
+} else {
+    const uploadResult = await cloudinary.uploader.upload(path, {
+        folder: process.env.CLOUDINARY_FOLDER,
         public_id: fileName,
       });
 

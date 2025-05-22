@@ -45,8 +45,7 @@ const VideoSchema = new mongoose.Schema(
         default: "movies"
         },
         duration:{
-            type: Number,
-            default: 0,
+            type: String,
         },
         ratings:{
             type: Number,

@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input"
 import { Check, Search, X } from "lucide-react"
 import { useGetPendingVideosQuery, useApproveVideoMutation, useRejectVideoMutation } from "@/redux/features/dashboard/adminDashboard/adminDashboardApi"
 import { useState } from "react"
-import { format } from "date-fns"
+import { format, formatDistanceToNow } from "date-fns"
 import toast from "react-hot-toast"
 
 const PendingVideos = () => {
@@ -37,29 +37,7 @@ const PendingVideos = () => {
     }
   }
 
-  const formatTimestamp = (timestamp: string) => {
-    try {
-      const date = new Date(timestamp)
-      const now = new Date()
 
-      // If less than 24 hours ago
-      if (now.getTime() - date.getTime() < 24 * 60 * 60 * 1000) {
-        const hours = Math.floor((now.getTime() - date.getTime()) / (60 * 60 * 1000))
-        return hours <= 1 ? "1 hour ago" : `${hours} hours ago`
-      }
-
-      // If less than 7 days ago
-      if (now.getTime() - date.getTime() < 7 * 24 * 60 * 60 * 1000) {
-        const days = Math.floor((now.getTime() - date.getTime()) / (24 * 60 * 60 * 1000))
-        return days === 1 ? "1 day ago" : `${days} days ago`
-      }
-
-      // Otherwise show formatted date
-      return format(date, "MMM d, yyyy")
-    } catch (e) {
-      return "Unknown date"
-    }
-  }
   return (
      <Card className="col-span-7 md:col-span-4 border border-gray-800/20 dark:border-gray-100/10">
                   <CardHeader>
@@ -126,14 +104,14 @@ const PendingVideos = () => {
                             className="w-full h-full object-cover"
                           />
                         </div>
-                        
+
                         <div className="flex-1 min-w-0">
                           <h4 className="text-sm font-semibold truncate">
                             {video.title}
                           </h4>
                           <div className="flex items-center gap-3 mt-1 text-xs text-muted-foreground">
                             <div>By {video.userId?.name || "Unknown"}</div>
-                            <div>{formatTimestamp(video.createdAt)}</div>
+                           <div>{formatDistanceToNow(new Date(video.createdAt), { addSuffix: true })}</div>
                           </div>
                         </div>
                         <div className="flex items-center gap-2">
