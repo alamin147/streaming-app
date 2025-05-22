@@ -428,7 +428,6 @@ export const getComments = async (
 ) => {
     try {
         const { videoId } = req.params;
-        // console.log(videoId)
         const comments = await Comment.find({ videoId })
             .sort({ createdAt: -1 })
             .populate({

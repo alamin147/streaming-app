@@ -60,7 +60,6 @@ export const SingleVideo = () => {
         createdAt = "",
         ratings = 0,
     } = video;
-console.log(video)
     useEffect(() => {
         if (videoRef.current && videoUrl) {
             if (videoUrl.includes(".m3u8") && Hls.isSupported()) {
@@ -457,8 +456,7 @@ console.log(video)
                                                         <select
                                                             className="w-full bg-gray-700 text-white px-2 py-1 rounded text-sm"
                                                             onChange={(e) => {
-                                                                // HLS quality selection would be implemented here
-                                                                console.log("Selected quality:", e.target.value);
+                                                               
                                                                 setShowOptions(false);
                                                             }}
                                                         >

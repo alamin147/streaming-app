@@ -15,7 +15,6 @@ const userDashboardApi = baseApi.injectEndpoints({
     }),
    updateMyVideos: builder.mutation({
       query: (data) => {
-        console.log(data)
         return {
           url:  `/dashboard/user/my-videos/${data.videoId}`,
           method: "PATCH",

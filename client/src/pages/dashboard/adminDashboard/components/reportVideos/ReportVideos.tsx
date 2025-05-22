@@ -52,7 +52,6 @@ const ReportVideos = () => {
       default: return 'bg-gray-500 text-white';
     }
   };
-console.log("line 54",recentReports)
   return (
     <>
       <Card className="col-span-7 md:col-span-3 border border-gray-800/20 dark:border-gray-100/10">

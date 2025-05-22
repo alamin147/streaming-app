@@ -47,7 +47,6 @@ export function RegisterPage({
 
     try {
       const res: any = await registerUser(data).unwrap();
-      console.log(res);
 
       if (res?.status === 201) {
         toast.success(
