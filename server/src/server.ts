@@ -1,43 +1,23 @@
-import express, { NextFunction, Request, Response } from "express";
-import dotenv from "dotenv";
-import userRoutes from "./app/routes/user";
+import { Server } from "http";
+import app from "./app";
+import mongoose from "mongoose";
 import { connectDB } from "./app/connectDB";
-import videoRoutes from "./app/routes/video";
-import authRoutes from "./app/routes/auth";
-import cors from "cors";
-import { response } from "./app/utils/utils";
-import cookieParser from "cookie-parser";
-import userDashboardRoutes from "./app/routes/dashboard/userDashboardRoutes";
-import adminDashboardRoutes from "./app/routes/dashboard/adminDashboardRoutes";
-import userManagementRoutes from "./app/routes/dashboard/userManagementRoutes";
-import reportRoutes from "./app/routes/report";
 
-export const app = express();
-dotenv.config();
-app.use(
-  cors({
-    origin: "http://localhost:5173",
-    credentials: true,
-    methods: ["GET", "POST", "PUT", "DELETE","PATCH"],
-  })
-);
-app.use(cookieParser());
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+const port = process.env.PORT || 5000;
 
-app.use("/api/v1/users", userRoutes);
-app.use("/api/v1/dashboard/user", userDashboardRoutes);
-app.use("/api/v1/dashboard/admin", adminDashboardRoutes);
-app.use("/api/v1/dashboard/admin/users", userManagementRoutes);
-app.use("/api/v1/videos", videoRoutes);
-app.use("/api/v1/auth", authRoutes);
-app.use("/api/v1/reports", reportRoutes);
+async function main() {
+  try {
 
-app.use((err: any, req: Request, res: Response, next: NextFunction) => {
-  response(res, 500, false, `${err.message}` || "Something went wrong");
-});
+    await connectDB();
 
-app.listen(5000, () => {
-  connectDB();
-  console.log("server running on 5000");
-});
+    const server: Server = app.listen(port, () => {
+      console.log(`Server running on port ${port}`);
+    });
+
+  } catch (err) {
+    console.error('Failed to start server:', err);
+    process.exit(1);
+  }
+}
+
+main();
