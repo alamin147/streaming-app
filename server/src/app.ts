@@ -14,15 +14,15 @@ dotenv.config();
 
 const app:Application = express();
 
+
 const corsConfig = {
   origin: "https://n-streaming.vercel.app",
-  credentials: true, 
+  credentials: true,
   methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
   allowedHeaders: ["Origin", "X-Requested-With", "Content-Type", "Accept", "Authorization"]
 };
 
 app.use(cors(corsConfig));
-
 app.options("*", cors(corsConfig));
 
 app.use(cookieParser());

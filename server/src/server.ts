@@ -1,7 +1,6 @@
 import { Server } from "http";
 import app from "./app";
 import { connectDB } from "./app/connectDB";
-
 const port = process.env.PORT || 5000;
 
 async function main() {
