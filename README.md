@@ -14,7 +14,8 @@ This project demonstrates a comprehensive implementation of a video streaming se
 
 
 ## 🌐 Live URL
-[N-Movies](https:)
+[N-Movies Frontend](https://n-streaming.vercel.app)
+[N-Movies Backend](https://streaming-server-chi.vercel.app)
 
 ---
 
