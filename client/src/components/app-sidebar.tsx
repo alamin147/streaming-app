@@ -108,7 +108,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <NavMain title="Menu" items={data.navMain}  />
         <NavProjects projects={data.projects} />
         {user && <NavMain title="Dashboard" items={data.dashboard}  />}
-        {user && <NavMain title="Admin Dashboard" items={data.adminDashboard}  />}
+        {user?.role=="admin" && <NavMain title="Admin Dashboard" items={data.adminDashboard}  />}
         <NavSecondary items={data.navSecondary} className="mt-auto" />
       </SidebarContent>
       <SidebarFooter>

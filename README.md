@@ -1,7 +1,3 @@
-# few updates to make:
-    admin view only page
-    remove auto fill login
-
 # 📌 N-Movies: Video Streaming Platform
 
 A modern video streaming platform built with the MERN stack, offering a seamless viewing experience with features like video uploading, watching history, bookmarking, and content moderation.

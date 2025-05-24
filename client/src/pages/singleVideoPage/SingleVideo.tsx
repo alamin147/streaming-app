@@ -38,7 +38,6 @@ export const SingleVideo = () => {
     const [isFullscreen, setIsFullscreen] = useState(false);
     const [showOptions, setShowOptions] = useState(false);
     const [playbackSpeed, setPlaybackSpeed] = useState(1);
-
     const [volume, setVolume] = useState(1);
     const [currentTime, setCurrentTime] = useState(0);
     const [duration, setDuration] = useState(0);

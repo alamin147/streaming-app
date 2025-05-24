@@ -28,12 +28,7 @@ export function LoginForm({
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm({
-    defaultValues: {
-      usernameOrEmail: "afd",
-      password: "123456",
-    },
-  });
+  } = useForm();
   const [loginUser, { isLoading }] = useLoginUserMutation();
   const dispatch = useDispatch();
 

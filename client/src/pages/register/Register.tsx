@@ -28,15 +28,7 @@ export function RegisterPage({
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm({
-    defaultValues: {
-      name: "asdas",
-      username: "afd",
-      email: "dfs@f.g",
-      password: "123456",
-      conpassword: "123456",
-    },
-  });
+  } = useForm();
   const navigate = useNavigate();
   const [registerUser, { isLoading }] = useRegisterUserMutation();
   const onSubmit = async (data: any) => {
