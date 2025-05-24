@@ -7,7 +7,7 @@ exports.upload = void 0;
 const fs_1 = __importDefault(require("fs"));
 const path_1 = __importDefault(require("path"));
 const multer_1 = __importDefault(require("multer"));
-const uploadDir = 'uploads/';
+const uploadDir = '/tmp/uploads/';
 if (!fs_1.default.existsSync(uploadDir)) {
     fs_1.default.mkdirSync(uploadDir, { recursive: true });
 }

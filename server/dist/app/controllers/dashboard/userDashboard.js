@@ -93,6 +93,9 @@ const editProfile = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
         res.cookie("token", token, {
             httpOnly: true,
             expires: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000),
+            secure: true,
+            sameSite: 'none',
+            path: '/',
         });
         (0, utils_1.response)(res, 200, true, "Profile updated successfully", { token });
     }

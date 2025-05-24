@@ -1,6 +1,5 @@
 import { Server } from "http";
 import app from "./app";
-import mongoose from "mongoose";
 import { connectDB } from "./app/connectDB";
 
 const port = process.env.PORT || 5000;

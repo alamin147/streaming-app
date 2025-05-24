@@ -77,6 +77,9 @@ const signin = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         res.cookie("token", token, {
             httpOnly: true,
             expires: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000),
+            sameSite: 'none',
+            secure: true,
+            path: '/',
         });
         (0, utils_1.response)(res, 200, true, "User logged in successfully", {
             user: restuser,

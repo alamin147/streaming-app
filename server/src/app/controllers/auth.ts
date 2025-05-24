@@ -62,6 +62,7 @@ export const signin = async (req: Request, res: Response) => {
       httpOnly: true,
       expires: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000),
       sameSite: 'none',
+      secure: true,
       path: '/',
     });
     response(res, 200, true, "User logged in successfully", {
