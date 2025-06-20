@@ -56,6 +56,7 @@ export const SingleVideo = () => {
         _id = "",
         createdAt = "",
         ratings = 0,
+        duration: videoDuration = 0,
     } = video;
     useEffect(() => {
         if (videoRef.current && videoUrl) {
@@ -573,7 +574,7 @@ export const SingleVideo = () => {
                                             </span>
                                         </div>
                                         <span className="text-gray-600 dark:text-gray-400">
-                                            24 min
+                                           {videoDuration}
                                         </span>
                                     </div>
 

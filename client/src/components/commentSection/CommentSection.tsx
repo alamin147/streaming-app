@@ -69,7 +69,7 @@ const CommentSection = ({ videoId, _id }: { videoId: string; _id: string }) => {
                             <h2 className="text-2xl font-semibold text-gray-800 dark:text-gray-200">
                                 Comments
                                 {!commentLoading &&
-                                    `: ${comments?.length || 0}`}
+                                    `: ${comments?.data?.comments?.length || 0}`}
                             </h2>
                         </div>
 
