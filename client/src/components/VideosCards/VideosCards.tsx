@@ -5,7 +5,7 @@ const VideosCards = ({ title, Videos }: any) => {
 
   return (
     <div>
-      {videos?.length > 1 && (
+      {videos?.length > 0 && (
         <div className="py-8 px-4 md:px-8">
           <h2 className="text-2xl font-bold mb-4 text-gray-900 dark:text-white">
             {title}
