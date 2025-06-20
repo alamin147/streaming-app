@@ -16,7 +16,7 @@ const app:Application = express();
 
 
 const corsConfig = {
-  origin: [`${process.env.CLIENT_URL}`,"http://localhost:5173"],
+  origin: [`${process.env.CLIENT_URL}`,'http://localhost:5173'],
   credentials: true,
   methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
   allowedHeaders: ["Origin", "X-Requested-With", "Content-Type", "Accept", "Authorization"]
@@ -27,7 +27,7 @@ app.options("*", cors(corsConfig));
 
 app.use(cookieParser());
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.urlencoded({extended: true }));
 
 app.get("/", (req: Request, res: Response) => {
     res.status(200).json({

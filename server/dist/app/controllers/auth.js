@@ -45,7 +45,7 @@ const signup = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         const hash = yield utils_1.utils.hashPassword(password);
         const newUser = new User_1.default(Object.assign(Object.assign({}, req.body), { password: hash }));
         yield newUser.save();
-        return (0, utils_1.response)(res, 201, true, "User created successfully");
+        return (0, utils_1.response)(res, 201, true, "User registered successfully. Now login to continue");
     }
     catch (err) {
         console.error("Signup error:", err);

@@ -268,87 +268,44 @@ export const search = async (req: Request, res: Response) => {
 };
 
 export const uploadVideo: any = async (req: Request, res: Response) => {
-    let uploadedThumbnail: any;
-    let uploadedVideo: any;
-    let imgUrl: any;
-    let videoUrl: any;
 
-    if (
-        !req.files ||
-        !(req.files as any).video ||
-        !(req.files as any).thumbnail
-    ) {
-        return response(
-            res,
-            400,
-            false,
-            "Both video and thumbnail are required."
-        );
-    }
 
-    const videoFile = (req.files as any).video[0];
-    const thumbnailFile = (req.files as any).thumbnail[0];
-
-    const maxSize = 100 * 1024 * 1024;
-    if (videoFile.size > maxSize || thumbnailFile.size > maxSize) {
-        return response(
-            res,
-            400,
-            false,
-            "Video or thumbnail size exceeds 100MB."
-        );
-    }
-    const { title, desc, duration, category, tags } = req.body;
-    let parsedTags: string[] = [];
     try {
-        if (tags) {
-            parsedTags = JSON.parse(tags);
-        }
+        const { title, desc, videoUrl, imgUrl, duration, category, tags } = req.body;
+        console.log("line 360",title, desc, imgUrl, videoUrl, duration, category, tags);
 
-        if (thumbnailFile) {
-            const filename = `${title.replace(/ /g, "_")}_${new Date()
-                .toISOString()
-                .replace(/[:.]/g, "-")}`;
-
-            uploadedThumbnail = await uploadFile(
-                thumbnailFile.path,
-                filename,
-                "img"
-            );
-
-            if (uploadedThumbnail?.secure_url) {
-                imgUrl = uploadedThumbnail?.secure_url as string;
-            }
-        }
-
-        // Upload video
-        if (videoFile) {
-            const filename = `${title.replace(/ /g, "_")}_${new Date()
-                .toISOString()
-                .replace(/[:.]/g, "-")}`;
-
-            uploadedVideo = await uploadFile(videoFile.path, filename, "vid");
-
-            if (uploadedVideo?.eager?.[0]?.secure_url) {
-                videoUrl = uploadedVideo.eager[0].secure_url;
-            }
-        }
-        const newVideo = new Video({
-            userId: req.user.id,
-            title,
-            des: desc,
-            videoUrl: videoUrl,
-            imgUrl: imgUrl,
-            duration,
-            category: category,
-            tags: parsedTags
-        });
-        const savedVideo = await newVideo.save();
-
-        response(res, 201, true, "Video uploaded successfully", savedVideo);
-    } catch (error: any) {
-        response(res, 500, false, error.message || "Internal Server Error");
+    if (!videoUrl || !imgUrl) {
+      return response(res, 400, false, "Video and thumbnail URLs are required.");
     }
+
+    if (!title || !duration || !category) {
+      return response(res, 400, false, "Title, duration, and category are required.");
+    }
+
+    let parsedTags: string[] = [];
+
+    if(tags){
+        parsedTags = Array.isArray(tags) ? tags : [];
+    }
+
+    const newVideo = new Video({
+      userId: req.user.id,
+      title,
+      des: desc,
+      videoUrl,
+      imgUrl,
+      duration,
+      category,
+      tags: parsedTags
+    });
+
+    const savedVideo = await newVideo.save();
+
+    return response(res, 201, true, "Video uploaded successfully", savedVideo);
+  } catch (error: any) {
+    console.log(error)
+    return response(res, 500, false, error.message || "Internal Server Error");
+  }
 };
 
 export const isBookmarked = async (
