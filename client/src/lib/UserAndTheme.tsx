@@ -10,6 +10,7 @@ export const UserAndTheme = ({on}:{on:boolean}) => {
 
     const user = getUserInfo();
     const { theme, setTheme } = useTheme();
+    console.log(user)
   return (
     <>
 

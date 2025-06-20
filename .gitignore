@@ -3,6 +3,8 @@
 server/node_modules
 
 /server/.env
+/server/dist
+/client/dist
 /client/node_modules
 /client/.env
 *.webp

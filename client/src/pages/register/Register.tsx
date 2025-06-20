@@ -19,9 +19,6 @@ export function RegisterPage({
     CardTitle,
     Input,
     Label,
-    FaApple,
-    FaGoogle,
-    FaMeta,
   } = RegisterPageImports;
 
   const {
@@ -42,7 +39,7 @@ export function RegisterPage({
 
       if (res?.status === 201) {
         toast.success(
-          res?.message || "User created successfully! Please login to continue."
+          res?.message || "Registration successfully! Please login to continue."
         );
         navigate("/login");
       } else {
@@ -186,31 +183,7 @@ export function RegisterPage({
                   Login
                 </Link>
               </div>
-              <div className="my-5 relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t after:border-border">
-                <span className="relative z-10 bg-background px-2 text-muted-foreground">
-                  Or continue with
-                </span>
-              </div>
-              <div className="grid grid-cols-3 gap-4">
-                <Button
-                  variant="outline"
-                  className="hover:bg-yellow-300 w-full hover:text-black"
-                >
-                  <FaApple />
-                </Button>
-                <Button
-                  variant="outline"
-                  className="hover:bg-yellow-300 w-full hover:text-black"
-                >
-                  <FaGoogle />
-                </Button>
-                <Button
-                  variant="outline"
-                  className="hover:bg-yellow-300 w-full hover:text-black"
-                >
-                  <FaMeta />
-                </Button>
-              </div>
+
             </CardContent>
           </Card>
           <div className="text-balance text-center text-xs text-muted-foreground [&_a]:underline [&_a]:underline-offset-4 [&_a]:hover:text-primary">

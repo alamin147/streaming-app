@@ -25,7 +25,7 @@ export const signup = async (req: Request, res: Response) => {
     const newUser = new User({ ...req.body, password: hash });
     await newUser.save();
 
-    return response(res, 201, true, "User created successfully");
+    return response(res, 201, true, "User registered successfully. Now login to continue");
   } catch (err: any) {
     console.error("Signup error:", err);
     return response(res, 500, false, err?.message || "Server Error");
