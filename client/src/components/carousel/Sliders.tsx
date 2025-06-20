@@ -5,17 +5,12 @@ import "swiper/css";
 import "swiper/css/pagination";
 import "swiper/swiper-bundle.css";
 import { useSidebar } from "../ui/sidebar";
-//  image array
-const images = [
-  "https://media.gettyimages.com/id/1445487185/photo/canadian-born-actor-keanu-reeves-walks-along-an-aisle-in-the-church-of-saint-eustache-in-a.jpg?s=612x612&w=0&k=20&c=rCJatqXjiKyzRRobjW7iuSZrYg7a7n0MbjRHw2NASZQ=",
-  "https://media.gettyimages.com/id/517724758/photo/marlon-brando-as-don-vito-corleone-in-the-godfather-for-which-he-won-an-oscar-for-best-actor.jpg?s=612x612&w=0&k=20&c=AteFgnS-zJEp9DmlieoeCk-ECqOyXy82splFpVmoLA8=",
-  "https://media.gettyimages.com/id/517475848/photo/scenes-from-the-movie-bonnie-and-clyde-with-warren-beatty-and-faye-dunaway-produced-by-warner.jpg?s=612x612&w=0&k=20&c=Jej6SNujxegbMJmE2ChJw9J3SazL0zlZdCOf6W1G5T0=",
-  "https://media.gettyimages.com/id/515364544/photo/the-hand-of-a-phantom-threatens-a-woman-in-bed-in-this-scene-from-the-cat-and-the-canary-1927.jpg?s=612x612&w=0&k=20&c=08-ykLwmdSBv7JQE-Qhb-tfYWVJwxMverMfnlNlLUOg=",
-  "https://media.gettyimages.com/id/50379490/photo/warriors-on-horses-in-movie-gladiator-being-filmed-at-bourne-wood.jpg?s=612x612&w=0&k=20&c=78DVB2IT8h-d0vb2y1obcvR9IM2Hi4jVUBqbXu1FtBU=",
-];
+import { Link } from "react-router-dom";
 
-const Sliders = () => {
-     const { open, setOpen } = useSidebar();
+
+const Sliders = ({videos}:{videos:any}) => {
+const video = videos?.data?.videos || [];
+    const { open, setOpen } = useSidebar();
   const { isMobile } = useSidebar();
   // Close sidebar for mobile
   if (isMobile === true) {
@@ -33,17 +28,17 @@ const Sliders = () => {
         <Swiper
           modules={[Autoplay, Pagination, Navigation]}
           autoplay={{ delay: 2000, disableOnInteraction: false }}
-          loop={true}
+          loop={video?.length > 1}
           pagination={{ clickable: true }}
           spaceBetween={10}
           className="h-full rounded-2xl shadow-lg "
         >
-          {images.map((image, index) => (
-            <SwiperSlide key={index}>
+          {video?.map((vid:any, index:number) => (
+            <SwiperSlide key={vid?._id || index}>
               <div className="relative w-full h-full">
                 <img
-                  src={image}
-                  alt={`Slide ${index + 1}`}
+                  src={vid?.imgUrl}
+                  alt={vid?.title}
                   className="w-full h-full object-cover rounded-2xl"
                 />
                 {/* Overlay with title, rating, year, tags, and buttons */}
@@ -52,45 +47,51 @@ const Sliders = () => {
                     {/* Title */}
                     <div className="mb-3 md:mb-6">
                       <h2 className="text-2xl md:text-6xl font-semibold text-white mb-2 z-10">
-                        Movie Title {index + 1}
+                        {vid.title}
                       </h2>
                     </div>
                     {/* Rating | Year | Age | Duration */}
                     <div className="text-sm md:text-lg flex items-center gap-2  text-white z-10 mb-2">
-                      <span className="text-yellow-500">⭐ 8.5 |</span>
-                      <span className="flex items-center gap-1">2021 |</span>
-                      <span>12+ |</span>
-                      <span>1.20 hr </span>
+                      <span className="text-yellow-500">⭐ {vid.ratings} |</span>
+                      <span className="flex items-center gap-1">
+                        {new Date(vid.createdAt).getFullYear()} |
+                      </span>
+                      <span>{vid?.category?.charAt(0).toUpperCase() + vid?.category.slice(1)} |</span>
+                      <span>{vid.duration}</span>
                     </div>
 
                     {/* Tags */}
                     <div className="flex gap-2 text-xs md:text-sm z-10 mb-4">
-                      <span className="bg-gray-500 text-white px-3 py-1 rounded-md">
-                        Action
-                      </span>
-                      <span
-                        className=" text-white px-3 py-1 rounded-md"
-                        style={{
-                          background:
-                            "linear-gradient(8deg, rgba(91,91,91,1) 54%, rgba(83,83,83,1) 60%)",
-                        }}
-                      >
-                        Thriller
-                      </span>
+                      {vid?.tags && vid.tags.map((tag:any, i:number) => (
+                        <span
+                          key={i}
+                          className={`${i % 2 === 0 ? 'bg-gray-500' : ''} text-white px-3 py-1 rounded-md`}
+                          style={i % 2 !== 0 ? {
+                            background: "linear-gradient(8deg, rgba(91,91,91,1) 54%, rgba(83,83,83,1) 60%)"
+                          } : {}}
+                        >
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
 
-                      <span className="bg-gray-500 text-white px-3 py-1 rounded-md">
-                        DramaMovies
-                      </span>
+                    {/* Description */}
+                    <div className="hidden md:block text-white text-sm mb-4 max-w-2xl line-clamp-2">
+                      {vid.des}
                     </div>
 
                     {/* Buttons */}
                     <div className="flex gap-4 md:gap-8 mt-2 z-10 items-center">
-                      <button className="px-2 md:px-4 py-2  bg-yellow-500 rounded-md hover:bg-yellow-400 flex font-semibold gap-1.5 text-black text-sm  md:text-lg">
+                      <Link to={`/video/${vid._id}`}>
+                      <button
+                        className="px-2 md:px-4 py-2 bg-yellow-500 rounded-md hover:bg-yellow-400 flex font-semibold gap-1.5 text-black text-sm md:text-lg"
+                      >
                         <FaPlay className="mt-0.5 md:mt-1 " />
                         Watch Now
                       </button>
+                      </Link>
 
-                      <button className="group hover:text-yellow-500 text-sm  md:text-lg flex items-center gap-2 text-white rounded-md ">
+                      <button className="group hover:text-yellow-500 text-sm md:text-lg flex items-center gap-2 text-white rounded-md ">
                         <FaPlus /> Watchlist
                       </button>
                     </div>

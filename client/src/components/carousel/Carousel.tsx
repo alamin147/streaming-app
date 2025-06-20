@@ -1,10 +1,8 @@
-
 import { useSidebar } from "../ui/sidebar";
 import Footer from "../footer/Footer";
 import { useGetRecentVideosQuery, useGetVideosQuery, useGetWatchLaterVideosQuery } from "@/redux/features/videos/videosApi";
 import VideosCards from "../VideosCards/VideosCards";
 import Sliders from "./Sliders";
-
 
 
 const Carousel = () => {
@@ -20,7 +18,7 @@ const Carousel = () => {
   const { data: watelaterVideos } = useGetWatchLaterVideosQuery(undefined);
   return (
     <>
-    <Sliders/>
+    <Sliders videos={videos}/>
 
       <div>
         {/* trending */}
