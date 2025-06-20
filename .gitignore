@@ -1,4 +1,5 @@
-
+/server/.vercel
+/client/.vercel
 /server/node_modules
 server/node_modules
 

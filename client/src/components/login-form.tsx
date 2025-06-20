@@ -11,8 +11,6 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { FaApple, FaGoogle } from "react-icons/fa";
-import { FaMeta } from "react-icons/fa6";
 import { Link, useNavigate } from "react-router-dom";
 import { useLoginUserMutation } from "@/redux/features/auth/authApi";
 import toast from "react-hot-toast";
@@ -125,7 +123,7 @@ export function LoginForm({
               </div>
             </form>
 
-            
+
           </CardContent>
         </Card>
       </div>
