@@ -30,8 +30,8 @@ export const UserAndTheme = ({on}:{on:boolean}) => {
                         )}
                         {user ? (
                             <Avatar className="border-2 border-gray-700 flex items-center justify-center text-black dark:text-white font-bold rounded-full w-10 h-10">
-                                {user.name.charAt(0)}
-                                {user.name.charAt(user.name.indexOf(" ") + 1)}
+                                {user?.name?.charAt(0)}
+                                {user?.name?.charAt(user?.name?.indexOf(" ") + 1)}
                             </Avatar>
                         ) : (
                             <Link to="/login">
@@ -59,8 +59,8 @@ export const UserAndTheme = ({on}:{on:boolean}) => {
                         )}
                         {user ? (
                             <Avatar className="border-2 border-gray-700 flex items-center justify-center text-black dark:text-white font-bold rounded-full w-10 h-10">
-                                {user.name.charAt(0)}
-                                {user.name.charAt(user.name.indexOf(" ") + 1)}
+                                {user?.name?.charAt(0)}
+                                {user?.name?.charAt(user?.name?.indexOf(" ") + 1)}
                             </Avatar>
                         ) : (
                             <Link to="/login">
