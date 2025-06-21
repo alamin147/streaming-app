@@ -28,6 +28,8 @@ export default function VideoUploadModal({ isOpen, setIsOpens }: VideoUploadModa
   const [videoDetails, setVideoDetails] = useState<string>("");
   const [selectedTags, setSelectedTags] = useState<Tag[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<Category>("movies");
+  const [thumbnailProgress, setThumbnailProgress] = useState(0);
+  const [videoProgress, setVideoProgress] = useState(0);
 
   const thumbnail = watch("thumbnail");
   const videoFile = watch("video");
@@ -85,11 +87,19 @@ export default function VideoUploadModal({ isOpen, setIsOpens }: VideoUploadModa
   try {
     setIsUploading(true);
 
-    // Upload thumbnail to Cloudinary
-    const imgUrl = await uploadToCloudinary(data.thumbnail, "image");
+    // Upload thumbnail to Cloudinary with progress tracking
+    const imgUrl = await uploadToCloudinary(
+      data.thumbnail,
+      "image",
+      (progress) => setThumbnailProgress(progress)
+    );
 
-    // Upload video to Cloudinary
-    const videoUrl = await uploadToCloudinary(data.video, "video");
+    // Upload video to Cloudinary with progress tracking
+    const videoUrl = await uploadToCloudinary(
+      data.video,
+      "video",
+      (progress) => setVideoProgress(progress)
+    );
 
     const metadata = {
       title: data.title,
@@ -104,12 +114,15 @@ export default function VideoUploadModal({ isOpen, setIsOpens }: VideoUploadModa
     await uploadVideo(metadata).unwrap();
 
     toast.success("Video uploaded successfully! It will be available after approval.", {
-      duration: 4000,});
+      duration: 4000,
+    });
     reset();
     setVideoDuration("");
     setVideoDetails("");
     setSelectedTags([]);
     setSelectedCategory("movies");
+    setThumbnailProgress(0);
+    setVideoProgress(0);
     setIsOpens(false);
   } catch (error) {
     console.error("Upload failed:", error);
@@ -308,6 +321,37 @@ export default function VideoUploadModal({ isOpen, setIsOpens }: VideoUploadModa
               </div>
             </div>
           </div>
+
+          {/* Upload Progress */}
+          {isUploading && (
+  <div className="space-y-3">
+    <div className="space-y-1">
+      <div className="flex justify-between text-xs">
+        <span>Thumbnail upload</span>
+        <span>{thumbnailProgress}%</span>
+      </div>
+      <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+        <div
+          className="bg-yellow-500 h-2 rounded-full transition-all duration-300"
+          style={{ width: `${thumbnailProgress}%` }}
+        ></div>
+      </div>
+    </div>
+
+    <div className="space-y-1">
+      <div className="flex justify-between text-xs">
+        <span>Video upload</span>
+        <span>{videoProgress}%</span>
+      </div>
+      <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+        <div
+          className="bg-yellow-500 h-2 rounded-full transition-all duration-300"
+          style={{ width: `${videoProgress}%` }}
+        ></div>
+      </div>
+    </div>
+  </div>
+)}
 
           {/* Moderation notice */}
           <div className="p-3 rounded-md bg-blue-500/10 border border-blue-500/20 text-sm">
