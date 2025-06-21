@@ -40,9 +40,34 @@ export default function VideoUploadModal({ isOpen, setIsOpens }: VideoUploadModa
     type: "thumbnail" | "video"
   ) => {
     const file = event.target.files?.[0];
+    if (!file) return;
+    if (type === "thumbnail" && !file.type.startsWith("image/")) {
+      return toast.error("Please select a valid image file for thumbnail.");
+    }
+    if (type === "video" && !file.type.startsWith("video/")) {
+      return toast.error("Please select a valid video file.");
+    }
+    if (type === "video" && file.size > 100 * 1024 * 1024) { // 100 MB limit
+      return toast.error("Video file size exceeds 100 MB limit.");
+    }
+    if (type === "thumbnail" && file.size > 10 * 1024 * 1024) { // 10 MB limit
+      return toast.error("Thumbnail file size exceeds 10 MB limit.");
+    }
+    // Set the file in the form state
+    setValue(type, file);
+    // Reset progress if changing files
+    if (type === "thumbnail") {
+      setThumbnailProgress(0);
+    } else if (type === "video") {
+      setVideoProgress(0);
+      setVideoDuration("");
+      setVideoDetails("");
+    }
+
     if (file) {
-      setValue(type, file);
-      if (type === "video") {
+        setValue(type, file);
+        if (type === "video") {
+         // If it's a video, calculate duration
         calculateVideoDuration(file);
       }
     }
@@ -83,6 +108,12 @@ export default function VideoUploadModal({ isOpen, setIsOpens }: VideoUploadModa
   if (!data.video || !data.thumbnail) {
     return toast.error("Video and thumbnail are required.");
   }
+if (data.video.size > 100 * 1024 * 1024) { // 100 MB limit
+      return toast.error("Video file size exceeds 100 MB limit.");
+    }
+    if (data.thumbnail.size > 10 * 1024 * 1024) { // 10 MB limit
+      return toast.error("Thumbnail file size exceeds 10 MB limit.");
+    }
 
   try {
     setIsUploading(true);
@@ -240,7 +271,7 @@ export default function VideoUploadModal({ isOpen, setIsOpens }: VideoUploadModa
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* Thumbnail Upload */}
             <div className="grid gap-2">
-              <Label htmlFor="thumbnail">Thumbnail</Label>
+              <Label htmlFor="thumbnail">Thumbnail (Max: 10mb)</Label>
               <div className="relative h-32 border border-dashed rounded-md p-1 flex flex-col items-center justify-center bg-muted/20 hover:bg-muted/30 transition-colors">
                 {thumbnail ? (
                   <>
@@ -284,7 +315,7 @@ export default function VideoUploadModal({ isOpen, setIsOpens }: VideoUploadModa
 
             {/* Video Upload */}
             <div className="grid gap-2">
-              <Label htmlFor="video">Video File</Label>
+              <Label htmlFor="video">Video File (Max: 100mb)</Label>
               <div className="relative h-32 border border-dashed rounded-md p-1 flex flex-col items-center justify-center bg-muted/20 hover:bg-muted/30 transition-colors">
                 {videoFile ? (
                   <div className="text-sm text-center">
