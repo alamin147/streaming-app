@@ -61,9 +61,9 @@ const CommentSection = ({ videoId, _id }: { videoId: string; _id: string }) => {
 
     return (
         <>
-            <div className="py-8 px-4 md:px-8 ">
-                <div className="max-w-7xl mx-auto">
-                    <div className="mt-8 bg-gray-100 dark:bg-gray-900 rounded-lg p-6 shadow-md">
+            <div className=" ">
+                <div className="w-full">
+                    <div className="mt-8 bg-gray-100 dark:bg-gray-900 p-6 ">
                         <div className="flex items-center gap-2 mb-6">
                             <MessageCircle className="text-yellow-600 dark:text-yellow-400" />
                             <h2 className="text-2xl font-semibold text-gray-800 dark:text-gray-200">

@@ -41,7 +41,7 @@ export const SingleVideo = () => {
         <AppSidebar />
         <SidebarInset>
           <HeaderComponent />
-          <div className="py-8 px-4 md:px-8">
+          <div className="">
             <div className="min-hscreen g-black text-gray-200">
               {/* Video Player */}
               <div className="w-full bg-gray-100 dark:bg-gray-900">
@@ -59,8 +59,8 @@ export const SingleVideo = () => {
             <Content video={video} videoId={videoId} />
 
             {/* Comment Section */}
-            <CommentSection videoId={videoId} _id={_id} />
           </div>
+            <CommentSection videoId={videoId} _id={_id} />
         </SidebarInset>
       </SidebarProvider>
     </>
