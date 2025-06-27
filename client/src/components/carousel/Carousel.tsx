@@ -3,6 +3,7 @@ import Footer from "../footer/Footer";
 import { useGetRecentVideosQuery, useGetVideosQuery, useGetWatchLaterVideosQuery } from "@/redux/features/videos/videosApi";
 import VideosCards from "../VideosCards/VideosCards";
 import Sliders from "./Sliders";
+import PromotionalSection from "../promotionalSection/PromotionalSection";
 
 
 const Carousel = () => {
@@ -28,6 +29,7 @@ const Carousel = () => {
         {/* watch later */}
         <VideosCards title="Watch Later" open={open} Videos={watelaterVideos}/>
 
+        <PromotionalSection />
         <Footer />
       </div>
     </>

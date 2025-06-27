@@ -12,3 +12,4 @@ server/node_modules
 stream.ts
 *.jpg
 *.mp4
+credential.txt
