@@ -4,6 +4,7 @@ import { useGetRecentVideosQuery, useGetVideosQuery, useGetWatchLaterVideosQuery
 import VideosCards from "../VideosCards/VideosCards";
 import Sliders from "./Sliders";
 import PromotionalSection from "../promotionalSection/PromotionalSection";
+import Pricing from "../pricing/Pricing";
 
 
 const Carousel = () => {
@@ -30,6 +31,9 @@ const Carousel = () => {
         <VideosCards title="Watch Later" open={open} Videos={watelaterVideos}/>
 
         <PromotionalSection />
+
+        <Pricing />
+        
         <Footer />
       </div>
     </>
