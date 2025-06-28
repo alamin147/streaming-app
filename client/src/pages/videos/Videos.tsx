@@ -54,8 +54,9 @@ const AllVideos = ({ videos }: { videos: any }) => {
   const [itemsPerPage, setItemsPerPage] = useState(12);
 
   const [filters, setFilters] = useState({
-    genre: "",
-    year: "",
+    genre: "all",
+    category: "all",
+    year: "all",
     searchQuery: "",
     sortBy: "newest",
   });
@@ -71,16 +72,19 @@ const AllVideos = ({ videos }: { videos: any }) => {
       return [];
     }
 
-    console.log("Processing videos:", videos.data.videos.length);
     let result = [...videos.data.videos];
 
-    if (filters.genre) {
-      result = result.filter((video) =>
-        video.genre?.toLowerCase().includes(filters.genre.toLowerCase())
-      );
+    // Filter by genre (tags)
+    if (filters.genre && filters.genre !== "all") {
+      result = result.filter((video) => video.tags?.includes(filters.genre));
     }
 
-    if (filters.year) {
+    // Filter by category
+    if (filters.category && filters.category !== "all") {
+      result = result.filter((video) => video.category === filters.category);
+    }
+
+    if (filters.year && filters.year !== "all") {
       result = result.filter((video) => {
         const videoYear = new Date(video.createdAt).getFullYear().toString();
         if (filters.year === "older") {
@@ -113,7 +117,7 @@ const AllVideos = ({ videos }: { videos: any }) => {
     }
 
     return result;
-  }, [videos, filters, itemsPerPage]);
+  }, [videos, filters]);
 
   const totalPages = Math.max(
     1,
@@ -327,6 +331,14 @@ const AllVideos = ({ videos }: { videos: any }) => {
                           <ul className="space-y-1">
                             <li>
                               <NavLink
+                                to="/year/2025"
+                                className="text-sm hover:text-yellow-400"
+                              >
+                                2025
+                              </NavLink>
+                            </li>
+                            <li>
+                              <NavLink
                                 to="/year/2024"
                                 className="text-sm hover:text-yellow-400"
                               >
@@ -347,14 +359,6 @@ const AllVideos = ({ videos }: { videos: any }) => {
                                 className="text-sm hover:text-yellow-400"
                               >
                                 2022
-                              </NavLink>
-                            </li>
-                            <li>
-                              <NavLink
-                                to="/year/2021"
-                                className="text-sm hover:text-yellow-400"
-                              >
-                                2021
                               </NavLink>
                             </li>
                             <li>
@@ -436,6 +440,7 @@ const AllVideos = ({ videos }: { videos: any }) => {
 
           {showFilters && (
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mt-4">
+              {/* Genre/Tags filter */}
               <div>
                 <Select
                   value={filters.genre}
@@ -445,16 +450,51 @@ const AllVideos = ({ videos }: { videos: any }) => {
                     <SelectValue placeholder="Filter by Genre" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">All Genres</SelectItem>
+                    <SelectItem value="all">All Genres</SelectItem>
                     <SelectItem value="action">Action</SelectItem>
+                    <SelectItem value="horror">Horror</SelectItem>
                     <SelectItem value="comedy">Comedy</SelectItem>
                     <SelectItem value="drama">Drama</SelectItem>
-                    <SelectItem value="horror">Horror</SelectItem>
+                    <SelectItem value="thriller">Thriller</SelectItem>
+                    <SelectItem value="romance">Romance</SelectItem>
+                    <SelectItem value="adventure">Adventure</SelectItem>
                     <SelectItem value="sci-fi">Sci-Fi</SelectItem>
+                    <SelectItem value="fantasy">Fantasy</SelectItem>
+                    <SelectItem value="animation">Animation</SelectItem>
+                    <SelectItem value="documentary">Documentary</SelectItem>
+                    <SelectItem value="crime">Crime</SelectItem>
+                    <SelectItem value="mystery">Mystery</SelectItem>
+                    <SelectItem value="family">Family</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
 
+              {/* Category filter */}
+              <div>
+                <Select
+                  value={filters.category}
+                  onValueChange={(value) =>
+                    handleFilterChange("category", value)
+                  }
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Filter by Category" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Categories</SelectItem>
+                    <SelectItem value="movies">Movies</SelectItem>
+                    <SelectItem value="documentaries">Documentaries</SelectItem>
+                    <SelectItem value="tv shows">TV Shows</SelectItem>
+                    <SelectItem value="web series">Web Series</SelectItem>
+                    <SelectItem value="short films">Short Films</SelectItem>
+                    <SelectItem value="educational">Educational</SelectItem>
+                    <SelectItem value="music videos">Music Videos</SelectItem>
+                    <SelectItem value="sports">Sports</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* Year filter */}
               <div>
                 <Select
                   value={filters.year}
@@ -464,7 +504,8 @@ const AllVideos = ({ videos }: { videos: any }) => {
                     <SelectValue placeholder="Filter by Year" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">All Years</SelectItem>
+                    <SelectItem value="all">All Years</SelectItem>
+                    <SelectItem value="2025">2025</SelectItem>
                     <SelectItem value="2024">2024</SelectItem>
                     <SelectItem value="2023">2023</SelectItem>
                     <SelectItem value="2022">2022</SelectItem>
@@ -474,6 +515,7 @@ const AllVideos = ({ videos }: { videos: any }) => {
                 </Select>
               </div>
 
+              {/* Sort by filter */}
               <div>
                 <Select
                   value={filters.sortBy}
@@ -487,23 +529,6 @@ const AllVideos = ({ videos }: { videos: any }) => {
                     <SelectItem value="oldest">Oldest First</SelectItem>
                     <SelectItem value="rating">Top Rated</SelectItem>
                     <SelectItem value="views">Most Viewed</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div>
-                <Select
-                  value={itemsPerPage.toString()}
-                  onValueChange={handleItemsPerPageChange}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Items per page" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="6">6 per page</SelectItem>
-                    <SelectItem value="12">12 per page</SelectItem>
-                    <SelectItem value="24">24 per page</SelectItem>
-                    <SelectItem value="48">48 per page</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
