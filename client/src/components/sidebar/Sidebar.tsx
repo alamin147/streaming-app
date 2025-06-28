@@ -32,7 +32,6 @@ export default function Sidebar() {
                 <header className="sticky top-0 z-20 flex h-16 shrink-0 items-center justify-between gap-2 px-4 bg-background rounded-t-lg shadow-sm">
                     <div className="flex items-center gap-4">
                         {<SidebarTrigger className="flex md:hidden -ml-1" />}
-
                         <Breadcrumb>
                             <BreadcrumbList>
                                 <BreadcrumbItem className="hidden md:block">
@@ -293,7 +292,7 @@ export default function Sidebar() {
                     </div>
                 </header>
                 {<VideoUploadModal isOpen={isOpen} setIsOpens={setIsOpen} />}
-                <div className="mt-10">
+                <div className="mt-4">
                     <Carousel />
                 </div>
             </SidebarInset>

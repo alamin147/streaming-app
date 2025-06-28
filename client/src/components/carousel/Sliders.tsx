@@ -38,9 +38,8 @@ const Sliders = ({ videos }: { videos: any }) => {
                 alt={vid?.title}
                 className="w-full h-full object-cover rounded-2xl"
               />
-              {/* Overlay with title, rating, year, tags, and buttons */}
               <div className=" absolute inset-0 bg-black bg-opacity-50 p-6 flex flex-col justify-center gap-2">
-                <div className="-mt-0 md:-mt-20">
+                <div className="mt-0 md:mt-32">
                   {/* Title */}
                   <div className="mb-3 md:mb-6">
                     <h2 className="text-2xl md:text-6xl font-semibold text-white mb-2 z-10">
