@@ -1,15 +1,8 @@
 import { AppSidebar } from "@/components/app-sidebar";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
-import {
-  Shield,
-} from "lucide-react";
+import { Shield } from "lucide-react";
 import { useState } from "react";
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger
-} from "@/components/ui/tabs";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 import Stats from "./components/stats/Stats";
 import AllVideos from "./components/videos/AllVideos";
@@ -18,7 +11,7 @@ import PendingVideos from "./components/pendingVideos/PendingVideos";
 import ReportVideos from "./components/reportVideos/ReportVideos";
 import ContentDistributionChart from "./components/contentDistributionChart/ContentDistributionChart";
 import AnalyticChart from "./components/analyticChart/AnalyticChart";
-import AdminHeader from "./adminHeader/AdminHeader";
+import Navbar from "@/components/navbar/Navbar";
 
 const AdminDashboard = () => {
   const [activeChartTab, setActiveChartTab] = useState("views");
@@ -28,7 +21,7 @@ const AdminDashboard = () => {
     <SidebarProvider>
       <AppSidebar />
       <SidebarInset>
-      <AdminHeader/>
+        <Navbar />
         <div className="flex flex-1 flex-col gap-6 p-6 overflow-auto">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <div>
@@ -42,8 +35,12 @@ const AdminDashboard = () => {
             </div>
           </div>
 
-          <Stats/>
-          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+          <Stats />
+          <Tabs
+            value={activeTab}
+            onValueChange={setActiveTab}
+            className="w-full"
+          >
             <TabsList className="grid w-full grid-cols-3 mb-4">
               <TabsTrigger value="analytics">Analytics</TabsTrigger>
               <TabsTrigger value="users">Users</TabsTrigger>
@@ -52,12 +49,15 @@ const AdminDashboard = () => {
 
             <TabsContent value="analytics" className="space-y-4">
               <div className="grid gap-6 md:grid-cols-7">
-                <AnalyticChart activeChartTab={activeChartTab} setActiveChartTab={setActiveChartTab} />
-                <ContentDistributionChart/>
+                <AnalyticChart
+                  activeChartTab={activeChartTab}
+                  setActiveChartTab={setActiveChartTab}
+                />
+                <ContentDistributionChart />
               </div>
               <div className="grid gap-6 md:grid-cols-7">
-                <PendingVideos/>
-                <ReportVideos/>
+                <PendingVideos />
+                <ReportVideos />
               </div>
             </TabsContent>
 
@@ -73,6 +73,6 @@ const AdminDashboard = () => {
       </SidebarInset>
     </SidebarProvider>
   );
-}
+};
 
 export default AdminDashboard;
