@@ -22,6 +22,7 @@ import WatchLater from "./pages/watchLater/WatchLater.tsx";
 import RecentlyWatched from "./pages/recentlyWatched/RecentlyWatched.tsx";
 import TrendingVideos from "./pages/trending/TrendingVideos.tsx";
 import PrivateRoutes from "./routes/PrivateRoutes.tsx";
+import Videos from "./pages/videos/Videos.tsx";
 
 const router = createBrowserRouter([
     {
@@ -35,6 +36,10 @@ const router = createBrowserRouter([
     {
         path: "/register",
         element: <RegisterPage />,
+    },
+    {
+        path: "/videos",
+        element: <Videos />,
     },
     {
         element: <PrivateRoutes />,
