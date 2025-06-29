@@ -12,9 +12,9 @@ This project demonstrates a comprehensive implementation of a video streaming se
 
 ---
 
-
 ## 🌐 Live URL
 [N-Movies Frontend](https://n-streaming.vercel.app)
+
 [N-Movies Backend](https://streaming-server-chi.vercel.app)
 
 ---
@@ -27,16 +27,23 @@ This project demonstrates a comprehensive implementation of a video streaming se
 - 📺 Custom video player with playback controls, picture-in-picture, and fullscreen mode
 - 🔍 Search and tag-based filtering
 - 💬 Comments system for viewer engagement
-- ⭐ Rating system for videos
+- ⭐ Rating system for videos (1-5 stars)
 - 📚 Bookmarking (Watch Later) functionality
 - 📊 User and admin dashboards with analytics
 - ⚙️ Admin panel for content moderation and user management
 - 📜 Video history tracking
 - 🔄 Trending videos section based on popularity
-- 📁 File uploads for videos and thumbnails
+- 📁 File uploads for videos (100MB limit) and thumbnails (10MB limit)
 - 🚩 Content reporting system for inappropriate material
+- 👤 User profile customization with bio
+- 📰 Blog section with articles on streaming tips and trends
+- 📧 Newsletter subscription system
+- 🏷️ Advanced tagging system (up to 5 tags per video)
+- 📱 Responsive design for mobile and desktop
 
 ---
+
+
 
 ## 🧑‍💻 Tech Stack
 
@@ -47,6 +54,7 @@ This project demonstrates a comprehensive implementation of a video streaming se
 - Tailwind CSS
 - Shadcn UI components
 - Redux Toolkit
+- React Hook Form
 
 **Backend:**
 - Node.js
@@ -57,6 +65,9 @@ This project demonstrates a comprehensive implementation of a video streaming se
 - MongoDB
 - Mongoose
 
+**Storage:**
+- Cloudinary (video and image hosting)
+
 **Other:**
 - JWT (authentication)
 - Bcrypt (password hashing)
@@ -64,7 +75,8 @@ This project demonstrates a comprehensive implementation of a video streaming se
 - HLS.js (video streaming)
 - Screenfull (fullscreen API)
 - React Hot Toast (notifications)
-- Cookies for authentication state
+- React Spinners (loading states)
+- Redux Persist (state persistence)
 
 ---
 
@@ -84,12 +96,12 @@ This project demonstrates a comprehensive implementation of a video streaming se
 > - Admin dashboard for content management
 > - Watch history and bookmarks
 > - Video upload and management interface
-
+> - User profile editing
+> - Blog section with streaming tips
 
 ---
 
 ## 🛠️ Installation & Usage (Local)
-
 
 ```bash
 # Clone the repository
@@ -155,6 +167,12 @@ CLOUD_API_SECRET=
 CLOUDINARY_URL=
 ```
 
+For the client, create a `.env` file with:
+```
+VITE_SERVER_URI=
+VITE_PRODUCTION=
+```
+
 ---
 
 ## 📊 API Documentation
@@ -187,6 +205,7 @@ GET /api/v1/videos/watchlater          - Get watch later videos
 POST /api/v1/videos/watchlater/:id     - Add/remove video to/from watch later
 GET /api/v1/videos/recentVideos        - Get recently watched videos
 POST /api/v1/videos/recentVideos       - Add video to recently watched
+GET /api/v1/videos/bookmarked/:id      - Check if video is bookmarked
 ```
 
 ### Report System
