@@ -290,60 +290,68 @@ const AllVideos = () => {
       <TabsContent value="videos" className="space-y-4">
         <Card className="border border-gray-800/20 dark:border-gray-100/10">
           <CardHeader>
-            <div className="flex justify-between items-center">
+            <div className="flex flex-col space-y-3 sm:flex-row sm:justify-between sm:space-y-0">
               <div>
                 <CardTitle>Video Management</CardTitle>
                 <CardDescription>
                   View and manage all platform videos
                 </CardDescription>
               </div>
-              <div className="flex items-center gap-2">
+              <div className="flex flex-col space-y-2 sm:flex-row sm:items-center sm:space-y-0 sm:space-x-2">
                 <div className="relative">
                   <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
                   <Input
                     type="search"
                     placeholder="Search videos..."
-                    className="w-[200px] pl-8"
+                    className="w-full pl-8 sm:w-[200px]"
                     value={searchTerm}
                     onChange={(e) => handleSearch(e.target.value)}
                   />
                 </div>
+                <div className="flex space-x-2">
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className={`gap-1 ${showFilters ? "bg-yellow-500/20" : ""}`}
+                    onClick={() => setShowFilters(!showFilters)}
+                  >
+                    <Filter className="h-4 w-4" />
+                    <span className="hidden xs:inline">Filter</span>
+                  </Button>
+                  <Select
+                    value={limit.toString()}
+                    onValueChange={(value) => setLimit(Number(value))}
+                  >
+                    <SelectTrigger className="w-[80px] sm:w-[100px]">
+                      <SelectValue placeholder={`${limit}`} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectGroup>
+                        <SelectLabel>Per Page</SelectLabel>
+                        <SelectItem value="2">2</SelectItem>
+                        <SelectItem value="5">5</SelectItem>
+                        <SelectItem value="10">10</SelectItem>
+                        <SelectItem value="20">20</SelectItem>
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
+                </div>
                 <Button
                   size="sm"
                   variant="outline"
-                  className={`gap-1 ${showFilters ? "bg-yellow-500/20" : ""}`}
-                  onClick={() => setShowFilters(!showFilters)}
+                  onClick={handleExportCSV}
+                  className="sm:ml-0"
                 >
-                  <Filter className="h-4 w-4" />
-                  Filter
-                </Button>
-                <Select
-                  value={limit.toString()}
-                  onValueChange={(value) => setLimit(Number(value))}
-                >
-                  <SelectTrigger className="w-[100px]">
-                    <SelectValue placeholder={`${limit} per page`} />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectGroup>
-                      <SelectLabel>Per Page</SelectLabel>
-                      <SelectItem value="2">2</SelectItem>
-                      <SelectItem value="5">5</SelectItem>
-                      <SelectItem value="10">10</SelectItem>
-                      <SelectItem value="20">20</SelectItem>
-                    </SelectGroup>
-                  </SelectContent>
-                </Select>
-                <Button size="sm" variant="outline" onClick={handleExportCSV}>
                   <Download className="h-4 w-4 mr-1" />
-                  Export as CSV
+                  <span className="hidden sm:inline">Export as CSV</span>
+                  <span className="sm:hidden">Export as CSV</span>
                 </Button>
               </div>
             </div>
 
             {/* Filters row */}
             {showFilters && (
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+              <div className="grid grid-cols-1 gap-3 mt-4 sm:grid-cols-2 lg:grid-cols-3">
                 {/* Category filter */}
                 <Select
                   value={filters.category}
