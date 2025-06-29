@@ -5,7 +5,13 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { useUploadVideoMutation } from "@/redux/features/videos/videosApi";
 import toast from "react-hot-toast";
 import { uploadToCloudinary } from "@/lib/uploadToCloudinary";
@@ -15,13 +21,40 @@ interface VideoUploadModalProps {
   setIsOpens: (open: boolean) => void;
 }
 
-const CATEGORIES = ["movies", "documentaries", "tv shows", "web series", "short films", "educational", "music videos", "sports"] as const;
-const TAGS = ["action", "horror", "comedy", "drama", "thriller", "romance", "adventure", "sci-fi", "fantasy", "animation", "documentary", "crime", "mystery", "family"] as const;
+const CATEGORIES = [
+  "movies",
+  "documentaries",
+  "tv shows",
+  "web series",
+  "short films",
+  "educational",
+  "music videos",
+  "sports",
+] as const;
+const TAGS = [
+  "action",
+  "horror",
+  "comedy",
+  "drama",
+  "thriller",
+  "romance",
+  "adventure",
+  "sci-fi",
+  "fantasy",
+  "animation",
+  "documentary",
+  "crime",
+  "mystery",
+  "family",
+] as const;
 
-type Category = typeof CATEGORIES[number];
-type Tag = typeof TAGS[number];
+type Category = (typeof CATEGORIES)[number];
+type Tag = (typeof TAGS)[number];
 
-export default function VideoUploadModal({ isOpen, setIsOpens }: VideoUploadModalProps) {
+export default function VideoUploadModal({
+  isOpen,
+  setIsOpens,
+}: VideoUploadModalProps) {
   const { register, handleSubmit, setValue, watch, reset } = useForm();
   const [isUploading, setIsUploading] = useState<boolean>(false);
   const [videoDuration, setVideoDuration] = useState<string>("");
@@ -47,10 +80,12 @@ export default function VideoUploadModal({ isOpen, setIsOpens }: VideoUploadModa
     if (type === "video" && !file.type.startsWith("video/")) {
       return toast.error("Please select a valid video file.");
     }
-    if (type === "video" && file.size > 100 * 1024 * 1024) { // 100 MB limit
+    if (type === "video" && file.size > 100 * 1024 * 1024) {
+      // 100 MB limit
       return toast.error("Video file size exceeds 100 MB limit.");
     }
-    if (type === "thumbnail" && file.size > 10 * 1024 * 1024) { // 10 MB limit
+    if (type === "thumbnail" && file.size > 10 * 1024 * 1024) {
+      // 10 MB limit
       return toast.error("Thumbnail file size exceeds 10 MB limit.");
     }
     // Set the file in the form state
@@ -65,9 +100,9 @@ export default function VideoUploadModal({ isOpen, setIsOpens }: VideoUploadModa
     }
 
     if (file) {
-        setValue(type, file);
-        if (type === "video") {
-         // If it's a video, calculate duration
+      setValue(type, file);
+      if (type === "video") {
+        // If it's a video, calculate duration
         calculateVideoDuration(file);
       }
     }
@@ -87,7 +122,7 @@ export default function VideoUploadModal({ isOpen, setIsOpens }: VideoUploadModa
       if (hours > 0) parts.push(`${hours}hr`);
       if (minutes > 0 || hours > 0) parts.push(`${minutes}min`);
       parts.push(`${seconds}sec`);
-      const durationText = parts.join('');
+      const durationText = parts.join("");
 
       setVideoDuration(durationText);
       setVideoDetails(`${file.name} (${durationText})`);
@@ -105,69 +140,74 @@ export default function VideoUploadModal({ isOpen, setIsOpens }: VideoUploadModa
   const [uploadVideo] = useUploadVideoMutation();
 
   const onSubmit = async (data: any) => {
-  if (!data.video || !data.thumbnail) {
-    return toast.error("Video and thumbnail are required.");
-  }
-if (data.video.size > 100 * 1024 * 1024) { // 100 MB limit
+    if (!data.video || !data.thumbnail) {
+      return toast.error("Video and thumbnail are required.");
+    }
+    if (data.video.size > 100 * 1024 * 1024) {
+      // 100 MB limit
       return toast.error("Video file size exceeds 100 MB limit.");
     }
-    if (data.thumbnail.size > 10 * 1024 * 1024) { // 10 MB limit
+    if (data.thumbnail.size > 10 * 1024 * 1024) {
+      // 10 MB limit
       return toast.error("Thumbnail file size exceeds 10 MB limit.");
     }
 
-  try {
-    setIsUploading(true);
+    try {
+      setIsUploading(true);
 
-    // Upload thumbnail to Cloudinary with progress tracking
-    const imgUrl = await uploadToCloudinary(
-      data.thumbnail,
-      "image",
-      (progress) => setThumbnailProgress(progress)
-    );
+      // Upload thumbnail to Cloudinary with progress tracking
+      const imgUrl = await uploadToCloudinary(
+        data.thumbnail,
+        "image",
+        (progress) => setThumbnailProgress(progress)
+      );
 
-    // Upload video to Cloudinary with progress tracking
-    const videoUrl = await uploadToCloudinary(
-      data.video,
-      "video",
-      (progress) => setVideoProgress(progress)
-    );
+      // Upload video to Cloudinary with progress tracking
+      const videoUrl = await uploadToCloudinary(
+        data.video,
+        "video",
+        (progress) => setVideoProgress(progress)
+      );
 
-    const metadata = {
-      title: data.title,
-      desc: data.desc,
-      duration: videoDuration,
-      category: selectedCategory,
-      tags: selectedTags,
-      imgUrl,
-      videoUrl,
-    };
+      const metadata = {
+        title: data.title,
+        desc: data.desc,
+        duration: videoDuration,
+        category: selectedCategory,
+        tags: selectedTags,
+        imgUrl,
+        videoUrl,
+      };
 
-    await uploadVideo(metadata).unwrap();
+      await uploadVideo(metadata).unwrap();
 
-    toast.success("Video uploaded successfully! It will be available after approval.", {
-      duration: 4000,
-    });
-    reset();
-    setVideoDuration("");
-    setVideoDetails("");
-    setSelectedTags([]);
-    setSelectedCategory("movies");
-    setThumbnailProgress(0);
-    setVideoProgress(0);
-    setIsOpens(false);
-  } catch (error) {
-    console.error("Upload failed:", error);
-    toast.error("Upload failed. Please try again.");
-  } finally {
-    setIsUploading(false);
-  }
-};
+      toast.success(
+        "Video uploaded successfully! It will be available after approval.",
+        {
+          duration: 4000,
+        }
+      );
+      reset();
+      setVideoDuration("");
+      setVideoDetails("");
+      setSelectedTags([]);
+      setSelectedCategory("movies");
+      setThumbnailProgress(0);
+      setVideoProgress(0);
+      setIsOpens(false);
+    } catch (error) {
+      console.error("Upload failed:", error);
+      toast.error("Upload failed. Please try again.");
+    } finally {
+      setIsUploading(false);
+    }
+  };
 
   // Tag selection toggle function
   const handleTagToggle = (tag: Tag) => {
-    setSelectedTags(prev => {
+    setSelectedTags((prev) => {
       if (prev.includes(tag)) {
-        return prev.filter(t => t !== tag);
+        return prev.filter((t) => t !== tag);
       }
       if (prev.length >= 5) {
         toast.error("You can select up to 5 tags only");
@@ -179,13 +219,13 @@ if (data.video.size > 100 * 1024 * 1024) { // 100 MB limit
 
   return (
     <div
-      className={`fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 ${
+      className={`fixed inset-0 bg-black/80 backdrop-blur-sm z-50 overflow-y-auto py-4 ${
         isOpen ? "visible opacity-100" : "invisible opacity-0"
       } transition-opacity duration-300`}
       onClick={() => setIsOpens(false)}
     >
       <div
-        className="bg-background border border-gray-800/20 dark:border-gray-100/10 p-6 rounded-lg shadow-2xl w-full max-w-[525px] relative transition-all duration-300"
+        className="bg-background border border-gray-800/20 dark:border-gray-100/10 p-4 sm:p-6 rounded-lg shadow-2xl w-[calc(100%-2rem)] max-w-[525px] my-4 mx-auto relative transition-all duration-300"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="absolute right-4 top-4">
@@ -233,7 +273,10 @@ if (data.video.size > 100 * 1024 * 1024) { // 100 MB limit
           {/* Category Selection */}
           <div className="grid gap-2">
             <Label htmlFor="category">Category</Label>
-            <Select value={selectedCategory} onValueChange={(value: Category) => setSelectedCategory(value)}>
+            <Select
+              value={selectedCategory}
+              onValueChange={(value: Category) => setSelectedCategory(value)}
+            >
               <SelectTrigger className="w-full">
                 <SelectValue placeholder="Select category" />
               </SelectTrigger>
@@ -258,8 +301,8 @@ if (data.video.size > 100 * 1024 * 1024) { // 100 MB limit
                   onClick={() => handleTagToggle(tag)}
                   className={`px-3 py-1 rounded-full text-sm font-medium transition-colors ${
                     selectedTags.includes(tag)
-                      ? 'bg-yellow-500 text-black'
-                      : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'
+                      ? "bg-yellow-500 text-black"
+                      : "bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700"
                   }`}
                 >
                   {tag}
@@ -320,7 +363,9 @@ if (data.video.size > 100 * 1024 * 1024) { // 100 MB limit
                 {videoFile ? (
                   <div className="text-sm text-center">
                     <Film className="h-8 w-8 text-yellow-500 mb-2 mx-auto" />
-                    <p className="text-xs font-medium mb-2 line-clamp-1">{videoDetails}</p>
+                    <p className="text-xs font-medium mb-2 line-clamp-1">
+                      {videoDetails}
+                    </p>
                     <label className="cursor-pointer">
                       <span className="inline-flex items-center px-4 py-2 bg-yellow-500/20 text-yellow-500 hover:bg-yellow-500/30 rounded-md text-sm font-medium">
                         Change Video
@@ -355,40 +400,41 @@ if (data.video.size > 100 * 1024 * 1024) { // 100 MB limit
 
           {/* Upload Progress */}
           {isUploading && (
-  <div className="space-y-3">
-    <div className="space-y-1">
-      <div className="flex justify-between text-xs">
-        <span>Thumbnail upload</span>
-        <span>{thumbnailProgress}%</span>
-      </div>
-      <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
-        <div
-          className="bg-yellow-500 h-2 rounded-full transition-all duration-300"
-          style={{ width: `${thumbnailProgress}%` }}
-        ></div>
-      </div>
-    </div>
+            <div className="space-y-3">
+              <div className="space-y-1">
+                <div className="flex justify-between text-xs">
+                  <span>Thumbnail upload</span>
+                  <span>{thumbnailProgress}%</span>
+                </div>
+                <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                  <div
+                    className="bg-yellow-500 h-2 rounded-full transition-all duration-300"
+                    style={{ width: `${thumbnailProgress}%` }}
+                  ></div>
+                </div>
+              </div>
 
-    <div className="space-y-1">
-      <div className="flex justify-between text-xs">
-        <span>Video upload</span>
-        <span>{videoProgress}%</span>
-      </div>
-      <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
-        <div
-          className="bg-yellow-500 h-2 rounded-full transition-all duration-300"
-          style={{ width: `${videoProgress}%` }}
-        ></div>
-      </div>
-    </div>
-  </div>
-)}
+              <div className="space-y-1">
+                <div className="flex justify-between text-xs">
+                  <span>Video upload</span>
+                  <span>{videoProgress}%</span>
+                </div>
+                <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                  <div
+                    className="bg-yellow-500 h-2 rounded-full transition-all duration-300"
+                    style={{ width: `${videoProgress}%` }}
+                  ></div>
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* Moderation notice */}
           <div className="p-3 rounded-md bg-blue-500/10 border border-blue-500/20 text-sm">
             <p className="text-blue-500">
-              <span className="font-medium">Note:</span> Uploaded videos require admin approval before appearing publicly.
-              You can view your video's status in the "My Videos" section.
+              <span className="font-medium">Note:</span> Uploaded videos require
+              admin approval before appearing publicly. You can view your
+              video's status in the "My Videos" section.
             </p>
           </div>
 

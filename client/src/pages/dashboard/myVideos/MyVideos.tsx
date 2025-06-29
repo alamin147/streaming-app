@@ -7,7 +7,6 @@ import {
   Search,
   Edit2,
   Trash2,
-  MoreHorizontal,
   Filter,
   Eye,
   Clock,
@@ -294,18 +293,6 @@ export default function MyVideos() {
                             {video.des}
                           </p>
                         </div>
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              className="h-8 w-8"
-                            >
-                              <MoreHorizontal className="h-4 w-4" />
-                              <span className="sr-only">More</span>
-                            </Button>
-                          </DropdownMenuTrigger>
-                        </DropdownMenu>
                       </div>
 
                       <div className="mt-4 flex items-center text-sm text-muted-foreground gap-4">
@@ -541,7 +528,7 @@ export default function MyVideos() {
 
       {/* Edit Video Dialog */}
       <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
-        <DialogContent className="sm:max-w-[525px]">
+        <DialogContent className="sm:max-w-[525px] w-[calc(100%-2rem)] mx-auto">
           <DialogHeader>
             <DialogTitle>Edit Video</DialogTitle>
             <DialogDescription>
@@ -561,7 +548,7 @@ export default function MyVideos() {
               <div className="grid gap-2">
                 <Label htmlFor="description">Description</Label>
                 <Textarea
-                  className="max-h-60"
+                  className="max-h-60 h-40"
                   id="description"
                   value={editedDescription}
                   onChange={(e) => setEditedDescription(e.target.value)}
@@ -642,7 +629,7 @@ export default function MyVideos() {
 
       {/* Delete Confirmation Dialog */}
       <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
-        <DialogContent className="sm:max-w-[425px]">
+        <DialogContent className="sm:max-w-[425px] w-[calc(100%-2rem)] mx-auto">
           <DialogHeader>
             <DialogTitle>Delete Video</DialogTitle>
             <DialogDescription>
