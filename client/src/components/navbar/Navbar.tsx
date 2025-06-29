@@ -38,20 +38,20 @@ const Navbar = () => {
                 Home
               </NavLink>
               <NavLink
-                to="/movies"
+                to="/videos?category=movies"
                 className={({ isActive }) =>
                   `hover:text-yellow-400 text-sm font-medium px-2 ${
-                    isActive ? "text-yellow-400" : ""
+                    isActive ? "" : ""
                   }`
                 }
               >
                 Movies
               </NavLink>
               <NavLink
-                to="/tv-shows"
+                to="/videos?category=tv shows"
                 className={({ isActive }) =>
                   `hover:text-yellow-400 text-sm font-medium px-2 ${
-                    isActive ? "text-yellow-400" : ""
+                    isActive ? "" : ""
                   }`
                 }
               >
@@ -77,7 +77,7 @@ const Navbar = () => {
                       <ul className="space-y-1">
                         <li>
                           <NavLink
-                            to="/category/action"
+                            to="/videos?genre=action"
                             className="text-sm hover:text-yellow-400"
                           >
                             Action
@@ -85,7 +85,7 @@ const Navbar = () => {
                         </li>
                         <li>
                           <NavLink
-                            to="/category/comedy"
+                            to="/videos?genre=comedy"
                             className="text-sm hover:text-yellow-400"
                           >
                             Comedy
@@ -93,7 +93,7 @@ const Navbar = () => {
                         </li>
                         <li>
                           <NavLink
-                            to="/category/drama"
+                            to="/videos?genre=drama"
                             className="text-sm hover:text-yellow-400"
                           >
                             Drama
@@ -101,7 +101,7 @@ const Navbar = () => {
                         </li>
                         <li>
                           <NavLink
-                            to="/category/horror"
+                            to="/videos?genre=horror"
                             className="text-sm hover:text-yellow-400"
                           >
                             Horror
@@ -109,7 +109,7 @@ const Navbar = () => {
                         </li>
                         <li>
                           <NavLink
-                            to="/category/sci-fi"
+                            to="/videos?genre=sci-fi"
                             className="text-sm hover:text-yellow-400"
                           >
                             Sci-Fi
@@ -124,7 +124,7 @@ const Navbar = () => {
                       <ul className="space-y-1">
                         <li>
                           <NavLink
-                            to="/collections/top-rated"
+                            to="/videos?sortBy=rating"
                             className="text-sm hover:text-yellow-400"
                           >
                             Top Rated
@@ -132,7 +132,7 @@ const Navbar = () => {
                         </li>
                         <li>
                           <NavLink
-                            to="/collections/award-winning"
+                            to="/videos?category=award-winning"
                             className="text-sm hover:text-yellow-400"
                           >
                             Award Winning
@@ -140,7 +140,7 @@ const Navbar = () => {
                         </li>
                         <li>
                           <NavLink
-                            to="/collections/classic"
+                            to="/videos?category=classic"
                             className="text-sm hover:text-yellow-400"
                           >
                             Classic Movies
@@ -148,7 +148,7 @@ const Navbar = () => {
                         </li>
                         <li>
                           <NavLink
-                            to="/collections/family"
+                            to="/videos?category=family"
                             className="text-sm hover:text-yellow-400"
                           >
                             Family Friendly
@@ -156,7 +156,7 @@ const Navbar = () => {
                         </li>
                         <li>
                           <NavLink
-                            to="/collections/indie"
+                            to="/videos?category=indie"
                             className="text-sm hover:text-yellow-400"
                           >
                             Independent Films
@@ -171,7 +171,7 @@ const Navbar = () => {
                       <ul className="space-y-1">
                         <li>
                           <NavLink
-                            to="/year/2024"
+                            to="/videos?year=2024"
                             className="text-sm hover:text-yellow-400"
                           >
                             2024
@@ -179,7 +179,7 @@ const Navbar = () => {
                         </li>
                         <li>
                           <NavLink
-                            to="/year/2023"
+                            to="/videos?year=2023"
                             className="text-sm hover:text-yellow-400"
                           >
                             2023
@@ -187,7 +187,7 @@ const Navbar = () => {
                         </li>
                         <li>
                           <NavLink
-                            to="/year/2022"
+                            to="/videos?year=2022"
                             className="text-sm hover:text-yellow-400"
                           >
                             2022
@@ -195,7 +195,7 @@ const Navbar = () => {
                         </li>
                         <li>
                           <NavLink
-                            to="/year/2021"
+                            to="/videos?year=2021"
                             className="text-sm hover:text-yellow-400"
                           >
                             2021
@@ -203,7 +203,7 @@ const Navbar = () => {
                         </li>
                         <li>
                           <NavLink
-                            to="/year/older"
+                            to="/videos?year=older"
                             className="text-sm hover:text-yellow-400"
                           >
                             Older
@@ -215,30 +215,30 @@ const Navbar = () => {
                 )}
               </div>
               <NavLink
-                to="/trending"
+                to="/videos?sortBy=rating"
                 className={({ isActive }) =>
                   `hover:text-yellow-400 text-sm font-medium px-2 ${
-                    isActive ? "text-yellow-400" : ""
+                    isActive ? "" : ""
                   }`
                 }
               >
                 Trending
               </NavLink>
               <NavLink
-                to="/popular"
+                to="/videos?sortBy=views"
                 className={({ isActive }) =>
                   `hover:text-yellow-400 text-sm font-medium px-2 ${
-                    isActive ? "text-yellow-400" : ""
+                    isActive ? "" : ""
                   }`
                 }
               >
                 Popular
               </NavLink>
               <NavLink
-                to="/new-releases"
+                to="/videos?year=2025"
                 className={({ isActive }) =>
                   `hover:text-yellow-400 text-sm font-medium px-2 ${
-                    isActive ? "text-yellow-400" : ""
+                    isActive ? "" : ""
                   }`
                 }
               >
