@@ -12,8 +12,10 @@ import {
   Eye,
   Clock,
   Star,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { FaCalendarWeek } from "react-icons/fa";
 import {
   DropdownMenu,
@@ -44,6 +46,13 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import Navbar from "@/components/navbar/Navbar";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export default function MyVideos() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -52,6 +61,9 @@ export default function MyVideos() {
   const [selectedVideo, setSelectedVideo] = useState<any>(null);
   const [editedTitle, setEditedTitle] = useState("");
   const [editedDescription, setEditedDescription] = useState("");
+  const [currentFilter, setCurrentFilter] = useState("all");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [videosPerPage, setVideosPerPage] = useState(5);
   const { data: myVideo, refetch } = useGetMyVideosQuery(undefined);
 
   const [updateMyVideos, { isLoading: isUpdateLoading }] =
@@ -65,6 +77,46 @@ export default function MyVideos() {
       video?.title.toLowerCase().includes(searchQuery?.toLowerCase()) ||
       video?.des.toLowerCase().includes(searchQuery?.toLowerCase())
   );
+
+  const sortedAndFilteredVideos = useMemo(() => {
+    let filtered = [...filteredVideos];
+
+    // Apply filters
+    switch (currentFilter) {
+      case "most-viewed":
+        filtered.sort((a, b) => (b.views || 0) - (a.views || 0));
+        break;
+      case "most-recent":
+        filtered.sort(
+          (a, b) =>
+            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        );
+        break;
+      case "oldest":
+        filtered.sort(
+          (a, b) =>
+            new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+        );
+        break;
+      default:
+        // "all" - keep default sorting (which is typically newest first)
+        break;
+    }
+
+    return filtered;
+  }, [filteredVideos, currentFilter]);
+
+  // Calculate pagination
+  const totalPages = Math.ceil(sortedAndFilteredVideos.length / videosPerPage);
+  const displayedVideos = sortedAndFilteredVideos.slice(
+    (currentPage - 1) * videosPerPage,
+    currentPage * videosPerPage
+  );
+
+  // Reset to first page when filter or search changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchQuery, currentFilter]);
 
   const handleEditClick = async (video: any) => {
     setSelectedVideo(video);
@@ -117,6 +169,11 @@ export default function MyVideos() {
     }
   };
 
+  // Filter handler
+  const handleFilterChange = (filterType: any) => {
+    setCurrentFilter(filterType);
+  };
+
   return (
     <SidebarProvider>
       <AppSidebar />
@@ -158,10 +215,46 @@ export default function MyVideos() {
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
-                    <DropdownMenuItem>All Videos</DropdownMenuItem>
-                    <DropdownMenuItem>Most Viewed</DropdownMenuItem>
-                    <DropdownMenuItem>Most Recent</DropdownMenuItem>
-                    <DropdownMenuItem>Oldest</DropdownMenuItem>
+                    <DropdownMenuItem
+                      onClick={() => handleFilterChange("all")}
+                      className={
+                        currentFilter === "all"
+                          ? "bg-gray-100 dark:bg-gray-800"
+                          : ""
+                      }
+                    >
+                      All Videos
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      onClick={() => handleFilterChange("most-viewed")}
+                      className={
+                        currentFilter === "most-viewed"
+                          ? "bg-gray-100 dark:bg-gray-800"
+                          : ""
+                      }
+                    >
+                      Most Viewed
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      onClick={() => handleFilterChange("most-recent")}
+                      className={
+                        currentFilter === "most-recent"
+                          ? "bg-gray-100 dark:bg-gray-800"
+                          : ""
+                      }
+                    >
+                      Most Recent
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      onClick={() => handleFilterChange("oldest")}
+                      className={
+                        currentFilter === "oldest"
+                          ? "bg-gray-100 dark:bg-gray-800"
+                          : ""
+                      }
+                    >
+                      Oldest
+                    </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
               </div>
@@ -169,7 +262,7 @@ export default function MyVideos() {
           </Card>
           {/* Videos List */}
           <div className="space-y-4">
-            {filteredVideos?.length === 0 ? (
+            {displayedVideos?.length === 0 ? (
               <div className="text-center py-12">
                 <h3 className="text-xl font-medium">No videos found</h3>
                 <p className="text-muted-foreground mt-2">
@@ -177,7 +270,7 @@ export default function MyVideos() {
                 </p>
               </div>
             ) : (
-              filteredVideos?.map((video: any) => (
+              displayedVideos?.map((video: any) => (
                 <Card
                   key={video._id}
                   className="border border-gray-800/20 dark:border-gray-100/10 overflow-hidden hover:border-yellow-500/30 transition-colors"
@@ -302,6 +395,147 @@ export default function MyVideos() {
               ))
             )}
           </div>
+
+          {/* Pagination */}
+          {sortedAndFilteredVideos.length > 0 && (
+            <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mt-6">
+              <div className="text-sm text-muted-foreground">
+                Showing {Math.min(1, sortedAndFilteredVideos.length)}-
+                {Math.min(
+                  currentPage * videosPerPage,
+                  sortedAndFilteredVideos.length
+                )}{" "}
+                of {sortedAndFilteredVideos.length} videos
+              </div>
+
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                  disabled={currentPage === 1}
+                >
+                  <ChevronLeft className="h-4 w-4 mr-1" />
+                  <span className="hidden sm:inline">Previous</span>
+                </Button>
+
+                <div className="hidden sm:flex items-center gap-1">
+                  {(() => {
+                    const pageNumbers = [];
+                    const maxVisible = 5; // Maximum number of page buttons to show
+
+                    if (totalPages <= maxVisible) {
+                      // If we have 5 or fewer pages, show all page numbers
+                      for (let i = 1; i <= totalPages; i++) {
+                        pageNumbers.push(i);
+                      }
+                    } else {
+                      // Always show first page
+                      pageNumbers.push(1);
+
+                      // Logic for middle pages
+                      let startPage = Math.max(2, currentPage - 1);
+                      let endPage = Math.min(totalPages - 1, currentPage + 1);
+
+                      // Adjust if we're near the beginning
+                      if (currentPage <= 3) {
+                        endPage = 4;
+                      }
+
+                      // Adjust if we're near the end
+                      if (currentPage >= totalPages - 2) {
+                        startPage = totalPages - 3;
+                      }
+
+                      // Add ellipsis after first page if needed
+                      if (startPage > 2) {
+                        pageNumbers.push("ellipsis1");
+                      }
+
+                      // Add middle pages
+                      for (let i = startPage; i <= endPage; i++) {
+                        pageNumbers.push(i);
+                      }
+
+                      // Add ellipsis before last page if needed
+                      if (endPage < totalPages - 1) {
+                        pageNumbers.push("ellipsis2");
+                      }
+
+                      // Always show last page
+                      pageNumbers.push(totalPages);
+                    }
+
+                    return pageNumbers.map((pageNum: any, idx) => {
+                      if (pageNum === "ellipsis1" || pageNum === "ellipsis2") {
+                        return (
+                          <span
+                            key={`ellipsis-${idx}`}
+                            className="px-2 py-1 text-muted-foreground"
+                          >
+                            ...
+                          </span>
+                        );
+                      }
+
+                      return (
+                        <Button
+                          key={`page-${pageNum}`}
+                          variant={
+                            pageNum === currentPage ? "default" : "outline"
+                          }
+                          size="sm"
+                          className={
+                            pageNum === currentPage
+                              ? "bg-yellow-500 hover:bg-yellow-600 text-black"
+                              : ""
+                          }
+                          onClick={() => setCurrentPage(pageNum)}
+                        >
+                          {pageNum}
+                        </Button>
+                      );
+                    });
+                  })()}
+                </div>
+
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() =>
+                    setCurrentPage((p) => Math.min(totalPages, p + 1))
+                  }
+                  disabled={currentPage === totalPages || totalPages === 0}
+                >
+                  <span className="hidden sm:inline">Next</span>
+                  <ChevronRight className="h-4 w-4 ml-1" />
+                </Button>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <span className="text-sm text-muted-foreground mr-1">
+                  Per page:
+                </span>
+                <Select
+                  value={videosPerPage.toString()}
+                  onValueChange={(value) => {
+                    setVideosPerPage(Number(value));
+                    setCurrentPage(1);
+                  }}
+                >
+                  <SelectTrigger className="w-[70px] h-9">
+                    <SelectValue placeholder={videosPerPage.toString()} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="5">5</SelectItem>
+                    <SelectItem value="10">10</SelectItem>
+                    <SelectItem value="20">20</SelectItem>
+                    <SelectItem value="50">50</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+          )}
         </div>
       </SidebarInset>
 
