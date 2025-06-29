@@ -21,6 +21,7 @@ import {
 } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import Navbar from "@/components/navbar/Navbar";
+import { useSearchParams } from "react-router-dom";
 
 const Videos = () => {
   const { data: videos } = useGetVideosQuery(undefined);
@@ -34,19 +35,34 @@ const Videos = () => {
 
 const AllVideos = ({ videos }: { videos: any }) => {
   const { open, setOpen, isMobile } = useSidebar();
+  const [searchParams] = useSearchParams();
 
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(12);
 
+  // Initialize filters with URL params
   const [filters, setFilters] = useState({
-    genre: "all",
-    category: "all",
-    year: "all",
-    searchQuery: "",
-    sortBy: "newest",
+    genre: searchParams.get("genre") || "all",
+    category: searchParams.get("category") || "all",
+    year: searchParams.get("year") || "all",
+    searchQuery: searchParams.get("search") || "",
+    sortBy: searchParams.get("sortBy") || "newest",
   });
 
   const [showFilters, setShowFilters] = useState(false);
+
+  // If there are any filter params in the URL, show the filters panel
+  useEffect(() => {
+    if (
+      searchParams.has("genre") ||
+      searchParams.has("category") ||
+      searchParams.has("year") ||
+      searchParams.has("sortBy")
+    ) {
+      setShowFilters(true);
+    }
+  }, [searchParams]);
+
   if (isMobile === true) {
     setOpen(false);
   }
@@ -129,8 +145,24 @@ const AllVideos = ({ videos }: { videos: any }) => {
     console.log("Reset to page 1, items per page:", itemsPerPage);
   }, [filters, itemsPerPage]);
 
+  // Update URL when filters change
   const handleFilterChange = (key: string, value: string) => {
     setFilters((prev) => ({ ...prev, [key]: value }));
+
+    // Update URL params without navigating
+    const newParams = new URLSearchParams(searchParams);
+    if (value === "all") {
+      newParams.delete(key);
+    } else {
+      newParams.set(key, value);
+    }
+
+    // Update the URL with new search params
+    window.history.replaceState(
+      {},
+      "",
+      `${window.location.pathname}?${newParams.toString()}`
+    );
   };
 
   const handleItemsPerPageChange = (value: string) => {
