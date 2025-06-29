@@ -7,16 +7,11 @@ import {
 } from "../ui/breadcrumb";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { UserAndTheme } from "@/lib/UserAndTheme";
-import { getUserInfo } from "@/redux/authUlits";
 import { ChevronDown } from "lucide-react";
 import { useState } from "react";
-import { RiVideoUploadFill } from "react-icons/ri";
 import { NavLink } from "react-router-dom";
 const Navbar = () => {
   const [megaMenuOpen, setMegaMenuOpen] = useState(false);
-  const [, setIsOpen] = useState(false);
-
-  const user = getUserInfo();
 
   return (
     <header className="sticky top-0 z-20 flex h-16 shrink-0 items-center justify-between gap-2 px-4 bg-background rounded-t-lg shadow-sm">
@@ -254,14 +249,6 @@ const Navbar = () => {
         </Breadcrumb>
       </div>
       <div className="flex items-center gap-4">
-        {user && (
-          <RiVideoUploadFill
-            title="Upload Video"
-            onClick={() => setIsOpen(true)}
-            className="cursor-pointer w-6 h-6 md:w-7 md:h-7 dark:text-yellow-600 text-black"
-            size={24}
-          />
-        )}
         <UserAndTheme on={false} />
       </div>
     </header>
