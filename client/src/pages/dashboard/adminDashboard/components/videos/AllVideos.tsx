@@ -57,7 +57,7 @@ import {
 const AllVideos = () => {
   // Pagination state
   const [page, setPage] = useState(1);
-  const [limit, setLimit] = useState(10);
+  const [limit, setLimit] = useState(5);
   const [searchTerm, setSearchTerm] = useState("");
   const [showFilters, setShowFilters] = useState(false);
   const [filters, setFilters] = useState({
@@ -206,7 +206,7 @@ const AllVideos = () => {
     }
   };
 
-  // Generate page numbers for pagination
+  // page numbers for pagination
   const generatePageNumbers = () => {
     const totalPages = pagination?.pages || 1;
     const pageNumbers = [];
@@ -218,13 +218,63 @@ const AllVideos = () => {
         (i === 2 && page > 3) ||
         (i === totalPages - 1 && page < totalPages - 2)
       ) {
-        pageNumbers.push(null); // for ellipsis
+        pageNumbers.push(null);
       }
     }
 
     return pageNumbers.filter((value, index, self) =>
       value === null ? self[index - 1] !== null : true
     );
+  };
+
+  const handleExportCSV = () => {
+    // Define headers for the CSV
+    const headers = [
+      "Title",
+      "Uploader",
+      "Category",
+      "Views",
+      "Ratings",
+      "Status",
+      "Created Date",
+    ];
+
+    let csvContent = "\ufeff"; // UTF-8 BOM
+
+    csvContent += headers.join(",") + "\n";
+
+    filteredVideos.forEach((video) => {
+      const row = [
+        `"${(video.title || "").replace(/"/g, '""')}"`,
+        `"${(video.userId?.name || "").replace(/"/g, '""')}"`,
+        `"${(video.category || "").replace(/"/g, '""')}"`,
+        video.views?.toString() || "0",
+        video.ratings?.toString() || "0",
+        `"${(video.status || "").replace(/"/g, '""')}"`,
+        `"${new Date(video.createdAt).toLocaleDateString()}"`,
+      ];
+      csvContent += row.join(",") + "\n";
+    });
+
+    const blob = new Blob([csvContent], {
+      type: "text/csv;charset=utf-8;",
+    });
+
+    // Create download link
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+
+    // Set up and trigger download
+    link.setAttribute("href", url);
+    link.setAttribute(
+      "download",
+      `videos-export-${new Date().toISOString().split("T")[0]}.csv`
+    );
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+
+    toast.success("CSV export started");
   };
 
   if (isLoading) {
@@ -277,14 +327,14 @@ const AllVideos = () => {
                   <SelectContent>
                     <SelectGroup>
                       <SelectLabel>Per Page</SelectLabel>
+                      <SelectItem value="2">2</SelectItem>
                       <SelectItem value="5">5</SelectItem>
                       <SelectItem value="10">10</SelectItem>
                       <SelectItem value="20">20</SelectItem>
-                      <SelectItem value="50">50</SelectItem>
                     </SelectGroup>
                   </SelectContent>
                 </Select>
-                <Button size="sm" variant="outline">
+                <Button size="sm" variant="outline" onClick={handleExportCSV}>
                   <Download className="h-4 w-4 mr-1" />
                   Export as CSV
                 </Button>

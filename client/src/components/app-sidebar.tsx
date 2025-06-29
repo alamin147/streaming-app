@@ -2,7 +2,6 @@ import * as React from "react";
 import {
   House,
   History,
-  Flame,
   BookmarkPlus,
   DoorOpen,
 } from "lucide-react";
@@ -22,6 +21,7 @@ import { FaUser } from "react-icons/fa";
 import { MdDashboard } from "react-icons/md";
 import { IoIosVideocam } from "react-icons/io"
 import { FaUserShield } from "react-icons/fa6";
+import { HiOutlineVideoCamera } from "react-icons/hi2";
 const data = {
   user: {
     name: "shadcn",
@@ -35,9 +35,9 @@ const data = {
       icon: House,
     },
     {
-      title: "Trending",
-      url: "/trending",
-      icon: Flame,
+      title: "All Videos",
+      url: "/videos",
+      icon: HiOutlineVideoCamera,
     },
   ],
   navSecondary: [
