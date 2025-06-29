@@ -2,7 +2,7 @@ import { Check } from "lucide-react";
 
 const Pricing = () => {
   return (
-    <div className="container mx-auto py-6">
+    <div className="mx-8 md:container md:mx-auto  py-6">
       <div className="text-center mb-8">
         <h2 className="text-2xl md:text-3xl font-bold mb-2">
           Choose Your <span className="text-primary">Plan</span>

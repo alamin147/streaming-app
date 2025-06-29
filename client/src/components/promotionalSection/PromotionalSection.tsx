@@ -1,6 +1,6 @@
 const PromotionalSection = () => {
   return (
-    <div className="pb-8 bg-card/50 rounded-xl">
+    <div className="mx-4 md:mx-0 pb-8 bg-card/50 rounded-xl">
       <div className="mx-auto py-8 px-4 md:px-14">
         <div className="text-center mb-12">
           <h2 className="text-2xl font-bold mb-4 text-gray-900 dark:text-white">
