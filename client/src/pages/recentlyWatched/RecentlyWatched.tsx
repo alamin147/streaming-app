@@ -10,16 +10,57 @@ import { AppSidebar } from "@/components/app-sidebar";
 import Navbar from "@/components/navbar/Navbar";
 
 const RecentlyWatched = () => {
-  const { data: recentVideos } = useGetRecentVideosQuery(undefined);
+  const { data: recentVideos, isLoading } = useGetRecentVideosQuery(undefined);
 
   return (
     <SidebarProvider>
-      <RecentContent videos={recentVideos} />
+      <RecentContent videos={recentVideos} isLoading={isLoading} />
     </SidebarProvider>
   );
 };
 
-const RecentContent = ({ videos }: { videos: any }) => {
+const VideoCardSkeleton = () => {
+  return (
+    <div className="bg-gray-100 dark:bg-gray-800 rounded-lg overflow-hidden shadow-md animate-pulse">
+      <div className="w-full h-40 bg-gray-200 dark:bg-gray-700"></div>
+      <div className="p-4 space-y-3">
+        <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-3/4"></div>
+        <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded w-1/2"></div>
+      </div>
+    </div>
+  );
+};
+
+const RecentSkeleton = ({ open }: { open: boolean }) => {
+  return (
+    <div className="px-4 md:px-8">
+      <div className="flex items-center py-4 mb-4">
+        <div className="h-6 w-32 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
+      </div>
+      <div
+        className={`grid ${
+          open
+            ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6"
+            : "grid-cols-1 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5"
+        } gap-6`}
+      >
+        {Array(10)
+          .fill(0)
+          .map((_, i) => (
+            <VideoCardSkeleton key={i} />
+          ))}
+      </div>
+    </div>
+  );
+};
+
+const RecentContent = ({
+  videos,
+  isLoading,
+}: {
+  videos: any;
+  isLoading: boolean;
+}) => {
   const { open, setOpen, isMobile } = useSidebar();
 
   if (isMobile === true) {
@@ -32,7 +73,20 @@ const RecentContent = ({ videos }: { videos: any }) => {
       <SidebarInset>
         <Navbar />
         <div className="min-h-screen">
-          <VideosCards title="History" open={open} Videos={videos} />
+          {isLoading ? (
+            <RecentSkeleton open={open} />
+          ) : videos?.data?.videos?.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-20">
+              <h2 className="text-2xl font-semibold mb-2">
+                Your watch history is empty
+              </h2>
+              <p className="text-gray-500 dark:text-gray-400">
+                Videos you watch will appear here
+              </p>
+            </div>
+          ) : (
+            <VideosCards title="History" open={open} Videos={videos} />
+          )}
         </div>
         <Footer />
       </SidebarInset>
