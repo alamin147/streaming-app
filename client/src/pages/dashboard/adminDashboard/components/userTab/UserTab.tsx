@@ -164,18 +164,18 @@ const UserTab = () => {
     <TabsContent value="users" className="space-y-4">
       <Card className="border border-gray-800/20 dark:border-gray-100/10">
         <CardHeader>
-          <div className="flex justify-between items-center">
+          <div className="flex flex-col space-y-3 sm:flex-row sm:justify-between sm:space-y-0">
             <div>
               <CardTitle>User Management</CardTitle>
               <CardDescription>View and manage user accounts</CardDescription>
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex flex-col space-y-2 sm:flex-row sm:items-center sm:space-y-0 sm:space-x-2">
               <div className="relative">
                 <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
                 <Input
                   type="search"
                   placeholder="Search users..."
-                  className="w-[200px] pl-8"
+                  className="w-full pl-8 sm:w-[200px]"
                   value={searchTerm}
                   onChange={(e) => handleSearch(e.target.value)}
                 />
@@ -187,7 +187,7 @@ const UserTab = () => {
                   setPage(1);
                 }}
               >
-                <SelectTrigger className="w-[100px]">
+                <SelectTrigger className="w-full sm:w-[100px]">
                   <SelectValue placeholder="5 per page" />
                 </SelectTrigger>
                 <SelectContent>

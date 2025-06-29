@@ -62,7 +62,9 @@ const AdminDashboard = () => {
             </TabsContent>
 
             <TabsContent value="users" className="space-y-4">
-              <UserTab />
+              <div className="grid gap-6 md:grid-cols-7">
+                <UserTab />
+              </div>
             </TabsContent>
 
             <TabsContent value="videos" className="space-y-4">
