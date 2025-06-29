@@ -4,10 +4,10 @@ import { useGetSingleVideoQuery } from "@/redux/features/videos/videosApi";
 import CommentSection from "@/components/commentSection/CommentSection";
 import { AppSidebar } from "@/components/app-sidebar";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
-
 import VideoPlayer from "./videoPlayer/VideoPlayers";
 import Content from "./Content";
-import HeaderComponent from "./HeaderComponent";
+
+import Navbar from "@/components/navbar/Navbar";
 
 export const SingleVideo = () => {
   const videoId: any = useParams();
@@ -18,7 +18,7 @@ export const SingleVideo = () => {
   }, []);
 
   const video = singleVideo?.data?.video || {};
-  const { title = "", imgUrl = "", videoUrl = "", _id = "" } = video;
+  const { imgUrl = "", videoUrl = "", _id = "" } = video;
 
   const LoadingSpinner = () => (
     <div className="min-h-screen flex items-center justify-center">
@@ -40,7 +40,7 @@ export const SingleVideo = () => {
       <SidebarProvider>
         <AppSidebar />
         <SidebarInset>
-          <HeaderComponent />
+          <Navbar />
           <div className="">
             <div className="min-hscreen g-black text-gray-200">
               {/* Video Player */}
@@ -48,7 +48,7 @@ export const SingleVideo = () => {
                 <VideoPlayer
                   src={videoUrl}
                   poster={imgUrl}
-                  title={title}
+                  //   title={title}
                   onPlay={() => console.log("Video started playing")}
                   onPause={() => console.log("Video paused")}
                   onTimeUpdate={(time) => console.log("Current time:", time)}
@@ -60,7 +60,7 @@ export const SingleVideo = () => {
 
             {/* Comment Section */}
           </div>
-            <CommentSection videoId={videoId} _id={_id} />
+          <CommentSection videoId={videoId} _id={_id} />
         </SidebarInset>
       </SidebarProvider>
     </>

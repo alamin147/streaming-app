@@ -32,7 +32,7 @@ interface VideoPlayerProps {
 export default function VideoPlayer({
   src,
   poster,
-  title = "Video Player",
+  title = "",
   onPlay,
   onPause,
   onTimeUpdate,
