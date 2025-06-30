@@ -222,6 +222,9 @@ const UserTab = () => {
                       <th className="py-3 px-4 text-left font-medium hidden md:table-cell">
                         Email
                       </th>
+                      <th className="py-3 px-4 text-left font-medium hidden md:table-cell">
+                        Username
+                      </th>
                       <th className="py-3 px-4 text-left font-medium hidden lg:table-cell">
                         Role
                       </th>
@@ -245,11 +248,17 @@ const UserTab = () => {
                         <td className="py-3 px-4">
                           <div className="font-medium">{user.name}</div>
                           <div className="text-muted-foreground text-xs md:hidden">
-                            {user.email}
+                            {"Username: " + user.username}
+                          </div>
+                          <div className="text-muted-foreground text-xs md:hidden">
+                            {"Email " + user.email}
                           </div>
                         </td>
                         <td className="py-3 px-4 hidden md:table-cell">
                           {user.email}
+                        </td>
+                        <td className="py-3 px-4 hidden md:table-cell">
+                          {user.username}
                         </td>
                         <td className="py-3 px-4 hidden lg:table-cell">
                           <span

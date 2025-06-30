@@ -9,6 +9,7 @@ import {
 import { Input } from "@/components/ui/input";
 import {
   useChangeVideoStatusMutation,
+  useDeleteVideoMutation,
   useGetAllVideosQuery,
 } from "@/redux/features/dashboard/adminDashboard/adminDashboardApi";
 import { TabsContent } from "@/components/ui/tabs";
@@ -75,7 +76,7 @@ const AllVideos = () => {
   // Fetch all videos without params
   const { data, isLoading } = useGetAllVideosQuery({});
   const allVideosFromServer = data?.data?.videos || [];
-
+  const [deleteVideo] = useDeleteVideoMutation();
   const [changeVideoStatus, { isLoading: isStatusChanging }] =
     useChangeVideoStatusMutation();
 
@@ -187,8 +188,9 @@ const AllVideos = () => {
 
   const handleDeleteVideo = async () => {
     try {
-      // await deleteVideo(selectedVideo._id).unwrap()
-      toast.success("Video deleted function disabled");
+      const res = await deleteVideo(selectedVideo._id).unwrap();
+      console.log(res);
+      toast.success("Video deleted Successfully");
       setIsDeleteDialogOpen(false);
     } catch (error) {
       console.error("Failed to delete video:", error);
@@ -644,21 +646,14 @@ const AllVideos = () => {
               <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
               <AlertCircleIcon className="text-yellow-500" />
             </div>
-            <AlertDialogDescription>
-              This is a portfolio project, so the delete function of admin part
-              is disabled. Other edits, changes, and features are functional for
-              admin. Because admin password is open to everyone for testing
-              purposes.
-            </AlertDialogDescription>
+            <AlertDialogDescription></AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
             <AlertDialogAction
               className="text-white bg-red-500 hover:bg-red-600"
               onClick={handleDeleteVideo}
-            >
-              Delete Video
-            </AlertDialogAction>
+            ></AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>

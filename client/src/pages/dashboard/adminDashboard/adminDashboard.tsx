@@ -3,7 +3,6 @@ import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { Shield } from "lucide-react";
 import { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-
 import Stats from "./components/stats/Stats";
 import AllVideos from "./components/videos/AllVideos";
 import UserTab from "./components/userTab/UserTab";
@@ -62,15 +61,11 @@ const AdminDashboard = () => {
             </TabsContent>
 
             <TabsContent value="users" className="space-y-4">
-              <div className="grid gap-6 md:grid-cols-7">
-                <UserTab />
-              </div>
+              <UserTab />
             </TabsContent>
 
             <TabsContent value="videos" className="space-y-4">
-              <div className="grid gap-6 md:grid-cols-7">
-                <AllVideos />
-              </div>
+              <AllVideos />
             </TabsContent>
           </Tabs>
         </div>
