@@ -166,12 +166,16 @@ export const deleteVideo = async (
             return response(res, 404, false, "Video not found");
         }
 
-        await Promise.all([
-            Video.findByIdAndDelete(videoId),
-            Comment.deleteMany({ videoId }),
-            RecentVideo.deleteMany({ videoId }),
-            WatchLater.deleteMany({ videoId })
-        ]);
+        // await Promise.all([
+        //     Video.findByIdAndDelete(videoId),
+        //     Comment.deleteMany({ videoId }),
+        //     RecentVideo.deleteMany({ videoId }),
+        //     WatchLater.deleteMany({ videoId })
+        // ]);
+
+        // soft delete the video
+        video.isDeleted = true;
+        await video.save();
 
         response(res, 200, true, "Video deleted successfully");
     } catch (err: any) {

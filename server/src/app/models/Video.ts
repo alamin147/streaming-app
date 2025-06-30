@@ -29,6 +29,10 @@ const VideoSchema = new mongoose.Schema(
             type: Number,
             default: 0,
         },
+        isDeleted: {
+            type: Boolean,
+            default: false,
+        },
         tags: {
             type: [String],
             default: [],
