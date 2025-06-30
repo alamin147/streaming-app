@@ -30,6 +30,7 @@ export function LoginForm({
     handleSubmit,
     formState: { errors },
     setValue,
+    reset,
   } = useForm();
   const [loginUser, { isLoading }] = useLoginUserMutation();
   const dispatch = useDispatch();
@@ -40,6 +41,14 @@ export function LoginForm({
     try {
       const res: any = await loginUser(data).unwrap();
       if (res?.success === true) {
+        const u = res?.data?.user?.status;
+        if (u == "inactive") {
+          toast.error(
+            "Your account is inactive by an admin. Please contact Admin."
+          );
+          reset();
+          return;
+        }
         const { token } = res.data;
         toast.success(res?.message || "User logged in successfully.");
         const decoded = jwtDecode(token);

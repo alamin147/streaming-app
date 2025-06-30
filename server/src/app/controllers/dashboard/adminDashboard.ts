@@ -115,7 +115,7 @@ export const getAllVideos = async (
     res: Response,
 ) => {
     try {
-        const videos = await Video.find().populate({
+        const videos = await Video.find({ isDeleted: false }).populate({
             path: "userId",
             select: "name email img",
         });

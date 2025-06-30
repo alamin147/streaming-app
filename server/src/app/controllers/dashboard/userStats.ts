@@ -55,7 +55,7 @@ export const getUserStats = async (req: Request, res: Response) => {
 export const getRecentUploads = async (req: Request, res: Response) => {
   try {
     const userId = req.user.id;
-    const recentVideos = await Video.find({ userId })
+    const recentVideos = await Video.find({ userId, isDeleted: false  })
       .sort({ createdAt: -1 })
       .limit(3)
       .lean();

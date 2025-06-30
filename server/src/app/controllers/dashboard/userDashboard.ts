@@ -14,7 +14,7 @@ export const getMyVideos = async (
 ) => {
   try {
     const userId=req.user.id;
-    const myVideos=await Video.find({userId})
+    const myVideos=await Video.find({userId, isDeleted: false })
     response(res,200,true,"My Video fetched successfully",{myVideos})
   } catch (err: any) {
     response(res, 500, false, err.message || "Internal Server Error");
