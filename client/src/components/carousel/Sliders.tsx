@@ -18,9 +18,9 @@ const Sliders = ({ videos }: { videos: any }) => {
 
   return (
     <div
-      className={`w-screen ${
+      className={`w-full ${
         open === true ? "max-w-[calc(100vw-300px)]" : "max-w-[calc(100vw-50px)]"
-      } mx-auto h-80 md:h-[700px] overflow-hidden`}
+      } mx-auto h-80 md:h-[700px] overflow-hidden px-4 pt-4`}
     >
       <Swiper
         modules={[Autoplay, Pagination, Navigation]}
@@ -28,7 +28,7 @@ const Sliders = ({ videos }: { videos: any }) => {
         loop={video?.length > 1}
         pagination={{ clickable: true }}
         spaceBetween={10}
-        className="h-full rounded-2xl shadow-lg "
+        className="h-full rounded-2xl shadow-lg"
       >
         {video?.map((vid: any, index: number) => (
           <SwiperSlide key={vid?._id || index}>

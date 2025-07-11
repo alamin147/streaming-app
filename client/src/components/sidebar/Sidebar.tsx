@@ -14,10 +14,10 @@ export default function Sidebar() {
   return (
     <SidebarProvider>
       <AppSidebar />
-      <SidebarInset>
+      <SidebarInset className="overflow-x-hidden">
         <Navbar />
         {<VideoUploadModal isOpen={isOpen} setIsOpens={setIsOpen} />}
-        <div className="mt-4">
+        <div className="mt-4 px-4">
           <Carousel />
         </div>
       </SidebarInset>
